@@ -39,9 +39,9 @@ export class JwtAuthGuard implements CanActivate {
       case 'student':
         return this.db.queryOne('SELECT * FROM users WHERE student_id = ?', [payload.id]);
       case 'staff':
-        return this.db.queryOne('SELECT * FROM staff WHERE unique_id = ?', [payload.id]);
+        return this.db.queryOne("SELECT * FROM staff WHERE unique_id = ? AND user != 'admin'", [payload.id]);
       case 'admin':
-        return this.db.queryOne('SELECT * FROM admin WHERE unique_id = ?', [payload.id]);
+        return this.db.queryOne("SELECT * FROM staff WHERE unique_id = ? AND user = 'admin'", [payload.id]);
       default:
         return null;
     }

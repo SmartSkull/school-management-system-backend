@@ -14,13 +14,13 @@ export class AdminService {
     const [students, staff, session, term, recentStudents, recentPayments] = await Promise.all([
       this.db.queryOne<any>('SELECT COUNT(*) as total, SUM(admin_verify=1) as verified, SUM(admin_verify=0) as pending FROM users'),
       this.db.queryOne<any>('SELECT COUNT(*) as total, SUM(admin_verify=1) as verified FROM staff'),
-      this.db.queryOne<any>('SELECT set_session FROM session WHERE current_session = 1 LIMIT 1'),
-      this.db.queryOne<any>('SELECT term FROM term WHERE current_term = 1 LIMIT 1'),
+      this.db.queryOne<any>('SELECT set_session FROM set_session_tbl LIMIT 1'),
+      this.db.queryOne<any>('SELECT set_term FROM set_term_tbl LIMIT 1'),
       this.db.query('SELECT firstname, lastname, date FROM users ORDER BY user_id DESC LIMIT 3'),
       this.db.query('SELECT student_id, date FROM scratch_card ORDER BY id DESC LIMIT 3'),
     ]);
     const studentsByClass = await this.db.query('SELECT class, COUNT(*) as count FROM users GROUP BY class');
-    return this.ok({ students, staff, studentsByClass, current_session: session?.set_session, current_term: term?.term, recentStudents, recentPayments });
+    return this.ok({ students, staff, studentsByClass, current_session: session?.set_session, current_term: term?.set_term, recentStudents, recentPayments });
   }
 
   async getStudents(q: any) {
@@ -75,7 +75,7 @@ export class AdminService {
 
   async verifyStudent(studentId: string) {
     await this.db.update('users', { admin_verify: '1' }, 'student_id = ?', [studentId]);
-    await this.db.insert('notifications', { unique_id: studentId, message: 'Your account has been verified. You can now access all features.', status: 'unread', date: new Date() });
+    await this.db.insert('notification', { user_id: studentId, user_type: 'student', title: 'Account Verified', message: 'Your account has been verified. You can now access all features.', type: 'success', is_read: 0, created_at: new Date() });
     return this.ok(null, 'Student verified successfully');
   }
 
@@ -137,37 +137,35 @@ export class AdminService {
   }
 
   async getSessions() {
-    const sessions = await this.db.query('SELECT * FROM session ORDER BY id DESC');
-    const current = await this.db.queryOne<any>('SELECT set_session FROM session WHERE current_session = 1 LIMIT 1');
-    return this.ok(sessions.map(s => ({ ...s, current: s.set_session === current?.set_session })));
+    const sessions = await this.db.query('SELECT * FROM session ORDER BY session DESC');
+    const current = await this.db.queryOne<any>('SELECT set_session FROM set_session_tbl LIMIT 1');
+    return this.ok(sessions.map((s: any) => ({ ...s, current: s.session === current?.set_session })));
   }
 
   async createSession(session: string) {
     if (!session) throw new BadRequestException('Session is required');
-    await this.db.insert('session', { set_session: session, current_session: 0 });
+    await this.db.insert('session', { session });
     return this.ok(null, 'Session created successfully');
   }
 
   async setCurrentSession(session: string) {
-    await this.db.update('session', { current_session: 0 }, '1=1');
-    await this.db.update('session', { current_session: 1 }, 'set_session = ?', [session]);
+    await this.db.update('set_session_tbl', { set_session: session }, '1=1');
     return this.ok(null, 'Current session updated successfully');
   }
 
   async deleteSession(session: string) {
-    await this.db.delete('session', 'set_session = ?', [session]);
+    await this.db.delete('session', 'session = ?', [session]);
     return this.ok(null, 'Session deleted successfully');
   }
 
   async getTerms() {
-    const terms = await this.db.query('SELECT * FROM term');
-    const current = await this.db.queryOne<any>('SELECT term FROM term WHERE current_term = 1 LIMIT 1');
-    return this.ok(terms.map(t => ({ ...t, current: t.term === current?.term })));
+    const terms = await this.db.query('SELECT * FROM term ORDER BY term_id');
+    const current = await this.db.queryOne<any>('SELECT set_term FROM set_term_tbl LIMIT 1');
+    return this.ok(terms.map((t: any) => ({ ...t, current: t.term === current?.set_term })));
   }
 
   async setCurrentTerm(term: string) {
-    await this.db.update('term', { current_term: 0 }, '1=1');
-    await this.db.update('term', { current_term: 1 }, 'term = ?', [term]);
+    await this.db.update('set_term_tbl', { set_term: term }, '1=1');
     return this.ok(null, 'Current term updated successfully');
   }
 
@@ -182,55 +180,55 @@ export class AdminService {
   }
 
   async getLibrary() {
-    const library = await this.db.query('SELECT * FROM library ORDER BY id DESC');
+    const library = await this.db.query('SELECT l.*, s.firstname, s.lastname FROM library l LEFT JOIN staff s ON l.staff_id = s.unique_id ORDER BY l.verify ASC, l.date DESC');
     return this.ok(library);
   }
 
   async approveLibrary(id: number) {
-    await this.db.update('library', { verify: '1' }, 'id = ?', [id]);
+    await this.db.update('library', { verify: '1' }, 'library_id = ?', [id]);
     return this.ok(null, 'Book approved successfully');
   }
 
   async deleteLibrary(id: number) {
-    await this.db.delete('library', 'id = ?', [id]);
+    await this.db.delete('library', 'library_id = ?', [id]);
     return this.ok(null, 'Book deleted successfully');
   }
 
   async getClasses() {
-    return this.ok(await this.db.query('SELECT * FROM classes ORDER BY id ASC'));
+    return this.ok(await this.db.query('SELECT c.*, CONCAT(s.firstname, " ", s.lastname) as teacher_name, (SELECT COUNT(*) FROM users WHERE class = c.class) as student_count FROM class c LEFT JOIN staff s ON c.class_teacher = s.unique_id ORDER BY c.class_id'));
   }
 
   async createClass(data: any) {
-    await this.db.insert('classes', { class: data.class, class_teacher: data.class_teacher || '' });
+    await this.db.insert('class', { class: data.class, class_teacher: data.class_teacher || '' });
     return this.ok(null, 'Class created successfully');
   }
 
   async updateClass(oldName: string, data: any) {
-    await this.db.update('classes', { class: data.class, class_teacher: data.class_teacher || '' }, 'class = ?', [oldName]);
+    await this.db.update('class', { class: data.class, class_teacher: data.class_teacher || '' }, 'class = ?', [oldName]);
     return this.ok(null, 'Class updated successfully');
   }
 
   async deleteClass(name: string) {
-    await this.db.delete('classes', 'class = ?', [name]);
+    await this.db.delete('class', 'class = ?', [name]);
     return this.ok(null, 'Class deleted successfully');
   }
 
   async getCourses() {
-    return this.ok(await this.db.query('SELECT * FROM courses ORDER BY id ASC'));
+    return this.ok(await this.db.query('SELECT course_id, courses as course, teacher FROM course ORDER BY courses ASC'));
   }
 
   async createCourse(data: any) {
-    await this.db.insert('courses', { courses: data.course, teacher: data.teacher || '' });
+    await this.db.insert('course', { courses: data.course, teacher: data.teacher || '' });
     return this.ok(null, 'Course created successfully');
   }
 
   async updateCourse(oldName: string, data: any) {
-    await this.db.update('courses', { courses: data.course, teacher: data.teacher || '' }, 'courses = ?', [oldName]);
+    await this.db.update('course', { courses: data.course, teacher: data.teacher || '' }, 'courses = ?', [oldName]);
     return this.ok(null, 'Course updated successfully');
   }
 
   async deleteCourse(name: string) {
-    await this.db.delete('courses', 'courses = ?', [name]);
+    await this.db.delete('course', 'courses = ?', [name]);
     return this.ok(null, 'Course deleted successfully');
   }
 
@@ -247,8 +245,8 @@ export class AdminService {
     if (q.class) { sql += ' AND u.class = ?'; params.push(q.class); }
     sql += ' ORDER BY u.class, u.firstname';
     const students = await this.db.query(sql, params);
-    const classes = await this.db.query('SELECT * FROM classes');
-    const sessions = await this.db.query('SELECT set_session FROM session');
+    const classes = await this.db.query('SELECT * FROM class ORDER BY class_id');
+    const sessions = await this.db.query('SELECT session FROM session ORDER BY session DESC');
     return this.ok({ students, classes, sessions, current_session: session, current_term: term });
   }
 
@@ -269,7 +267,7 @@ export class AdminService {
     const session = body.session || await this.getCurrentSession();
     const term = body.term || await this.getCurrentTerm();
     await this.db.update('result', { approved: 1 }, 'student_id = ? AND session = ? AND term = ?', [studentId, session, term]);
-    await this.db.insert('notifications', { unique_id: studentId, message: `Your result for ${term} term, ${session} session has been approved.`, status: 'unread', date: new Date() });
+    await this.db.insert('notification', { user_id: studentId, user_type: 'student', title: 'Results Approved', message: `Your result for ${term} term, ${session} session has been approved.`, type: 'info', is_read: 0, created_at: new Date() });
     return this.ok(null, 'Results approved successfully');
   }
 
@@ -277,6 +275,7 @@ export class AdminService {
     const session = body.session || await this.getCurrentSession();
     const term = body.term || await this.getCurrentTerm();
     await this.db.update('result', { approved: 0 }, 'student_id = ? AND session = ? AND term = ?', [studentId, session, term]);
+    await this.db.insert('notification', { user_id: studentId, user_type: 'student', title: 'Results Unapproved', message: `Your result for ${term} term, ${session} session has been unapproved.`, type: 'info', is_read: 0, created_at: new Date() });
     return this.ok(null, 'Results unapproved successfully');
   }
 
@@ -312,7 +311,7 @@ export class AdminService {
   }
 
   async getSchoolDays() {
-    return this.ok(await this.db.query('SELECT * FROM school_days ORDER BY id DESC'));
+    return this.ok(await this.db.query('SELECT * FROM school_days ORDER BY session DESC, term ASC'));
   }
 
   async setSchoolDays(body: any) {
@@ -333,13 +332,13 @@ export class AdminService {
   }
 
   private async getCurrentSession(): Promise<string> {
-    const r = await this.db.queryOne<any>('SELECT set_session FROM session WHERE current_session = 1 LIMIT 1');
+    const r = await this.db.queryOne<any>('SELECT set_session FROM set_session_tbl LIMIT 1');
     return r?.set_session || '';
   }
 
   private async getCurrentTerm(): Promise<string> {
-    const r = await this.db.queryOne<any>('SELECT term FROM term WHERE current_term = 1 LIMIT 1');
-    return r?.term || '';
+    const r = await this.db.queryOne<any>('SELECT set_term FROM set_term_tbl LIMIT 1');
+    return r?.set_term || '';
   }
 
   private async generateStudentId(): Promise<string> {

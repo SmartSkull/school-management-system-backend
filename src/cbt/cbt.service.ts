@@ -11,7 +11,7 @@ export class CbtService {
   }
 
   async getAvailableTests(user: any) {
-    const tests = await this.db.query('SELECT DISTINCT course, duration FROM cbt WHERE class = ?', [user.class]);
+    const tests = await this.db.query('SELECT course, COUNT(*) as question_count, MAX(duration) as duration FROM cbt WHERE class = ? GROUP BY course ORDER BY course', [user.class]);
     for (const test of tests as any[]) {
       const completed = await this.db.queryOne('SELECT id FROM cbt_result WHERE student_id = ? AND class = ? AND course = ?', [user.student_id, user.class, test.course]);
       test.completed = !!completed;
@@ -45,7 +45,7 @@ export class CbtService {
       await this.db.insert('cbt_session', { student_id: user.student_id, class: user.class, course, duration, start_time: new Date() });
     }
 
-    const questions = await this.db.query('SELECT id, question, option1, option2, option3, option4 FROM cbt WHERE class = ? AND course = ?', [user.class, course]);
+    const questions = await this.db.query('SELECT cbt_id, question, option1, option2, option3, option4 FROM cbt WHERE class = ? AND course = ? ORDER BY RAND()', [user.class, course]);
     if (!questions.length) throw new NotFoundException('No questions found for this test');
 
     return this.ok({ course, questions, total_questions: questions.length, duration, remaining_time: remainingTime });
@@ -64,7 +64,7 @@ export class CbtService {
   }
 
   async submitTest(user: any, course: string) {
-    const answers = await this.db.query('SELECT sa.student_pick, c.answer FROM student_answers sa JOIN cbt c ON sa.cbt_id = c.id WHERE sa.student_id = ? AND sa.course = ?', [user.student_id, course]);
+    const answers = await this.db.query('SELECT sa.student_pick, c.answer FROM student_answers sa JOIN cbt c ON sa.cbt_id = c.cbt_id WHERE sa.student_id = ? AND sa.course = ?', [user.student_id, course]);
     const score = (answers as any[]).filter(a => a.student_pick === a.answer).length;
     const existing = await this.db.queryOne('SELECT id FROM cbt_result WHERE student_id = ? AND class = ? AND course = ?', [user.student_id, user.class, course]);
     if (!existing) await this.db.insert('cbt_result', { student_id: user.student_id, class: user.class, course, score, date: new Date() });
@@ -92,7 +92,7 @@ export class CbtService {
   }
 
   async deleteQuestion(id: number) {
-    await this.db.delete('cbt', 'id = ?', [id]);
+    await this.db.delete('cbt', 'cbt_id = ?', [id]);
     return this.ok(null, 'Question deleted successfully');
   }
 

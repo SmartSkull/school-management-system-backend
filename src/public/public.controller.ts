@@ -12,29 +12,29 @@ export class PublicController {
 
   @Get('public/current-period')
   async currentPeriod() {
-    const session = await this.db.queryOne<any>('SELECT set_session FROM session WHERE current_session = 1 LIMIT 1');
-    const term = await this.db.queryOne<any>('SELECT term FROM term WHERE current_term = 1 LIMIT 1');
-    return { success: true, data: { session: session?.set_session, term: term?.term } };
+    const session = await this.db.queryOne<any>('SELECT set_session FROM set_session_tbl LIMIT 1');
+    const term = await this.db.queryOne<any>('SELECT set_term FROM set_term_tbl LIMIT 1');
+    return { success: true, data: { session: session?.set_session, term: term?.set_term } };
   }
 
   @Get('public/sessions')
   async sessions() {
-    return { success: true, data: await this.db.query('SELECT * FROM session ORDER BY id DESC') };
+    return { success: true, data: await this.db.query('SELECT * FROM session ORDER BY session DESC') };
   }
 
   @Get('public/terms')
   async terms() {
-    return { success: true, data: await this.db.query('SELECT * FROM term') };
+    return { success: true, data: await this.db.query('SELECT * FROM term ORDER BY term_id') };
   }
 
   @Get('public/classes')
   async classes() {
-    return { success: true, data: await this.db.query('SELECT * FROM classes ORDER BY id ASC') };
+    return { success: true, data: await this.db.query('SELECT * FROM class ORDER BY class_id ASC') };
   }
 
   @Get('public/courses')
   async courses() {
-    return { success: true, data: await this.db.query('SELECT * FROM courses ORDER BY id ASC') };
+    return { success: true, data: await this.db.query('SELECT course_id, courses as course, teacher FROM course ORDER BY courses ASC') };
   }
 
   @Get('public/posts')

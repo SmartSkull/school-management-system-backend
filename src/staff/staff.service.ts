@@ -10,20 +10,20 @@ export class StaffService {
   }
 
   private async getCurrentSession(): Promise<string> {
-    const r = await this.db.queryOne<any>('SELECT set_session FROM session WHERE current_session = 1 LIMIT 1');
+    const r = await this.db.queryOne<any>('SELECT set_session FROM set_session_tbl LIMIT 1');
     return r?.set_session || '';
   }
 
   private async getCurrentTerm(): Promise<string> {
-    const r = await this.db.queryOne<any>('SELECT term FROM term WHERE current_term = 1 LIMIT 1');
-    return r?.term || '';
+    const r = await this.db.queryOne<any>('SELECT set_term FROM set_term_tbl LIMIT 1');
+    return r?.set_term || '';
   }
 
   async dashboard(user: any) {
     const session = await this.getCurrentSession();
     const term = await this.getCurrentTerm();
     const studentCount = await this.db.count('users', 'class = ?', [user.class]);
-    const assignments = await this.db.query('SELECT * FROM assignments WHERE staff_id = ? ORDER BY id DESC', [user.unique_id]);
+    const assignments = await this.db.query('SELECT * FROM assignment WHERE staff_id = ? ORDER BY assignment_id DESC', [user.unique_id]);
     const libraryItems = await this.db.query('SELECT * FROM library WHERE staff_id = ? ORDER BY id DESC', [user.unique_id]);
     return this.ok({ user, current_session: session, current_term: term, student_count: studentCount, analytics: { assignments: { total: assignments.length, recent: assignments.slice(0, 5) }, library: { total: libraryItems.length, verified: libraryItems.filter((i: any) => i.verify == '1').length, pending: libraryItems.filter((i: any) => i.verify != '1').length } } });
   }
@@ -176,29 +176,29 @@ export class StaffService {
   async createAssignment(user: any, body: any, file?: Express.Multer.File) {
     const data: any = { subject: body.subject, class: body.class, assignment: body.assignment, deadline: body.deadline, staff_id: user.unique_id, date: new Date() };
     if (file) data.file = file.filename;
-    const id = await this.db.insert('assignments', data);
+    const id = await this.db.insert('assignment', data);
     return this.ok({ id }, 'Assignment created successfully');
   }
 
   async getAssignments(user: any) {
-    const assignments = await this.db.query('SELECT * FROM assignments WHERE staff_id = ? ORDER BY id DESC', [user.unique_id]);
+    const assignments = await this.db.query('SELECT * FROM assignment WHERE staff_id = ? ORDER BY assignment_id DESC', [user.unique_id]);
     return this.ok(assignments);
   }
 
   async updateAssignment(user: any, id: number, body: any, file?: Express.Multer.File) {
-    const assignment = await this.db.queryOne<any>('SELECT * FROM assignments WHERE id = ?', [id]);
+    const assignment = await this.db.queryOne<any>('SELECT * FROM assignment WHERE assignment_id = ?', [id]);
     if (!assignment || assignment.staff_id !== user.unique_id) throw new NotFoundException('Assignment not found');
     const data: any = {};
     ['subject', 'class', 'assignment', 'deadline'].forEach(k => { if (body[k]) data[k] = body[k]; });
     if (file) data.file = file.filename;
-    await this.db.update('assignments', data, 'id = ?', [id]);
+    await this.db.update('assignment', data, 'assignment_id = ?', [id]);
     return this.ok(null, 'Assignment updated successfully');
   }
 
   async deleteAssignment(user: any, id: number) {
-    const assignment = await this.db.queryOne<any>('SELECT * FROM assignments WHERE id = ?', [id]);
+    const assignment = await this.db.queryOne<any>('SELECT * FROM assignment WHERE assignment_id = ?', [id]);
     if (!assignment || assignment.staff_id !== user.unique_id) throw new NotFoundException('Assignment not found');
-    await this.db.delete('assignments', 'id = ?', [id]);
+    await this.db.delete('assignment', 'assignment_id = ?', [id]);
     return this.ok(null, 'Assignment deleted successfully');
   }
 
@@ -214,22 +214,22 @@ export class StaffService {
   }
 
   async deleteLibrary(user: any, id: number) {
-    const item = await this.db.queryOne<any>('SELECT * FROM library WHERE id = ?', [id]);
+    const item = await this.db.queryOne<any>('SELECT * FROM library WHERE library_id = ?', [id]);
     if (!item) throw new NotFoundException('Document not found');
     if (item.staff_id !== user.unique_id) throw new ForbiddenException('You can only delete your own documents');
-    await this.db.delete('library', 'id = ?', [id]);
+    await this.db.delete('library', 'library_id = ?', [id]);
     return this.ok(null, 'Document deleted successfully');
   }
 
   async getClasses() {
-    return { success: true, data: await this.db.query('SELECT * FROM classes ORDER BY id ASC') };
+    return { success: true, data: await this.db.query('SELECT * FROM class ORDER BY class_id ASC') };
   }
 
   async getCourses() {
-    return { success: true, data: await this.db.query('SELECT * FROM courses ORDER BY id ASC') };
+    return { success: true, data: await this.db.query('SELECT course_id, courses as course, teacher FROM course ORDER BY courses ASC') };
   }
 
   async getSchoolDays() {
-    return { success: true, data: await this.db.query('SELECT * FROM school_days ORDER BY id DESC') };
+    return { success: true, data: await this.db.query('SELECT * FROM school_days ORDER BY session DESC, term ASC') };
   }
 }

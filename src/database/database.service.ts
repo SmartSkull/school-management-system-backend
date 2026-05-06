@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import * as mysql from 'mysql2/promise';
 
 @Injectable()
@@ -9,7 +9,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     this.pool = mysql.createPool({
       host: process.env.DB_HOST || 'localhost',
       port: parseInt(process.env.DB_PORT || '3306'),
-      database: process.env.DB_NAME || 'greakings',
+      database: process.env.DB_NAME || 'florieren',
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASS || '',
       charset: 'utf8mb4',
