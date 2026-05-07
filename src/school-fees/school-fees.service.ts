@@ -137,13 +137,15 @@ export class SchoolFeesService {
         data: { status: 'success', paid_at: new Date() },
       });
 
-      await this.prisma.create('notifications', {
-        user_id: payment.student_id,
-        user_type: 'student',
-        title: 'School Fees Payment Successful',
-        message: `Your school fees payment of ₦${payment.amount} for ${payment.term} term, ${payment.session} session has been confirmed.`,
-        is_read: false,
-        created_at: new Date(),
+      await this.prisma.notifications.create({
+        data: {
+          user_id: payment.student_id as any,
+          user_type: 'student',
+          title: 'School Fees Payment Successful',
+          message: `Your school fees payment of ₦${payment.amount} for ${payment.term} term, ${payment.session} session has been confirmed.`,
+          is_read: false,
+          created_at: new Date(),
+        },
       });
 
       return this.ok({
