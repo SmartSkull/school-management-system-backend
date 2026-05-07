@@ -1,12 +1,12 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { DatabaseService } from '../../database/database.service';
+import { PrismaService } from '../../database/prisma.service';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   constructor(
     protected jwtService: JwtService,
-    protected db: DatabaseService,
+    protected prisma: PrismaService,
   ) {}
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
@@ -37,11 +37,21 @@ export class JwtAuthGuard implements CanActivate {
   protected async resolveUser(payload: any): Promise<any> {
     switch (payload.role) {
       case 'student':
-        return this.db.queryOne('SELECT * FROM users WHERE student_id = ?', [payload.id]);
+        return this.prisma.users.findFirst({ where: { student_id: payload.id } });
       case 'staff':
-        return this.db.queryOne("SELECT * FROM staff WHERE unique_id = ? AND user != 'admin'", [payload.id]);
+        return this.prisma.staff.findFirst({
+          where: {
+            unique_id: payload.id,
+            NOT: { user: 'admin' },
+          },
+        });
       case 'admin':
-        return this.db.queryOne("SELECT * FROM staff WHERE unique_id = ? AND user = 'admin'", [payload.id]);
+        return this.prisma.staff.findFirst({
+          where: {
+            unique_id: payload.id,
+            user: 'admin',
+          },
+        });
       default:
         return null;
     }

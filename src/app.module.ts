@@ -9,6 +9,7 @@ import { MessagesModule } from './messages/messages.module';
 import { CbtModule } from './cbt/cbt.module';
 import { BookgameModule } from './bookgame/bookgame.module';
 import { PublicModule } from './public/public.module';
+import { SchoolFeesModule } from './school-fees/school-fees.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { PublicModule } from './public/public.module';
     CbtModule,
     BookgameModule,
     PublicModule,
+    SchoolFeesModule,
   ],
 })
 export class AppModule {}

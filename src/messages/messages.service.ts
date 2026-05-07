@@ -1,9 +1,9 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { DatabaseService } from '../database/database.service';
+import { PrismaService } from '../database/prisma.service';
 
 @Injectable()
 export class MessagesService {
-  constructor(private db: DatabaseService) {}
+  constructor(private prisma: PrismaService) {}
 
   private ok(data: any = null, message = 'Success') {
     return { success: true, data, message };
@@ -15,46 +15,64 @@ export class MessagesService {
 
   async getConversations(user: any) {
     const userId = this.uid(user);
-    const chats = await this.db.query(
-      'SELECT DISTINCT IF(sender_id = ?, receiver_id, sender_id) as chat_with FROM messages WHERE sender_id = ? OR receiver_id = ?',
-      [userId, userId, userId],
-    );
+    const rows = await this.prisma.messages.findMany({
+      where: { OR: [{ incoming_id: userId }, { outgoing_id: userId }] },
+      orderBy: { timestamp: 'desc' },
+    });
+    const chatIds = [...new Set(rows.map(row => row.incoming_id === userId ? row.outgoing_id : row.incoming_id))];
     const conversations = [];
-    for (const chat of chats as any[]) {
-      const chatUser = await this.db.queryOne<any>('SELECT student_id as id, firstname, lastname, image FROM users WHERE student_id = ?', [chat.chat_with])
-        ?? await this.db.queryOne<any>('SELECT unique_id as id, firstname, lastname, image FROM staff WHERE unique_id = ?', [chat.chat_with]);
+    for (const chatWith of chatIds) {
+      const chatUser = await this.findChatUser(chatWith);
       if (!chatUser) continue;
-      const lastMsg = await this.db.queryOne<any>('SELECT * FROM messages WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?) ORDER BY id DESC LIMIT 1', [userId, chat.chat_with, chat.chat_with, userId]);
-      const unread = await this.db.count('messages', "sender_id = ? AND receiver_id = ? AND is_read = '0'", [chat.chat_with, userId]);
-      conversations.push({ user: chatUser, last_message: lastMsg?.message, last_time: lastMsg?.created_at, unread_count: unread });
+      const thread = rows.filter(row => [row.incoming_id, row.outgoing_id].includes(chatWith));
+      const lastMsg = thread[0];
+      const unread = thread.filter(row => row.outgoing_id === chatWith && row.incoming_id === userId && !row.is_read).length;
+      conversations.push({ user: chatUser, last_message: lastMsg?.message, last_time: lastMsg?.timestamp, unread_count: unread });
     }
     return this.ok(conversations);
   }
 
   async getMessages(user: any, otherId: string) {
     const userId = this.uid(user);
-    const messages = await this.db.query(
-      'SELECT * FROM messages WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?) ORDER BY id ASC',
-      [userId, otherId, otherId, userId],
-    );
-    await this.db.update('messages', { is_read: '1' }, 'sender_id = ? AND receiver_id = ?', [otherId, userId]);
+    const messages = await this.prisma.messages.findMany({
+      where: {
+        OR: [
+          { incoming_id: userId, outgoing_id: otherId },
+          { incoming_id: otherId, outgoing_id: userId },
+        ],
+      },
+      orderBy: { msg_id: 'asc' },
+    });
+    await this.prisma.messages.updateMany({
+      where: { outgoing_id: otherId, incoming_id: userId },
+      data: { is_read: true },
+    });
     return this.ok(messages);
   }
 
   async sendMessage(user: any, body: any) {
     if (!body.to || !body.message) throw new BadRequestException('to and message are required');
-    const id = await this.db.insert('messages', { sender_id: this.uid(user), receiver_id: body.to, message: body.message, is_read: '0', created_at: new Date() });
-    return this.ok({ id }, 'Message sent');
+    const message = await this.prisma.messages.create({
+      data: { outgoing_id: this.uid(user), incoming_id: body.to, message: body.message, alert: '0', is_read: false },
+    });
+    return this.ok({ id: message.msg_id }, 'Message sent');
   }
 
   async getUnreadCount(user: any) {
-    const count = await this.db.count('messages', "receiver_id = ? AND is_read = '0'", [this.uid(user)]);
+    const count = await this.prisma.messages.count({ where: { incoming_id: this.uid(user), is_read: false } });
     return this.ok({ count });
   }
 
   async deleteConversation(user: any, otherId: string) {
     const userId = this.uid(user);
-    await this.db.delete('messages', '(sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)', [userId, otherId, otherId, userId]);
+    await this.prisma.messages.deleteMany({
+      where: {
+        OR: [
+          { incoming_id: userId, outgoing_id: otherId },
+          { incoming_id: otherId, outgoing_id: userId },
+        ],
+      },
+    });
     return this.ok(null, 'Conversation deleted');
   }
 
@@ -65,15 +83,24 @@ export class MessagesService {
   }
 
   async getUsers(search?: string) {
-    const staff = await this.db.query('SELECT unique_id as id, firstname, lastname, image FROM staff LIMIT 50');
-    const students = await this.db.query('SELECT student_id as id, firstname, lastname, image FROM users LIMIT 50');
+    const [staff, students] = await Promise.all([
+      this.prisma.staff.findMany({ take: 50, select: { unique_id: true, firstname: true, lastname: true, image: true } }),
+      this.prisma.users.findMany({ take: 50, select: { student_id: true, firstname: true, lastname: true, image: true } }),
+    ]);
     const all = [
-      ...(staff as any[]).map(s => ({ ...s, type: 'staff' })),
-      ...(students as any[]).map(s => ({ ...s, type: 'student' })),
+      ...staff.map(s => ({ id: s.unique_id, firstname: s.firstname, lastname: s.lastname, image: s.image, type: 'staff' })),
+      ...students.map(s => ({ id: s.student_id, firstname: s.firstname, lastname: s.lastname, image: s.image, type: 'student' })),
     ];
     const filtered = search
       ? all.filter(u => `${u.firstname} ${u.lastname}`.toLowerCase().includes(search.toLowerCase()))
       : all;
     return this.ok(filtered);
+  }
+
+  private async findChatUser(id: string) {
+    const student = await this.prisma.users.findFirst({ where: { student_id: id }, select: { student_id: true, firstname: true, lastname: true, image: true } });
+    if (student) return { id: student.student_id, firstname: student.firstname, lastname: student.lastname, image: student.image };
+    const staff = await this.prisma.staff.findFirst({ where: { unique_id: id }, select: { unique_id: true, firstname: true, lastname: true, image: true } });
+    return staff ? { id: staff.unique_id, firstname: staff.firstname, lastname: staff.lastname, image: staff.image } : null;
   }
 }

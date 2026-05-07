@@ -1,104 +1,100 @@
 import { Injectable, BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import * as fs from 'fs';
-import { DatabaseService } from '../database/database.service';
+import { PrismaService } from '../database/prisma.service';
 
 @Injectable()
 export class CbtService {
-  constructor(private db: DatabaseService) {}
+  constructor(private prisma: PrismaService) {}
 
   private ok(data: any = null, message = 'Success') {
     return { success: true, data, message };
   }
 
   async getAvailableTests(user: any) {
-    const tests = await this.db.query('SELECT course, COUNT(*) as question_count, MAX(duration) as duration FROM cbt WHERE class = ? GROUP BY course ORDER BY course', [user.class]);
-    for (const test of tests as any[]) {
-      const completed = await this.db.queryOne('SELECT id FROM cbt_result WHERE student_id = ? AND class = ? AND course = ?', [user.student_id, user.class, test.course]);
-      test.completed = !!completed;
-      if (!completed) {
-        const session = await this.db.queryOne<any>('SELECT start_time, duration FROM cbt_session WHERE student_id = ? AND course = ? ORDER BY id DESC LIMIT 1', [user.student_id, test.course]);
-        if (session) {
-          const elapsed = Math.floor((Date.now() - new Date(session.start_time).getTime()) / 1000);
-          test.remaining_time = Math.max(0, session.duration * 60 - elapsed);
-          test.in_progress = test.remaining_time > 0;
-        }
-      }
+    const questions = await this.prisma.cbt.findMany({ where: { class: user.class }, orderBy: { course: 'asc' } });
+    const byCourse = new Map<string, any[]>();
+    questions.forEach(q => byCourse.set(q.course, [...(byCourse.get(q.course) ?? []), q]));
+    const tests = [];
+    for (const [course, rows] of byCourse.entries()) {
+      const completed = await this.hasCompleted(user, course);
+      tests.push({ course, question_count: rows.length, duration: Math.max(...rows.map(r => Number(r.duration ?? 30))), completed });
     }
     return this.ok(tests);
   }
 
   async startTest(user: any, course: string) {
-    const completed = await this.db.queryOne('SELECT id FROM cbt_result WHERE student_id = ? AND class = ? AND course = ?', [user.student_id, user.class, course]);
-    if (completed) throw new ForbiddenException('You have already completed this test');
-
-    const testInfo = await this.db.queryOne<any>('SELECT duration FROM cbt WHERE class = ? AND course = ? LIMIT 1', [user.class, course]);
-    const duration = testInfo?.duration || 30;
-
-    const existingSession = await this.db.queryOne<any>('SELECT * FROM cbt_session WHERE student_id = ? AND course = ? ORDER BY id DESC LIMIT 1', [user.student_id, course]);
-    let remainingTime = duration * 60;
-
-    if (existingSession) {
-      const elapsed = Math.floor((Date.now() - new Date(existingSession.start_time).getTime()) / 1000);
-      remainingTime = Math.max(0, existingSession.duration * 60 - elapsed);
-      if (remainingTime <= 0) throw new ForbiddenException('Test time has expired');
-    } else {
-      await this.db.insert('cbt_session', { student_id: user.student_id, class: user.class, course, duration, start_time: new Date() });
-    }
-
-    const questions = await this.db.query('SELECT cbt_id, question, option1, option2, option3, option4 FROM cbt WHERE class = ? AND course = ? ORDER BY RAND()', [user.class, course]);
+    if (await this.hasCompleted(user, course)) throw new ForbiddenException('You have already completed this test');
+    const questions = await this.prisma.cbt.findMany({
+      where: { class: user.class, course },
+      select: { cbt_id: true, question: true, option1: true, option2: true, option3: true, option4: true, duration: true },
+    });
     if (!questions.length) throw new NotFoundException('No questions found for this test');
-
-    return this.ok({ course, questions, total_questions: questions.length, duration, remaining_time: remainingTime });
+    const shuffled = questions.sort(() => Math.random() - 0.5);
+    const duration = shuffled[0]?.duration || 30;
+    return this.ok({ course, questions: shuffled, total_questions: shuffled.length, duration, remaining_time: duration * 60 });
   }
 
   async submitAnswer(user: any, body: any) {
     const { cbt_id, answer, course } = body;
     if (!cbt_id || !answer || !course) throw new BadRequestException('cbt_id, answer, and course are required');
-    const existing = await this.db.queryOne('SELECT id FROM student_answers WHERE cbt_id = ? AND student_id = ?', [cbt_id, user.student_id]);
+    const where = { cbt_id: String(cbt_id), student_id: user.student_id };
+    const existing = await this.prisma.student_answer.findFirst({ where, select: { id: true } });
     if (existing) {
-      await this.db.update('student_answers', { student_pick: answer }, 'cbt_id = ? AND student_id = ?', [cbt_id, user.student_id]);
+      await this.prisma.student_answer.updateMany({ where, data: { student_pick: answer } });
     } else {
-      await this.db.insert('student_answers', { cbt_id, student_pick: answer, class: user.class, course, student_id: user.student_id });
+      await this.prisma.student_answer.create({ data: { cbt_id: String(cbt_id), student_pick: answer, class: user.class, course, student_id: user.student_id } });
     }
     return this.ok(null, 'Answer submitted');
   }
 
   async submitTest(user: any, course: string) {
-    const answers = await this.db.query('SELECT sa.student_pick, c.answer FROM student_answers sa JOIN cbt c ON sa.cbt_id = c.cbt_id WHERE sa.student_id = ? AND sa.course = ?', [user.student_id, course]);
-    const score = (answers as any[]).filter(a => a.student_pick === a.answer).length;
-    const existing = await this.db.queryOne('SELECT id FROM cbt_result WHERE student_id = ? AND class = ? AND course = ?', [user.student_id, user.class, course]);
-    if (!existing) await this.db.insert('cbt_result', { student_id: user.student_id, class: user.class, course, score, date: new Date() });
+    const answers = await this.prisma.student_answer.findMany({ where: { student_id: user.student_id, course } });
+    const questionIds = answers.map(a => Number(a.cbt_id)).filter(Boolean);
+    const questions = await this.prisma.cbt.findMany({ where: { cbt_id: { in: questionIds } }, select: { cbt_id: true, answer: true } });
+    const byId = new Map(questions.map(q => [String(q.cbt_id), q.answer]));
+    const score = answers.filter(a => a.student_pick === byId.get(String(a.cbt_id))).length;
+    if (!(await this.hasCompleted(user, course))) {
+      await this.prisma.cbt_result.create({ data: { student_id: user.student_id, cbt_id: String(questionIds[0] ?? ''), student_score: String(score), score, percentage: answers.length ? (score / answers.length) * 100 : 0, submitted_at: new Date() } });
+    }
     return this.ok({ score }, 'Test submitted successfully');
   }
 
   async getStudentResults(user: any) {
-    return this.ok(await this.db.query('SELECT * FROM cbt_result WHERE student_id = ? ORDER BY id DESC', [user.student_id]));
+    return this.ok(await this.prisma.cbt_result.findMany({ where: { student_id: user.student_id }, orderBy: { id: 'desc' } }));
   }
 
   async getStaffExams(user: any) {
     const staffId = user.unique_id ?? user.student_id;
-    return this.ok(await this.db.query('SELECT DISTINCT class, course, duration FROM cbt WHERE staff_id = ?', [staffId]));
+    const rows = await this.prisma.cbt.findMany({ where: { staff_id: staffId }, select: { class: true, course: true, duration: true } });
+    return this.ok([...new Map(rows.map(r => [`${r.class}:${r.course}:${r.duration}`, r])).values()]);
   }
 
   async createQuestion(user: any, body: any) {
     const staffId = user.unique_id ?? user.student_id;
-    const id = await this.db.insert('cbt', { ...body, staff_id: staffId, duration: body.duration || 30 });
-    return this.ok({ id }, 'Question created successfully');
+    const question = await this.prisma.cbt.create({ data: this.cbtData({ ...body, staff_id: staffId, duration: body.duration || 30 }) });
+    return this.ok({ id: question.cbt_id }, 'Question created successfully');
   }
 
   async getQuestions(cls: string, course: string) {
     if (!cls || !course) throw new BadRequestException('Class and course are required');
-    return this.ok(await this.db.query('SELECT * FROM cbt WHERE class = ? AND course = ?', [cls, course]));
+    return this.ok(await this.prisma.cbt.findMany({ where: { class: cls, course } }));
   }
 
   async deleteQuestion(id: number) {
-    await this.db.delete('cbt', 'cbt_id = ?', [id]);
+    await this.prisma.cbt.deleteMany({ where: { cbt_id: id } });
     return this.ok(null, 'Question deleted successfully');
   }
 
   async getExamResults(cls: string, course: string) {
     if (!cls || !course) throw new BadRequestException('Class and course are required');
-    return this.ok(await this.db.query('SELECT cr.*, u.firstname, u.lastname FROM cbt_result cr LEFT JOIN users u ON cr.student_id = u.student_id WHERE cr.class = ? AND cr.course = ?', [cls, course]));
+    const answers = await this.prisma.student_answer.findMany({ where: { class: cls, course }, select: { student_id: true } });
+    const ids = [...new Set(answers.map(a => a.student_id))];
+    const [results, users] = await Promise.all([
+      this.prisma.cbt_result.findMany({ where: { student_id: { in: ids } } }),
+      this.prisma.users.findMany({ where: { student_id: { in: ids } }, select: { student_id: true, firstname: true, lastname: true } }),
+    ]);
+    const byId = new Map(users.map(u => [u.student_id, u]));
+    return this.ok(results.map(r => ({ ...r, firstname: byId.get(r.student_id)?.firstname, lastname: byId.get(r.student_id)?.lastname })));
   }
 
   async extractQuestions(file: Express.Multer.File) {
@@ -117,10 +113,37 @@ export class CbtService {
     let count = 0;
     for (const item of data) {
       if (!item.question || !item.answer) continue;
-      await this.db.insert('cbt', { class: cls, course, staff_id: staffId, question: item.question, option1: item.option1 || '', option2: item.option2 || '', option3: item.option3 || '', option4: item.option4 || '', answer: item.answer, duration: +duration });
+      await this.prisma.cbt.create({ data: this.cbtData({ class: cls, course, staff_id: staffId, question: item.question, option1: item.option1 || '', option2: item.option2 || '', option3: item.option3 || '', option4: item.option4 || '', answer: item.answer, duration: +duration }) });
       count++;
     }
     return this.ok(null, `Successfully imported ${count} questions`);
+  }
+
+  private async hasCompleted(user: any, course: string) {
+    const answers = await this.prisma.student_answer.findMany({ where: { student_id: user.student_id, course }, select: { cbt_id: true } });
+    if (!answers.length) return false;
+    const result = await this.prisma.cbt_result.findFirst({ where: { student_id: user.student_id, cbt_id: { in: answers.map(a => String(a.cbt_id)) } }, select: { id: true } });
+    return !!result;
+  }
+
+  private cbtData(data: any) {
+    return {
+      staff_id: data.staff_id || '',
+      class: data.class || '',
+      course: data.course || '',
+      question: data.question || '',
+      option1: data.option1 || '',
+      option2: data.option2 || '',
+      option3: data.option3 || '',
+      option4: data.option4 || '',
+      answer: data.answer || '',
+      number: data.number || '',
+      time_frame: data.time_frame || '',
+      status: data.status || '',
+      date: data.date || String(new Date()),
+      updated: data.updated || '',
+      duration: Number(data.duration || 30),
+    };
   }
 
   private parseQuestions(text: string): any[] {

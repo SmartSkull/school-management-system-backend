@@ -5,7 +5,10 @@
     "build": "nest build",
     "start": "nest start",
     "start:dev": "nest start --watch",
-    "start:prod": "node dist/main"
+    "start:prod": "node dist/main",
+    "prisma:pull": "prisma db pull",
+    "prisma:generate": "prisma generate",
+    "prisma:studio": "prisma studio"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -13,16 +16,19 @@
     "@nestjs/jwt": "^10.0.0",
     "@nestjs/passport": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
+    "@prisma/adapter-mariadb": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "bcryptjs": "^2.4.3",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
+    "dotenv": "^17.2.3",
+    "multer": "^1.4.5-lts.1",
     "mysql2": "^3.6.0",
+    "openai": "^4.0.0",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
-    "bcryptjs": "^2.4.3",
-    "multer": "^1.4.5-lts.1",
-    "class-validator": "^0.14.0",
-    "class-transformer": "^0.5.1",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1",
-    "openai": "^4.0.0"
+    "rxjs": "^7.8.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
@@ -31,6 +37,7 @@
     "@types/multer": "^1.4.11",
     "@types/node": "^20.0.0",
     "@types/passport-jwt": "^3.0.13",
+    "prisma": "^7.8.0",
     "typescript": "^5.0.0"
   }
 }

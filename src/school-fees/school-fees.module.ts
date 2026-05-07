@@ -1,0 +1,12 @@
+import { Module } from '@nestjs/common';
+import { StudentSchoolFeesController, PaystackCallbackController, AdminSchoolFeesController } from './school-fees.controller';
+import { SchoolFeesService } from './school-fees.service';
+import { AuthModule } from '../auth/auth.module';
+import { JwtAuthGuard, StudentGuard, AdminGuard } from '../common/guards/auth.guard';
+
+@Module({
+  imports: [AuthModule],
+  controllers: [PaystackCallbackController, StudentSchoolFeesController, AdminSchoolFeesController],
+  providers: [SchoolFeesService, JwtAuthGuard, StudentGuard, AdminGuard],
+})
+export class SchoolFeesModule {}
