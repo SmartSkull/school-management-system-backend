@@ -8,6 +8,7 @@ export class AuthService {
   constructor(private prisma: PrismaService, private jwt: JwtService) {}
 
   // Student login: tries full name match + password check (lastname, bcrypt, or plain)
+  // Student login: tries full name match + password check
   async studentLogin(name: string, password: string) {
     if (!name || !password) throw new UnauthorizedException('Invalid credentials');
 
@@ -18,21 +19,25 @@ export class AuthService {
     let users: any[];
     if (parts.length > 1) {
       const last = parts[parts.length - 1];
-      users = await this.prisma.users.findMany({
+      users = await this.prisma.user.findMany({
         where: {
+          role: 'STUDENT',
           OR: [
-            { firstname: { startsWith: first }, lastname: { startsWith: last } },
-            { firstname: { startsWith: last }, lastname: { startsWith: first } },
+            { firstName: { startsWith: first }, lastName: { startsWith: last } },
+            { firstName: { startsWith: last }, lastName: { startsWith: first } },
+            { uniqueId: nameTrimmed },
           ],
         },
         take: 20,
       });
     } else {
-      users = await this.prisma.users.findMany({
+      users = await this.prisma.user.findMany({
         where: {
+          role: 'STUDENT',
           OR: [
-            { firstname: { startsWith: first } },
-            { lastname: { startsWith: first } },
+            { firstName: { startsWith: first } },
+            { lastName: { startsWith: first } },
+            { uniqueId: nameTrimmed },
           ],
         },
         take: 20,
@@ -43,8 +48,10 @@ export class AuthService {
     let user: any = null;
 
     for (const row of users) {
-      const fullName = `${row.firstname} ${row.lastname}`.toLowerCase();
-      if (fullName !== nameLower) continue;
+      const fullName = `${row.firstName} ${row.lastName}`.toLowerCase();
+      const uniqueId = row.uniqueId?.toLowerCase();
+      
+      if (fullName !== nameLower && uniqueId !== nameLower) continue;
 
       const passwordMatches = await this.verifyStudentPassword(password, row);
       if (passwordMatches) {
@@ -54,13 +61,14 @@ export class AuthService {
     }
 
     if (!user) throw new UnauthorizedException('Invalid credentials');
-    return this.buildTokenResponse(user, 'student', user.student_id);
+    return this.buildTokenResponse(user, 'student', user.uniqueId);
   }
 
   // Student password can be: lastname (legacy), bcrypt hash, or plain stored password
+  // Student password can be: lastName (legacy), bcrypt hash, or plain stored password
   private async verifyStudentPassword(input: string, row: any): Promise<boolean> {
-    // 1. Lastname match (original PHP logic)
-    if (input.toLowerCase() === row.lastname.toLowerCase()) return true;
+    // 1. LastName match (original PHP logic)
+    if (input.toLowerCase() === row.lastName.toLowerCase()) return true;
     // 2. Bcrypt hash in password column
     if (row.password) {
       try {
@@ -75,53 +83,44 @@ export class AuthService {
   }
 
   // Staff login: bcrypt OR fallback plain 'florieren'
+  // Staff login: bcrypt OR fallback plain 'florieren'
   async staffLogin(staffId: string, password: string) {
-    // Search by unique_id, email, or user column
-    const staff = await this.prisma.staff.findFirst({
+    const user = await this.prisma.user.findFirst({
       where: {
-        AND: [
-          {
-            OR: [
-              { unique_id: staffId },
-              { email: staffId },
-              { user: staffId },
-            ],
-          },
-          { NOT: { user: 'admin' } },
+        role: 'STAFF',
+        OR: [
+          { uniqueId: staffId },
+          { email: staffId },
+          { telephone: staffId },
         ],
       },
     });
-    if (!staff) throw new UnauthorizedException('Invalid credentials');
+    if (!user) throw new UnauthorizedException('Invalid credentials');
 
-    const valid = await this.verifyPassword(password, staff.password, 'florieren');
+    const valid = await this.verifyPassword(password, user.password, 'florieren');
     if (!valid) throw new UnauthorizedException('Invalid credentials');
 
-    return this.buildTokenResponse(staff, 'staff', staff.unique_id);
+    return this.buildTokenResponse(user, 'staff', user.uniqueId);
   }
 
   // Admin login: staff record with user='admin', bcrypt OR fallback 'greatkings'
+  // Admin login: user with role='ADMIN', bcrypt OR fallback 'florieren'
   async adminLogin(adminId: string, password: string) {
-    // Search by unique_id, email, or user='admin' directly
-    const admin = await this.prisma.staff.findFirst({
+    const user = await this.prisma.user.findFirst({
       where: {
-        AND: [
-          {
-            OR: [
-              { unique_id: adminId },
-              { email: adminId },
-              { user: adminId },
-            ],
-          },
-          { user: 'admin' },
+        role: 'ADMIN',
+        OR: [
+          { uniqueId: adminId },
+          { email: adminId },
         ],
       },
     });
-    if (!admin) throw new UnauthorizedException('Invalid credentials');
+    if (!user) throw new UnauthorizedException('Invalid credentials');
 
-    const valid = await this.verifyPassword(password, admin.password, 'florieren');
+    const valid = await this.verifyPassword(password, user.password, 'florieren');
     if (!valid) throw new UnauthorizedException('Invalid credentials');
 
-    return this.buildTokenResponse(admin, 'admin', admin.unique_id);
+    return this.buildTokenResponse(user, 'admin', user.uniqueId);
   }
 
   async refreshToken(refreshToken: string) {

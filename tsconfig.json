@@ -13,6 +13,9 @@
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "paths": {
+      "@generated/*": ["node_modules/@generated/*"]
+    }
   }
 }

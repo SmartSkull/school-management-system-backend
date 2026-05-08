@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 
 @Injectable()
@@ -9,67 +9,100 @@ export class MessagesService {
     return { success: true, data, message };
   }
 
-  private uid(user: any): string {
-    return String(user.student_id ?? user.unique_id ?? '');
-  }
-
   async getConversations(user: any) {
-    const userId = this.uid(user);
-    const rows = await this.prisma.messages.findMany({
-      where: { OR: [{ incoming_id: userId }, { outgoing_id: userId }] },
-      orderBy: { timestamp: 'desc' },
+    const userId = BigInt(user.id);
+    const rows = await this.prisma.message.findMany({
+      where: { OR: [{ senderId: userId }, { receiverId: userId }] },
+      orderBy: { createdAt: 'desc' },
+      include: { 
+        sender: { select: { id: true, firstName: true, lastName: true, image: true, uniqueId: true } },
+        receiver: { select: { id: true, firstName: true, lastName: true, image: true, uniqueId: true } }
+      }
     });
-    const chatIds = [...new Set(rows.map(row => row.incoming_id === userId ? row.outgoing_id : row.incoming_id))];
+
+    const chatPartners = new Map<bigint, any>();
     const conversations = [];
-    for (const chatWith of chatIds) {
-      const chatUser = await this.findChatUser(chatWith);
-      if (!chatUser) continue;
-      const thread = rows.filter(row => [row.incoming_id, row.outgoing_id].includes(chatWith));
-      const lastMsg = thread[0];
-      const unread = thread.filter(row => row.outgoing_id === chatWith && row.incoming_id === userId && !row.is_read).length;
-      conversations.push({ user: chatUser, last_message: lastMsg?.message, last_time: lastMsg?.timestamp, unread_count: unread });
+
+    for (const msg of rows) {
+      const partner = msg.senderId === userId ? msg.receiver : msg.sender;
+      if (chatPartners.has(partner.id)) continue;
+
+      const thread = rows.filter(m => m.senderId === partner.id || m.receiverId === partner.id);
+      const unreadCount = thread.filter(m => m.receiverId === userId && !m.readAt).length;
+
+      chatPartners.set(partner.id, partner);
+      conversations.push({ 
+        user: {
+          id: partner.uniqueId,
+          db_id: partner.id.toString(),
+          firstname: partner.firstName,
+          lastname: partner.lastName,
+          image: partner.image
+        }, 
+        last_message: msg.body, 
+        last_time: msg.createdAt, 
+        unread_count: unreadCount 
+      });
     }
     return this.ok(conversations);
   }
 
-  async getMessages(user: any, otherId: string) {
-    const userId = this.uid(user);
-    const messages = await this.prisma.messages.findMany({
+  async getMessages(user: any, otherUniqueId: string) {
+    const userId = BigInt(user.id);
+    const otherUser = await this.prisma.user.findUnique({ where: { uniqueId: otherUniqueId } });
+    if (!otherUser) throw new NotFoundException('User not found');
+
+    const messages = await this.prisma.message.findMany({
       where: {
         OR: [
-          { incoming_id: userId, outgoing_id: otherId },
-          { incoming_id: otherId, outgoing_id: userId },
+          { senderId: userId, receiverId: otherUser.id },
+          { senderId: otherUser.id, receiverId: userId },
         ],
       },
-      orderBy: { msg_id: 'asc' },
+      orderBy: { createdAt: 'asc' },
     });
-    await this.prisma.messages.updateMany({
-      where: { outgoing_id: otherId, incoming_id: userId },
-      data: { is_read: true },
+
+    await this.prisma.message.updateMany({
+      where: { senderId: otherUser.id, receiverId: userId, readAt: null },
+      data: { readAt: new Date() },
     });
-    return this.ok(messages);
+
+    return this.ok(messages.map(m => ({ ...m, id: m.id.toString(), senderId: m.senderId.toString(), receiverId: m.receiverId.toString() })));
   }
 
   async sendMessage(user: any, body: any) {
     if (!body.to || !body.message) throw new BadRequestException('to and message are required');
-    const message = await this.prisma.messages.create({
-      data: { outgoing_id: this.uid(user), incoming_id: body.to, message: body.message, alert: '0', is_read: false },
+    
+    const receiver = await this.prisma.user.findUnique({ where: { uniqueId: body.to } });
+    if (!receiver) throw new NotFoundException('Receiver not found');
+
+    const message = await this.prisma.message.create({
+      data: { 
+        senderId: BigInt(user.id), 
+        receiverId: receiver.id, 
+        body: body.message 
+      },
     });
-    return this.ok({ id: message.msg_id }, 'Message sent');
+    return this.ok({ id: message.id.toString() }, 'Message sent');
   }
 
   async getUnreadCount(user: any) {
-    const count = await this.prisma.messages.count({ where: { incoming_id: this.uid(user), is_read: false } });
+    const count = await this.prisma.message.count({ 
+      where: { receiverId: BigInt(user.id), readAt: null } 
+    });
     return this.ok({ count });
   }
 
-  async deleteConversation(user: any, otherId: string) {
-    const userId = this.uid(user);
-    await this.prisma.messages.deleteMany({
+  async deleteConversation(user: any, otherUniqueId: string) {
+    const userId = BigInt(user.id);
+    const otherUser = await this.prisma.user.findUnique({ where: { uniqueId: otherUniqueId } });
+    if (!otherUser) throw new NotFoundException('User not found');
+
+    await this.prisma.message.deleteMany({
       where: {
         OR: [
-          { incoming_id: userId, outgoing_id: otherId },
-          { incoming_id: otherId, outgoing_id: userId },
+          { senderId: userId, receiverId: otherUser.id },
+          { senderId: otherUser.id, receiverId: userId },
         ],
       },
     });
@@ -83,24 +116,24 @@ export class MessagesService {
   }
 
   async getUsers(search?: string) {
-    const [staff, students] = await Promise.all([
-      this.prisma.staff.findMany({ take: 50, select: { unique_id: true, firstname: true, lastname: true, image: true } }),
-      this.prisma.users.findMany({ take: 50, select: { student_id: true, firstname: true, lastname: true, image: true } }),
-    ]);
-    const all = [
-      ...staff.map(s => ({ id: s.unique_id, firstname: s.firstname, lastname: s.lastname, image: s.image, type: 'staff' })),
-      ...students.map(s => ({ id: s.student_id, firstname: s.firstname, lastname: s.lastname, image: s.image, type: 'student' })),
-    ];
-    const filtered = search
-      ? all.filter(u => `${u.firstname} ${u.lastname}`.toLowerCase().includes(search.toLowerCase()))
-      : all;
-    return this.ok(filtered);
-  }
-
-  private async findChatUser(id: string) {
-    const student = await this.prisma.users.findFirst({ where: { student_id: id }, select: { student_id: true, firstname: true, lastname: true, image: true } });
-    if (student) return { id: student.student_id, firstname: student.firstname, lastname: student.lastname, image: student.image };
-    const staff = await this.prisma.staff.findFirst({ where: { unique_id: id }, select: { unique_id: true, firstname: true, lastname: true, image: true } });
-    return staff ? { id: staff.unique_id, firstname: staff.firstname, lastname: staff.lastname, image: staff.image } : null;
+    const users = await this.prisma.user.findMany({
+      take: 100,
+      where: search ? {
+        OR: [
+          { firstName: { contains: search } },
+          { lastName: { contains: search } },
+          { uniqueId: { contains: search } }
+        ]
+      } : {},
+      select: { uniqueId: true, firstName: true, lastName: true, image: true, role: true }
+    });
+    
+    return this.ok(users.map(u => ({ 
+      id: u.uniqueId, 
+      firstname: u.firstName, 
+      lastname: u.lastName, 
+      image: u.image, 
+      type: u.role.toLowerCase() 
+    })));
   }
 }

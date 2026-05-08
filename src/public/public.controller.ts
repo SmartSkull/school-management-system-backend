@@ -12,43 +12,57 @@ export class PublicController {
 
   @Get('public/current-period')
   async currentPeriod() {
-    const session = await this.prisma.set_session_tbl.findFirst();
-    const term = await this.prisma.set_term_tbl.findFirst();
-    return { success: true, data: { session: session?.set_session, term: term?.set_term } };
+    const session = await this.prisma.academicSession.findFirst({ where: { isCurrent: true } });
+    const term = await this.prisma.academicTerm.findFirst({ where: { isCurrent: true } });
+    return { success: true, data: { session: session?.name, term: term?.name } };
   }
 
   @Get('public/sessions')
   async sessions() {
-    return { success: true, data: await this.prisma.session.findMany({ orderBy: { session: 'desc' } }) };
+    return { success: true, data: await this.prisma.academicSession.findMany({ orderBy: { name: 'desc' } }) };
   }
 
   @Get('public/terms')
   async terms() {
-    return { success: true, data: await this.prisma.term.findMany({ orderBy: { term_id: 'asc' } }) };
+    return { success: true, data: await this.prisma.academicTerm.findMany({ orderBy: { id: 'asc' } }) };
   }
 
   @Get('public/classes')
   async classes() {
-    return { success: true, data: await this.prisma.renamedclass.findMany({ orderBy: { class_id: 'asc' } }) };
+    return { success: true, data: await this.prisma.classRoom.findMany({ orderBy: { name: 'asc' } }) };
   }
 
   @Get('public/courses')
   async courses() {
-    const courses = await this.prisma.course.findMany({ orderBy: { courses: 'asc' } });
-    return { success: true, data: courses.map(c => ({ course_id: c.course_id, course: c.courses, teacher: c.teacher })) };
+    const courses = await this.prisma.subject.findMany({ orderBy: { name: 'asc' } });
+    return { success: true, data: courses.map(c => ({ course_id: c.id.toString(), course: c.name })) };
   }
 
   @Get('public/posts')
   async posts() {
-    return { success: true, data: await this.prisma.post.findMany({ orderBy: { post_id: 'desc' }, take: 20 }) };
+    const posts = await this.prisma.post.findMany({ 
+      orderBy: { createdAt: 'desc' }, 
+      take: 20,
+      include: { author: { select: { firstName: true, lastName: true } } }
+    });
+    return { success: true, data: posts.map(p => ({ ...p, id: p.id.toString(), author_name: `${p.author.firstName} ${p.author.lastName}` })) };
   }
 
   @Get('public/students/search')
   async searchStudents(@Query('q') q: string) {
     if (!q) return { success: true, data: [] };
-    return { success: true, data: await this.prisma.users.findMany({
-      where: { OR: [{ firstname: { contains: q } }, { lastname: { contains: q } }] },
-      select: { student_id: true, firstname: true, lastname: true, class: true },
-    }) };
+    const users = await this.prisma.user.findMany({
+      where: { 
+        role: 'STUDENT',
+        OR: [{ firstName: { contains: q } }, { lastName: { contains: q } }] 
+      },
+      select: { uniqueId: true, firstName: true, lastName: true, student: { select: { classRoom: { select: { name: true } } } } },
+    });
+    return { success: true, data: users.map(u => ({
+      student_id: u.uniqueId,
+      firstname: u.firstName,
+      lastname: u.lastName,
+      class: u.student?.classRoom?.name
+    })) };
   }
 }

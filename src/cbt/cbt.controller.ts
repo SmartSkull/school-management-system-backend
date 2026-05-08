@@ -44,7 +44,7 @@ export class CbtController {
 
   @Delete('staff/cbt/questions/:id')
   @UseGuards(StaffGuard)
-  deleteQuestion(@Param('id') id: string) { return this.svc.deleteQuestion(+id); }
+  deleteQuestion(@Param('id') id: string) { return this.svc.deleteQuestion(id); }
 
   @Get('staff/cbt/results')
   @UseGuards(StaffGuard)
@@ -69,5 +69,5 @@ export class CbtController {
 
   @Delete('admin/cbt/questions/:id')
   @UseGuards(StaffGuard)
-  adminDeleteQuestion(@Param('id') id: string) { return this.svc.deleteQuestion(+id); }
+  adminDeleteQuestion(@Param('id') id: string) { return this.svc.deleteQuestion(id); }
 }

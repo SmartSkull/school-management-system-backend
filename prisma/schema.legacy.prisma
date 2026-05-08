@@ -1,0 +1,549 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/@generated/legacy-client"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model account {
+  account_id     Int    @id @default(autoincrement()) @db.UnsignedInt
+  admin_id       String @db.VarChar(100)
+  account_name   String @db.VarChar(100)
+  account_number String @db.VarChar(100)
+  account_bank   String @db.VarChar(100)
+  date           String @db.VarChar(100)
+  updated        String @db.VarChar(100)
+}
+
+model admin {
+  admin_id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  unique_id       String   @db.VarChar(100)
+  surname         String   @db.VarChar(100)
+  other_names     String   @db.VarChar(100)
+  image           String   @db.VarChar(100)
+  email           String   @db.VarChar(100)
+  telephone       String   @db.VarChar(100)
+  class           String   @db.VarChar(100)
+  state_of_origin String   @db.VarChar(100)
+  date_of_birth   String   @db.VarChar(100)
+  home_address    String   @db.VarChar(100)
+  password        String   @db.VarChar(100)
+  verified        String   @db.VarChar(100)
+  updated         DateTime @default(now()) @db.Timestamp(0)
+}
+
+model assignment {
+  assignment_id Int      @id @default(autoincrement()) @db.UnsignedInt
+  staff_id      String   @db.VarChar(100)
+  subject       String   @db.VarChar(100)
+  class         String   @db.VarChar(100)
+  assignment    String   @db.Text
+  deadline      String   @db.VarChar(100)
+  date          DateTime @default(now()) @db.Timestamp(0)
+  updated       String   @db.VarChar(100)
+  subject_id    BigInt?
+}
+
+model assignments {
+  id          BigInt    @id @default(autoincrement())
+  title       String?   @db.VarChar(255)
+  description String?   @db.Text
+  class_id    BigInt?
+  subject_id  BigInt?
+  due_date    DateTime? @db.Date
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+  updated_at  DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model attendance {
+  attendance_id     Int    @id @default(autoincrement()) @db.UnsignedInt
+  student_id        String @db.VarChar(100)
+  present           String @default("0") @db.VarChar(100)
+  absent            String @default("0") @db.VarChar(100)
+  comment           String @db.Text
+  principal_comment String @db.Text
+  date              String @db.VarChar(100)
+  term              String @db.VarChar(255)
+  session           String @db.VarChar(255)
+  type              String @db.VarChar(255)
+}
+
+model bulk_message {
+  id       Int    @id @default(autoincrement()) @db.UnsignedInt
+  sender   String @db.VarChar(100)
+  receiver String @db.VarChar(100)
+  message  String @db.Text
+  counter  String @db.VarChar(100)
+  date     String @db.VarChar(100)
+  updated  String @db.VarChar(100)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model cbt {
+  cbt_id     Int    @id @default(autoincrement()) @db.UnsignedInt
+  staff_id   String @db.VarChar(100)
+  class      String @db.VarChar(100)
+  course     String @db.VarChar(100)
+  question   String @db.Text
+  option1    String @db.Text
+  option2    String @db.Text
+  option3    String @db.Text
+  option4    String @db.Text
+  answer     String @db.Text
+  number     String @db.VarChar(100)
+  time_frame String @db.VarChar(100)
+  status     String @db.VarChar(100)
+  date       String @db.VarChar(100)
+  updated    String @db.VarChar(100)
+  duration   Int?
+}
+
+model cbt_result {
+  id            Int       @id @default(autoincrement()) @db.UnsignedInt
+  student_id    String    @db.VarChar(100)
+  cbt_id        String    @db.VarChar(255)
+  student_score String    @db.VarChar(100)
+  score         Decimal?  @db.Decimal(5, 2)
+  percentage    Decimal?  @db.Decimal(5, 2)
+  submitted_at  DateTime? @db.DateTime(0)
+}
+
+model cbt_session {
+  id         BigInt    @id @default(autoincrement())
+  cbt_id     BigInt?
+  user_id    BigInt?
+  started_at DateTime? @db.DateTime(0)
+  ended_at   DateTime? @db.DateTime(0)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+}
+
+/// This model has been renamed to 'Renamedclass' during introspection, because the original name 'class' is reserved.
+model Renamedclass {
+  class_id      Int    @id @default(autoincrement()) @db.UnsignedInt
+  class         String @db.VarChar(100)
+  class_teacher String @db.VarChar(100)
+
+  @@map("class")
+}
+
+model class_timetable {
+  class_timetable_id Int    @id @default(autoincrement()) @db.UnsignedInt
+  staff_id           String @db.VarChar(100)
+  class              String @db.VarChar(100)
+  timetable          String @db.Text
+  date               String @db.VarChar(100)
+  updated            String @db.VarChar(100)
+}
+
+model comment {
+  comment_id Int    @id @default(autoincrement()) @db.UnsignedInt
+  post_id    Int
+  comment    String @db.Text
+  unique_id  String @db.VarChar(100)
+  date       String @db.VarChar(100)
+}
+
+model course {
+  course_id Int    @id @default(autoincrement()) @db.UnsignedInt
+  courses   String @db.VarChar(100)
+  teacher   String @db.VarChar(100)
+}
+
+model exam_timetable {
+  exam_timetable_id Int    @id @default(autoincrement()) @db.UnsignedInt
+  staff_id          String @db.VarChar(100)
+  user              String @db.VarChar(100)
+  timetable         String @db.Text
+  date              String @db.VarChar(100)
+  updated           String @db.VarChar(100)
+}
+
+model failed_jobs {
+  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  uuid       String   @unique(map: "failed_jobs_uuid_unique") @db.VarChar(255)
+  connection String   @db.Text
+  queue      String   @db.Text
+  payload    String   @db.LongText
+  exception  String   @db.LongText
+  failed_at  DateTime @default(now()) @db.Timestamp(0)
+}
+
+model lesson_note {
+  lesson_note_id Int    @id @default(autoincrement()) @db.UnsignedInt
+  staff_id       String @db.VarChar(100)
+  subject        String @db.VarChar(100)
+  class          String @db.VarChar(100)
+  lesson_note    String @db.VarChar(100)
+  date           String @db.VarChar(100)
+  updated        String @db.VarChar(100)
+}
+
+model library {
+  library_id Int    @id @default(autoincrement()) @db.UnsignedInt
+  staff_id   String @db.VarChar(100)
+  course     String @db.VarChar(100)
+  class      String @db.VarChar(100)
+  pdf        String @db.VarChar(200)
+  about      String @db.Text
+  verify     String @db.VarChar(100)
+  date       String @db.VarChar(100)
+  updated    String @db.VarChar(100)
+}
+
+model likes {
+  likes_id  Int    @id @default(autoincrement()) @db.UnsignedInt
+  post_id   String @db.VarChar(100)
+  unique_id String @db.VarChar(100)
+  date      String @db.VarChar(100)
+}
+
+model manage_fees_tbl {
+  manage_fees_id     Int    @id @default(autoincrement()) @db.UnsignedInt
+  manage_senior_fees String @db.VarChar(100)
+  manage_junior_fees String @db.VarChar(100)
+}
+
+model manage_school_fees {
+  school_fees_id Int    @id @default(autoincrement()) @db.UnsignedInt
+  fees           String @db.VarChar(100)
+}
+
+model messages {
+  msg_id      Int      @id @default(autoincrement()) @db.UnsignedInt
+  incoming_id String   @db.VarChar(100)
+  outgoing_id String   @db.VarChar(100)
+  message     String   @db.Text
+  alert       String   @db.VarChar(50)
+  timestamp   DateTime @default(now()) @db.Timestamp(0)
+  is_read     Boolean? @default(false)
+}
+
+model migrations {
+  id        Int    @id @default(autoincrement()) @db.UnsignedInt
+  migration String @db.VarChar(255)
+  batch     Int
+}
+
+model notification {
+  notification_id Int    @id @default(autoincrement()) @db.UnsignedInt
+  unique_id       String @db.VarChar(100)
+  message         String @db.Text
+  unset           String @db.VarChar(50)
+  time            String @db.VarChar(100)
+}
+
+model notifications {
+  id         BigInt    @id @default(autoincrement())
+  user_type  String    @db.VarChar(255)
+  user_id    BigInt?
+  title      String?   @db.VarChar(255)
+  message    String?   @db.Text
+  is_read    Boolean?  @default(false)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model password_resets {
+  email      String    @db.VarChar(255)
+  token      String    @db.VarChar(255)
+  created_at DateTime? @db.Timestamp(0)
+
+  @@index([email], map: "password_resets_email_index")
+  @@ignore
+}
+
+model payment {
+  payment_id Int    @id @default(autoincrement()) @db.UnsignedInt
+  parent_id  String @db.VarChar(100)
+  upload     String @db.VarChar(100)
+  verified   String @db.VarChar(100)
+  date       String @db.VarChar(100)
+  updated    String @db.VarChar(100)
+}
+
+model personal_access_tokens {
+  id             BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  tokenable_type String    @db.VarChar(255)
+  tokenable_id   BigInt    @db.UnsignedBigInt
+  name           String    @db.VarChar(255)
+  token          String    @unique(map: "personal_access_tokens_token_unique") @db.VarChar(64)
+  abilities      String?   @db.Text
+  last_used_at   DateTime? @db.Timestamp(0)
+  created_at     DateTime? @db.Timestamp(0)
+  updated_at     DateTime? @db.Timestamp(0)
+
+  @@index([tokenable_type, tokenable_id], map: "personal_access_tokens_tokenable_type_tokenable_id_index")
+}
+
+model post {
+  post_id  Int    @id @default(autoincrement()) @db.UnsignedInt
+  admin_id String @db.VarChar(100)
+  image    String @db.VarChar(100)
+  text     String @db.Text
+  user     String @db.VarChar(100)
+  time     String @db.VarChar(100)
+  updated  String @db.VarChar(100)
+}
+
+model posts {
+  id         BigInt    @id @default(autoincrement())
+  user_id    BigInt?
+  title      String?   @db.VarChar(255)
+  content    String?   @db.Text
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model result {
+  result_id         Int      @id @default(autoincrement()) @db.UnsignedInt
+  teacher_id        String   @db.VarChar(100)
+  student_id        String   @db.VarChar(100)
+  course            String   @db.VarChar(100)
+  session           String   @db.VarChar(100)
+  term              String   @db.VarChar(100)
+  first_term_score  String   @db.VarChar(100)
+  second_term_score String   @db.VarChar(100)
+  test_score        String   @db.VarChar(100)
+  exam_score        String   @db.VarChar(100)
+  total_score       String   @db.VarChar(100)
+  cummulative       String   @db.VarChar(100)
+  percentage        String   @db.VarChar(100)
+  grade             String   @db.VarChar(100)
+  remark            String   @db.VarChar(255)
+  date              DateTime @default(now()) @db.Timestamp(0)
+  approved          String   @db.VarChar(100)
+  term_id           BigInt?
+}
+
+model school_days {
+  id         BigInt    @id @default(autoincrement())
+  term       String    @db.VarChar(255)
+  session    String    @db.VarChar(255)
+  total_days Int
+  updated_at DateTime  @default(now()) @db.Timestamp(0)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model school_fees_config {
+  id          Int       @id @default(autoincrement())
+  class       String    @db.VarChar(100)
+  session     String    @db.VarChar(20)
+  term        String    @db.VarChar(20)
+  amount      Decimal   @default(0.00) @db.Decimal(10, 2)
+  description String?   @default("") @db.VarChar(255)
+  created_at  DateTime? @default(now()) @db.DateTime(0)
+  updated_at  DateTime? @default(now()) @db.DateTime(0)
+
+  @@unique([class, session, term], map: "unique_class_session_term")
+}
+
+model school_fees_payment {
+  id                   Int                         @id @default(autoincrement())
+  student_id           String                      @db.VarChar(100)
+  class                String                      @db.VarChar(100)
+  session              String                      @db.VarChar(20)
+  term                 String                      @db.VarChar(20)
+  amount               Decimal                     @db.Decimal(10, 2)
+  paystack_reference   String?                     @unique(map: "paystack_reference") @db.VarChar(100)
+  paystack_access_code String?                     @db.VarChar(255)
+  status               school_fees_payment_status? @default(pending)
+  paid_at              DateTime?                   @db.DateTime(0)
+  created_at           DateTime?                   @default(now()) @db.DateTime(0)
+
+  @@index([session, term], map: "idx_session_term")
+  @@index([student_id], map: "idx_student")
+}
+
+model schools {
+  id              BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  name            String    @db.VarChar(255)
+  slug            String    @unique(map: "schools_slug_unique") @db.VarChar(255)
+  logo            String?   @db.VarChar(255)
+  primary_color   String    @default("#1a73e8") @db.VarChar(10)
+  secondary_color String    @default("#ffffff") @db.VarChar(10)
+  address         String    @db.Text
+  email           String    @unique(map: "schools_email_unique") @db.VarChar(255)
+  telephone       String    @db.VarChar(20)
+  contact_person  String    @db.VarChar(255)
+  status          String    @default("pending") @db.VarChar(50)
+  settings        String?   @db.LongText
+  created_at      DateTime? @db.Timestamp(0)
+  updated_at      DateTime? @db.Timestamp(0)
+}
+
+model scratch_card {
+  scratch_card_id Int    @id @default(autoincrement()) @db.UnsignedInt
+  student_id      String @db.VarChar(100)
+  class           String @db.VarChar(255)
+  transfer_amount String @db.VarChar(100)
+  transfer_date   String @db.VarChar(100)
+  upload          String @db.VarChar(200)
+  term            String @db.VarChar(100)
+  session         String @db.VarChar(100)
+  verified        String @db.VarChar(50)
+  status          String @db.VarChar(255)
+  reference       String @db.VarChar(255)
+  date            String @db.VarChar(100)
+  admin_date      String @db.VarChar(100)
+}
+
+model session {
+  session_id Int    @id @default(autoincrement()) @db.UnsignedInt
+  session    String @db.VarChar(100)
+}
+
+model sessions {
+  id         BigInt    @id @default(autoincrement())
+  name       String?   @db.VarChar(100)
+  start_date DateTime? @db.Date
+  end_date   DateTime? @db.Date
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model set_session_tbl {
+  set_session_id Int    @id @default(autoincrement()) @db.UnsignedInt
+  set_session    String @db.VarChar(100)
+}
+
+model set_term_tbl {
+  set_term_id Int    @id @default(autoincrement()) @db.UnsignedInt
+  set_term    String @db.VarChar(100)
+}
+
+model staff {
+  staff_id        Int     @id @default(autoincrement()) @db.UnsignedInt
+  school_id       BigInt? @db.UnsignedBigInt
+  unique_id       String  @db.VarChar(100)
+  firstname       String  @db.VarChar(100)
+  lastname        String  @db.VarChar(100)
+  image           String  @db.VarChar(100)
+  email           String  @db.VarChar(100)
+  telephone       String  @db.VarChar(100)
+  class           String  @db.VarChar(100)
+  state_of_origin String  @db.VarChar(100)
+  date_of_birth   String  @db.VarChar(100)
+  home_address    String  @db.VarChar(100)
+  about           String  @db.Text
+  user            String  @db.VarChar(100)
+  password        String  @db.VarChar(100)
+  admin_verify    String  @db.VarChar(100)
+  email_verify    String  @db.VarChar(200)
+  v_email         String  @db.VarChar(100)
+  date            String  @db.VarChar(100)
+  updated         String  @db.VarChar(100)
+  role            String? @db.VarChar(50)
+}
+
+model student_answer {
+  id           Int    @id @default(autoincrement()) @db.UnsignedInt
+  cbt_id       String @db.VarChar(100)
+  student_pick String @db.VarChar(100)
+  class        String @db.VarChar(100)
+  course       String @db.VarChar(100)
+  student_id   String @db.VarChar(100)
+}
+
+model student_attendance {
+  id         Int    @id @default(autoincrement()) @db.UnsignedInt
+  student_id String @db.VarChar(100)
+  tick       String @db.VarChar(100)
+  term       String @db.VarChar(100)
+  session    String @db.VarChar(100)
+  staff_id   String @db.VarChar(100)
+  date       String @db.VarChar(100)
+  count      String @db.VarChar(100)
+  updated    String @db.VarChar(100)
+}
+
+model submit_assignment {
+  id            Int    @id @default(autoincrement()) @db.UnsignedInt
+  assignment_id String @db.VarChar(100)
+  student_id    String @db.VarChar(100)
+  assignment    String @db.Text
+  score         String @db.VarChar(100)
+}
+
+model term {
+  term_id Int    @id @default(autoincrement()) @db.UnsignedInt
+  term    String @db.VarChar(100)
+}
+
+model terms {
+  id         BigInt    @id @default(autoincrement())
+  session_id BigInt?
+  name       String?   @db.VarChar(100)
+  start_date DateTime? @db.Date
+  end_date   DateTime? @db.Date
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model test {
+  test_id          Int    @id @default(autoincrement()) @db.UnsignedInt
+  test_score_sixty String @db.VarChar(255)
+  test_score_forty String @db.VarChar(255)
+  total_score      String @db.VarChar(255)
+  grade            String @db.VarChar(255)
+  remark           String @db.VarChar(255)
+  student_id       String @db.VarChar(255)
+  term             String @db.VarChar(255)
+  session          String @db.VarChar(255)
+  course           String @db.VarChar(255)
+  cummulative      String @db.VarChar(255)
+  teacher_id       String @db.VarChar(255)
+  percentage       String @db.VarChar(255)
+  date             String @db.VarChar(255)
+}
+
+model typing_status {
+  id         BigInt    @id @default(autoincrement())
+  user_id    BigInt?
+  is_typing  Boolean?  @default(false)
+  updated_at DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model users {
+  user_id           Int       @id @default(autoincrement()) @db.UnsignedInt
+  school_id         BigInt?   @db.UnsignedBigInt
+  student_id        String    @db.VarChar(100)
+  firstname         String    @db.VarChar(100)
+  middlename        String    @db.VarChar(255)
+  lastname          String    @db.VarChar(100)
+  father_name       String    @db.VarChar(100)
+  mother_name       String    @db.VarChar(100)
+  image             String    @db.VarChar(100)
+  parent_image      String    @db.VarChar(200)
+  email             String    @db.VarChar(100)
+  telephone         String    @db.VarChar(100)
+  class             String    @db.VarChar(100)
+  date_of_birth     String    @db.VarChar(100)
+  state_of_origin   String    @db.VarChar(100)
+  home_address      String    @db.VarChar(100)
+  about             String    @db.Text
+  year_of_admission String    @db.VarChar(100)
+  password          String    @db.VarChar(100)
+  admin_verify      String    @db.VarChar(100)
+  email_verify      String    @db.VarChar(100)
+  v_email           String    @db.VarChar(100)
+  date              DateTime  @default(now()) @db.Timestamp(0)
+  updated           String    @db.VarChar(100)
+  last_login        DateTime? @db.DateTime(0)
+  status            String?   @default("active") @db.VarChar(20)
+}
+
+model video {
+  id       Int    @id @default(autoincrement()) @db.UnsignedInt
+  staff_id String @db.VarChar(100)
+  course   String @db.VarChar(100)
+  class    String @db.VarChar(100)
+  link     String @db.VarChar(100)
+  date     String @db.VarChar(100)
+  updated  String @db.VarChar(100)
+}
+
+enum school_fees_payment_status {
+  pending
+  success
+  failed
+}

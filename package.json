@@ -8,7 +8,9 @@
     "start:prod": "node dist/main",
     "prisma:pull": "prisma db pull",
     "prisma:generate": "prisma generate",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "prisma:validate": "prisma validate",
+    "prisma:validate:target": "prisma validate --schema prisma/schema.target.prisma"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -34,10 +36,12 @@
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@types/bcryptjs": "^2.4.6",
+    "@types/dotenv": "^6.1.1",
     "@types/multer": "^1.4.11",
     "@types/node": "^20.0.0",
     "@types/passport-jwt": "^3.0.13",
     "prisma": "^7.8.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.0.0"
   }
 }

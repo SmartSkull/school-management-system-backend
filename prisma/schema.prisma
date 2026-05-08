@@ -1,549 +1,514 @@
+// Target normalized schema for Florieren.
+// This is a clean design to migrate toward. It should not be applied directly
+// to the existing production database without a data migration plan.
+
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
+  output   = "../node_modules/@generated/prisma"
 }
 
 datasource db {
   provider = "mysql"
 }
 
-model account {
-  account_id     Int    @id @default(autoincrement()) @db.UnsignedInt
-  admin_id       String @db.VarChar(100)
-  account_name   String @db.VarChar(100)
-  account_number String @db.VarChar(100)
-  account_bank   String @db.VarChar(100)
-  date           String @db.VarChar(100)
-  updated        String @db.VarChar(100)
+enum UserRole {
+  STUDENT
+  STAFF
+  ADMIN
 }
 
-model admin {
-  admin_id        Int      @id @default(autoincrement()) @db.UnsignedInt
-  unique_id       String   @db.VarChar(100)
-  surname         String   @db.VarChar(100)
-  other_names     String   @db.VarChar(100)
-  image           String   @db.VarChar(100)
-  email           String   @db.VarChar(100)
-  telephone       String   @db.VarChar(100)
-  class           String   @db.VarChar(100)
-  state_of_origin String   @db.VarChar(100)
-  date_of_birth   String   @db.VarChar(100)
-  home_address    String   @db.VarChar(100)
-  password        String   @db.VarChar(100)
-  verified        String   @db.VarChar(100)
-  updated         DateTime @default(now()) @db.Timestamp(0)
+enum AccountStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  GRADUATED
+  ARCHIVED
 }
 
-model assignment {
-  assignment_id Int      @id @default(autoincrement()) @db.UnsignedInt
-  staff_id      String   @db.VarChar(100)
-  subject       String   @db.VarChar(100)
-  class         String   @db.VarChar(100)
-  assignment    String   @db.Text
-  deadline      String   @db.VarChar(100)
-  date          DateTime @default(now()) @db.Timestamp(0)
-  updated       String   @db.VarChar(100)
-  subject_id    BigInt?
+enum TermName {
+  FIRST
+  SECOND
+  THIRD
 }
 
-model assignments {
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  CANCELLED
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+}
+
+enum ResourceStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model School {
+  id             BigInt        @id @default(autoincrement())
+  name           String        @db.VarChar(255)
+  slug           String        @unique @db.VarChar(100)
+  email          String?       @unique @db.VarChar(255)
+  telephone      String?       @db.VarChar(50)
+  address        String?       @db.Text
+  logo           String?       @db.VarChar(255)
+  primaryColor   String        @default("#1a73e8") @db.VarChar(20)
+  secondaryColor String        @default("#ffffff") @db.VarChar(20)
+  status         AccountStatus @default(PENDING)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  users          User[]
+  classes        ClassRoom[]
+  sessions       AcademicSession[]
+}
+
+model User {
+  id           BigInt        @id @default(autoincrement())
+  schoolId     BigInt?
+  role         UserRole
+  uniqueId     String        @unique @db.VarChar(100)
+  firstName    String        @db.VarChar(100)
+  middleName   String?       @db.VarChar(100)
+  lastName     String        @db.VarChar(100)
+  email        String?       @db.VarChar(255)
+  telephone    String?       @db.VarChar(50)
+  password     String        @db.VarChar(255)
+  image        String?       @db.VarChar(255)
+  status       AccountStatus @default(ACTIVE)
+  verifiedAt   DateTime?
+  lastLoginAt  DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  school       School?       @relation(fields: [schoolId], references: [id])
+  student      Student?
+  staff        Staff?
+  notifications Notification[]
+  posts        Post[]
+  comments     Comment[]
+  likes        Like[]
+  sentMessages Message[]     @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+}
+
+model Student {
+  id              BigInt    @id @default(autoincrement())
+  userId          BigInt    @unique
+  studentNo       String    @unique @db.VarChar(100)
+  classRoomId     BigInt?
+  admissionYear   String?   @db.VarChar(20)
+  dateOfBirth     DateTime?
+  stateOfOrigin   String?   @db.VarChar(100)
+  homeAddress     String?   @db.Text
+  fatherName      String?   @db.VarChar(150)
+  motherName      String?   @db.VarChar(150)
+  parentImage     String?   @db.VarChar(255)
+  about           String?   @db.Text
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  classRoom       ClassRoom? @relation(fields: [classRoomId], references: [id])
+  results         Result[]
+  attendance      Attendance[]
+  feePayments     SchoolFeePayment[]
+  cbtAnswers      CbtAnswer[]
+  cbtResults      CbtResult[]
+  scratchCards    ScratchCard[]
+}
+
+model Staff {
+  id            BigInt    @id @default(autoincrement())
+  userId        BigInt    @unique
+  staffNo       String    @unique @db.VarChar(100)
+  stateOfOrigin String?   @db.VarChar(100)
+  dateOfBirth   DateTime?
+  homeAddress   String?   @db.Text
+  about         String?   @db.Text
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  classRooms    ClassRoom[] @relation("ClassTeacher")
+  subjects      Subject[]
+  assignments   Assignment[]
+  resources     LibraryResource[]
+  results       Result[]
+  questions     CbtQuestion[]
+  classTimetables ClassTimetable[]
+  examTimetables  ExamTimetable[]
+}
+
+model AcademicSession {
+  id        BigInt   @id @default(autoincrement())
+  schoolId  BigInt?
+  name      String   @unique @db.VarChar(20)
+  startsAt  DateTime?
+  endsAt    DateTime?
+  isCurrent Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  school    School?  @relation(fields: [schoolId], references: [id])
+  terms     AcademicTerm[]
+  results   Result[]
+  attendance Attendance[]
+  feeConfigs SchoolFeeConfig[]
+  feePayments SchoolFeePayment[]
+  scratchCards ScratchCard[]
+}
+
+model AcademicTerm {
+  id         BigInt          @id @default(autoincrement())
+  sessionId  BigInt
+  name       TermName
+  startsAt   DateTime?
+  endsAt     DateTime?
+  totalDays  Int             @default(0)
+  isCurrent  Boolean         @default(false)
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+
+  session    AcademicSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  results    Result[]
+  attendance Attendance[]
+  feeConfigs SchoolFeeConfig[]
+  feePayments SchoolFeePayment[]
+  scratchCards ScratchCard[]
+
+  @@unique([sessionId, name])
+}
+
+model ClassRoom {
+  id             BigInt   @id @default(autoincrement())
+  schoolId       BigInt?
+  name           String   @unique @db.VarChar(100)
+  classTeacherId BigInt?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  school         School?  @relation(fields: [schoolId], references: [id])
+  classTeacher   Staff?   @relation("ClassTeacher", fields: [classTeacherId], references: [id])
+  students       Student[]
+  subjects       Subject[]
+  assignments    Assignment[]
+  feeConfigs     SchoolFeeConfig[]
+  cbtTests       CbtTest[]
+  classTimetables ClassTimetable[]
+  scratchCards   ScratchCard[]
+  libraryResources LibraryResource[]
+}
+
+model Subject {
   id          BigInt    @id @default(autoincrement())
-  title       String?   @db.VarChar(255)
-  description String?   @db.Text
-  class_id    BigInt?
-  subject_id  BigInt?
-  due_date    DateTime? @db.Date
-  created_at  DateTime? @default(now()) @db.Timestamp(0)
-  updated_at  DateTime? @default(now()) @db.Timestamp(0)
+  classRoomId BigInt?
+  teacherId   BigInt?
+  name        String    @db.VarChar(150)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  classRoom   ClassRoom? @relation(fields: [classRoomId], references: [id])
+  teacher     Staff?     @relation(fields: [teacherId], references: [id])
+  results     Result[]
+  assignments Assignment[]
+  resources   LibraryResource[]
+  cbtTests    CbtTest[]
+  questions   CbtQuestion[]
+
+  @@unique([classRoomId, name])
 }
 
-model attendance {
-  attendance_id     Int    @id @default(autoincrement()) @db.UnsignedInt
-  student_id        String @db.VarChar(100)
-  present           String @default("0") @db.VarChar(100)
-  absent            String @default("0") @db.VarChar(100)
-  comment           String @db.Text
-  principal_comment String @db.Text
-  date              String @db.VarChar(100)
-  term              String @db.VarChar(255)
-  session           String @db.VarChar(255)
-  type              String @db.VarChar(255)
+model Result {
+  id          BigInt   @id @default(autoincrement())
+  studentId   BigInt
+  subjectId   BigInt
+  teacherId   BigInt?
+  sessionId   BigInt
+  termId      BigInt
+  testScore   Decimal  @default(0) @db.Decimal(5, 2)
+  examScore   Decimal  @default(0) @db.Decimal(5, 2)
+  totalScore  Decimal  @default(0) @db.Decimal(5, 2)
+  grade       String?  @db.VarChar(10)
+  remark      String?  @db.VarChar(255)
+  approvedAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subject     Subject  @relation(fields: [subjectId], references: [id])
+  teacher     Staff?   @relation(fields: [teacherId], references: [id])
+  session     AcademicSession @relation(fields: [sessionId], references: [id])
+  term        AcademicTerm @relation(fields: [termId], references: [id])
+
+  @@unique([studentId, subjectId, sessionId, termId])
 }
 
-model bulk_message {
-  id       Int    @id @default(autoincrement()) @db.UnsignedInt
-  sender   String @db.VarChar(100)
-  receiver String @db.VarChar(100)
-  message  String @db.Text
-  counter  String @db.VarChar(100)
-  date     String @db.VarChar(100)
-  updated  String @db.VarChar(100)
+model Attendance {
+  id               BigInt   @id @default(autoincrement())
+  studentId         BigInt
+  sessionId         BigInt
+  termId            BigInt
+  present           Int      @default(0)
+  absent            Int      @default(0)
+  comment          String?  @db.Text
+  principalComment  String?  @db.Text
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  student           Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  session           AcademicSession @relation(fields: [sessionId], references: [id])
+  term              AcademicTerm @relation(fields: [termId], references: [id])
+
+  @@unique([studentId, sessionId, termId])
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model cbt {
-  cbt_id     Int    @id @default(autoincrement()) @db.UnsignedInt
-  staff_id   String @db.VarChar(100)
-  class      String @db.VarChar(100)
-  course     String @db.VarChar(100)
-  question   String @db.Text
-  option1    String @db.Text
-  option2    String @db.Text
-  option3    String @db.Text
-  option4    String @db.Text
-  answer     String @db.Text
-  number     String @db.VarChar(100)
-  time_frame String @db.VarChar(100)
-  status     String @db.VarChar(100)
-  date       String @db.VarChar(100)
-  updated    String @db.VarChar(100)
-  duration   Int?
+model Assignment {
+  id          BigInt    @id @default(autoincrement())
+  staffId     BigInt
+  classRoomId BigInt?
+  subjectId   BigInt?
+  title       String    @db.VarChar(255)
+  content     String    @db.Text
+  file        String?   @db.VarChar(255)
+  dueAt       DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  staff       Staff     @relation(fields: [staffId], references: [id])
+  classRoom   ClassRoom? @relation(fields: [classRoomId], references: [id])
+  subject     Subject?  @relation(fields: [subjectId], references: [id])
 }
 
-model cbt_result {
-  id            Int       @id @default(autoincrement()) @db.UnsignedInt
-  student_id    String    @db.VarChar(100)
-  cbt_id        String    @db.VarChar(255)
-  student_score String    @db.VarChar(100)
-  score         Decimal?  @db.Decimal(5, 2)
-  percentage    Decimal?  @db.Decimal(5, 2)
-  submitted_at  DateTime? @db.DateTime(0)
+model LibraryResource {
+  id             BigInt   @id @default(autoincrement())
+  staffId        BigInt
+  subjectId      BigInt
+  classRoomId    BigInt?
+  title          String   @db.VarChar(200)
+  description    String?  @db.Text
+  file           String   @db.VarChar(200)
+  status         ResourceStatus @default(PENDING)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  staff          Staff     @relation(fields: [staffId], references: [id])
+  subject        Subject   @relation(fields: [subjectId], references: [id])
+  classRoom      ClassRoom? @relation(fields: [classRoomId], references: [id])
 }
 
-model cbt_session {
-  id         BigInt    @id @default(autoincrement())
-  cbt_id     BigInt?
-  user_id    BigInt?
-  started_at DateTime? @db.DateTime(0)
-  ended_at   DateTime? @db.DateTime(0)
-  created_at DateTime? @default(now()) @db.Timestamp(0)
+model SchoolFeeConfig {
+  id          BigInt   @id @default(autoincrement())
+  classRoomId BigInt
+  sessionId   BigInt
+  termId      BigInt
+  amount      Decimal  @db.Decimal(10, 2)
+  description String?  @db.VarChar(255)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  classRoom   ClassRoom @relation(fields: [classRoomId], references: [id])
+  session     AcademicSession @relation(fields: [sessionId], references: [id])
+  term        AcademicTerm @relation(fields: [termId], references: [id])
+
+  @@unique([classRoomId, sessionId, termId])
 }
 
-/// This model has been renamed to 'Renamedclass' during introspection, because the original name 'class' is reserved.
-model Renamedclass {
-  class_id      Int    @id @default(autoincrement()) @db.UnsignedInt
-  class         String @db.VarChar(100)
-  class_teacher String @db.VarChar(100)
+model SchoolFeePayment {
+  id                 BigInt        @id @default(autoincrement())
+  studentId           BigInt
+  sessionId           BigInt
+  termId              BigInt
+  amount              Decimal       @db.Decimal(10, 2)
+  reference           String        @unique @db.VarChar(150)
+  paystackAccessCode  String?       @db.VarChar(255)
+  status              PaymentStatus @default(PENDING)
+  paidAt              DateTime?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
 
-  @@map("class")
+  student             Student       @relation(fields: [studentId], references: [id])
+  session             AcademicSession @relation(fields: [sessionId], references: [id])
+  term                AcademicTerm @relation(fields: [termId], references: [id])
 }
 
-model class_timetable {
-  class_timetable_id Int    @id @default(autoincrement()) @db.UnsignedInt
-  staff_id           String @db.VarChar(100)
-  class              String @db.VarChar(100)
-  timetable          String @db.Text
-  date               String @db.VarChar(100)
-  updated            String @db.VarChar(100)
+model Notification {
+  id        BigInt           @id @default(autoincrement())
+  userId    BigInt
+  type      NotificationType @default(INFO)
+  title     String?          @db.VarChar(255)
+  message   String           @db.Text
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model comment {
-  comment_id Int    @id @default(autoincrement()) @db.UnsignedInt
-  post_id    Int
-  comment    String @db.Text
-  unique_id  String @db.VarChar(100)
-  date       String @db.VarChar(100)
+model Post {
+  id        BigInt    @id @default(autoincrement())
+  authorId  BigInt
+  text      String    @db.Text
+  image     String?   @db.VarChar(255)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  author    User      @relation(fields: [authorId], references: [id])
+  comments  Comment[]
+  likes     Like[]
 }
 
-model course {
-  course_id Int    @id @default(autoincrement()) @db.UnsignedInt
-  courses   String @db.VarChar(100)
-  teacher   String @db.VarChar(100)
+model Comment {
+  id        BigInt   @id @default(autoincrement())
+  postId    BigInt
+  authorId  BigInt
+  text      String   @db.Text
+  createdAt DateTime @default(now())
+
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author    User     @relation(fields: [authorId], references: [id])
 }
 
-model exam_timetable {
-  exam_timetable_id Int    @id @default(autoincrement()) @db.UnsignedInt
-  staff_id          String @db.VarChar(100)
-  user              String @db.VarChar(100)
-  timetable         String @db.Text
-  date              String @db.VarChar(100)
-  updated           String @db.VarChar(100)
+model Like {
+  id        BigInt   @id @default(autoincrement())
+  postId    BigInt
+  userId    BigInt
+  createdAt DateTime @default(now())
+
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([postId, userId])
 }
 
-model failed_jobs {
-  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
-  uuid       String   @unique(map: "failed_jobs_uuid_unique") @db.VarChar(255)
-  connection String   @db.Text
-  queue      String   @db.Text
-  payload    String   @db.LongText
-  exception  String   @db.LongText
-  failed_at  DateTime @default(now()) @db.Timestamp(0)
+model Message {
+  id         BigInt   @id @default(autoincrement())
+  senderId   BigInt
+  receiverId BigInt
+  body       String   @db.Text
+  readAt     DateTime?
+  createdAt  DateTime @default(now())
+
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
 }
 
-model lesson_note {
-  lesson_note_id Int    @id @default(autoincrement()) @db.UnsignedInt
-  staff_id       String @db.VarChar(100)
-  subject        String @db.VarChar(100)
-  class          String @db.VarChar(100)
-  lesson_note    String @db.VarChar(100)
-  date           String @db.VarChar(100)
-  updated        String @db.VarChar(100)
+model CbtTest {
+  id          BigInt        @id @default(autoincrement())
+  classRoomId BigInt?
+  subjectId   BigInt?
+  title       String        @db.VarChar(255)
+  durationMin Int           @default(30)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  classRoom   ClassRoom?    @relation(fields: [classRoomId], references: [id])
+  subject     Subject?      @relation(fields: [subjectId], references: [id])
+  questions   CbtQuestion[]
+  results     CbtResult[]
 }
 
-model library {
-  library_id Int    @id @default(autoincrement()) @db.UnsignedInt
-  staff_id   String @db.VarChar(100)
-  course     String @db.VarChar(100)
-  class      String @db.VarChar(100)
-  pdf        String @db.VarChar(200)
-  about      String @db.Text
-  verify     String @db.VarChar(100)
-  date       String @db.VarChar(100)
-  updated    String @db.VarChar(100)
+model CbtQuestion {
+  id          BigInt   @id @default(autoincrement())
+  testId      BigInt
+  staffId     BigInt?
+  subjectId   BigInt?
+  question    String   @db.Text
+  optionA     String   @db.Text
+  optionB     String   @db.Text
+  optionC     String?  @db.Text
+  optionD     String?  @db.Text
+  answer      String   @db.VarChar(10)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  test        CbtTest  @relation(fields: [testId], references: [id], onDelete: Cascade)
+  staff       Staff?   @relation(fields: [staffId], references: [id])
+  subject     Subject? @relation(fields: [subjectId], references: [id])
+  answers     CbtAnswer[]
 }
 
-model likes {
-  likes_id  Int    @id @default(autoincrement()) @db.UnsignedInt
-  post_id   String @db.VarChar(100)
-  unique_id String @db.VarChar(100)
-  date      String @db.VarChar(100)
+model CbtAnswer {
+  id          BigInt      @id @default(autoincrement())
+  studentId   BigInt
+  questionId  BigInt
+  selected    String      @db.VarChar(10)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  student     Student     @relation(fields: [studentId], references: [id])
+  question    CbtQuestion @relation(fields: [questionId], references: [id])
+
+  @@unique([studentId, questionId])
 }
 
-model manage_fees_tbl {
-  manage_fees_id     Int    @id @default(autoincrement()) @db.UnsignedInt
-  manage_senior_fees String @db.VarChar(100)
-  manage_junior_fees String @db.VarChar(100)
+model CbtResult {
+  id          BigInt   @id @default(autoincrement())
+  testId      BigInt
+  studentId   BigInt
+  score       Decimal  @db.Decimal(5, 2)
+  percentage  Decimal  @db.Decimal(5, 2)
+  submittedAt DateTime @default(now())
+
+  test        CbtTest  @relation(fields: [testId], references: [id])
+  student     Student  @relation(fields: [studentId], references: [id])
+
+  @@unique([testId, studentId])
+}
+model SchoolDays {
+  id         BigInt   @id @default(autoincrement())
+  session    String   @db.VarChar(20)
+  term       String   @db.VarChar(20)
+  totalDays  Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([session, term])
 }
 
-model manage_school_fees {
-  school_fees_id Int    @id @default(autoincrement()) @db.UnsignedInt
-  fees           String @db.VarChar(100)
+model ClassTimetable {
+  id          BigInt   @id @default(autoincrement())
+  staffId     BigInt?
+  classRoomId BigInt
+  content     String   @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  staff       Staff?    @relation(fields: [staffId], references: [id])
+  classRoom   ClassRoom @relation(fields: [classRoomId], references: [id])
 }
 
-model messages {
-  msg_id      Int      @id @default(autoincrement()) @db.UnsignedInt
-  incoming_id String   @db.VarChar(100)
-  outgoing_id String   @db.VarChar(100)
-  message     String   @db.Text
-  alert       String   @db.VarChar(50)
-  timestamp   DateTime @default(now()) @db.Timestamp(0)
-  is_read     Boolean? @default(false)
+model ExamTimetable {
+  id        BigInt   @id @default(autoincrement())
+  staffId   BigInt?
+  level     String   @db.VarChar(50) // junior/senior
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  staff     Staff?   @relation(fields: [staffId], references: [id])
 }
 
-model migrations {
-  id        Int    @id @default(autoincrement()) @db.UnsignedInt
-  migration String @db.VarChar(255)
-  batch     Int
-}
+model ScratchCard {
+  id             BigInt   @id @default(autoincrement())
+  studentId      BigInt
+  classRoomId    BigInt?
+  amount         Decimal  @db.Decimal(10, 2)
+  reference      String?  @db.VarChar(150)
+  status         String   @default("pending") @db.VarChar(50)
+  sessionId      BigInt?
+  termId         BigInt?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-model notification {
-  notification_id Int    @id @default(autoincrement()) @db.UnsignedInt
-  unique_id       String @db.VarChar(100)
-  message         String @db.Text
-  unset           String @db.VarChar(50)
-  time            String @db.VarChar(100)
-}
-
-model notifications {
-  id         BigInt    @id @default(autoincrement())
-  user_type  String    @db.VarChar(255)
-  user_id    BigInt?
-  title      String?   @db.VarChar(255)
-  message    String?   @db.Text
-  is_read    Boolean?  @default(false)
-  created_at DateTime? @default(now()) @db.Timestamp(0)
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model password_resets {
-  email      String    @db.VarChar(255)
-  token      String    @db.VarChar(255)
-  created_at DateTime? @db.Timestamp(0)
-
-  @@index([email], map: "password_resets_email_index")
-  @@ignore
-}
-
-model payment {
-  payment_id Int    @id @default(autoincrement()) @db.UnsignedInt
-  parent_id  String @db.VarChar(100)
-  upload     String @db.VarChar(100)
-  verified   String @db.VarChar(100)
-  date       String @db.VarChar(100)
-  updated    String @db.VarChar(100)
-}
-
-model personal_access_tokens {
-  id             BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
-  tokenable_type String    @db.VarChar(255)
-  tokenable_id   BigInt    @db.UnsignedBigInt
-  name           String    @db.VarChar(255)
-  token          String    @unique(map: "personal_access_tokens_token_unique") @db.VarChar(64)
-  abilities      String?   @db.Text
-  last_used_at   DateTime? @db.Timestamp(0)
-  created_at     DateTime? @db.Timestamp(0)
-  updated_at     DateTime? @db.Timestamp(0)
-
-  @@index([tokenable_type, tokenable_id], map: "personal_access_tokens_tokenable_type_tokenable_id_index")
-}
-
-model post {
-  post_id  Int    @id @default(autoincrement()) @db.UnsignedInt
-  admin_id String @db.VarChar(100)
-  image    String @db.VarChar(100)
-  text     String @db.Text
-  user     String @db.VarChar(100)
-  time     String @db.VarChar(100)
-  updated  String @db.VarChar(100)
-}
-
-model posts {
-  id         BigInt    @id @default(autoincrement())
-  user_id    BigInt?
-  title      String?   @db.VarChar(255)
-  content    String?   @db.Text
-  created_at DateTime? @default(now()) @db.Timestamp(0)
-  updated_at DateTime? @default(now()) @db.Timestamp(0)
-}
-
-model result {
-  result_id         Int      @id @default(autoincrement()) @db.UnsignedInt
-  teacher_id        String   @db.VarChar(100)
-  student_id        String   @db.VarChar(100)
-  course            String   @db.VarChar(100)
-  session           String   @db.VarChar(100)
-  term              String   @db.VarChar(100)
-  first_term_score  String   @db.VarChar(100)
-  second_term_score String   @db.VarChar(100)
-  test_score        String   @db.VarChar(100)
-  exam_score        String   @db.VarChar(100)
-  total_score       String   @db.VarChar(100)
-  cummulative       String   @db.VarChar(100)
-  percentage        String   @db.VarChar(100)
-  grade             String   @db.VarChar(100)
-  remark            String   @db.VarChar(255)
-  date              DateTime @default(now()) @db.Timestamp(0)
-  approved          String   @db.VarChar(100)
-  term_id           BigInt?
-}
-
-model school_days {
-  id         BigInt    @id @default(autoincrement())
-  term       String    @db.VarChar(255)
-  session    String    @db.VarChar(255)
-  total_days Int
-  updated_at DateTime  @default(now()) @db.Timestamp(0)
-  created_at DateTime? @default(now()) @db.Timestamp(0)
-}
-
-model school_fees_config {
-  id          Int       @id @default(autoincrement())
-  class       String    @db.VarChar(100)
-  session     String    @db.VarChar(20)
-  term        String    @db.VarChar(20)
-  amount      Decimal   @default(0.00) @db.Decimal(10, 2)
-  description String?   @default("") @db.VarChar(255)
-  created_at  DateTime? @default(now()) @db.DateTime(0)
-  updated_at  DateTime? @default(now()) @db.DateTime(0)
-
-  @@unique([class, session, term], map: "unique_class_session_term")
-}
-
-model school_fees_payment {
-  id                   Int                         @id @default(autoincrement())
-  student_id           String                      @db.VarChar(100)
-  class                String                      @db.VarChar(100)
-  session              String                      @db.VarChar(20)
-  term                 String                      @db.VarChar(20)
-  amount               Decimal                     @db.Decimal(10, 2)
-  paystack_reference   String?                     @unique(map: "paystack_reference") @db.VarChar(100)
-  paystack_access_code String?                     @db.VarChar(255)
-  status               school_fees_payment_status? @default(pending)
-  paid_at              DateTime?                   @db.DateTime(0)
-  created_at           DateTime?                   @default(now()) @db.DateTime(0)
-
-  @@index([session, term], map: "idx_session_term")
-  @@index([student_id], map: "idx_student")
-}
-
-model schools {
-  id              BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
-  name            String    @db.VarChar(255)
-  slug            String    @unique(map: "schools_slug_unique") @db.VarChar(255)
-  logo            String?   @db.VarChar(255)
-  primary_color   String    @default("#1a73e8") @db.VarChar(10)
-  secondary_color String    @default("#ffffff") @db.VarChar(10)
-  address         String    @db.Text
-  email           String    @unique(map: "schools_email_unique") @db.VarChar(255)
-  telephone       String    @db.VarChar(20)
-  contact_person  String    @db.VarChar(255)
-  status          String    @default("pending") @db.VarChar(50)
-  settings        String?   @db.LongText
-  created_at      DateTime? @db.Timestamp(0)
-  updated_at      DateTime? @db.Timestamp(0)
-}
-
-model scratch_card {
-  scratch_card_id Int    @id @default(autoincrement()) @db.UnsignedInt
-  student_id      String @db.VarChar(100)
-  class           String @db.VarChar(255)
-  transfer_amount String @db.VarChar(100)
-  transfer_date   String @db.VarChar(100)
-  upload          String @db.VarChar(200)
-  term            String @db.VarChar(100)
-  session         String @db.VarChar(100)
-  verified        String @db.VarChar(50)
-  status          String @db.VarChar(255)
-  reference       String @db.VarChar(255)
-  date            String @db.VarChar(100)
-  admin_date      String @db.VarChar(100)
-}
-
-model session {
-  session_id Int    @id @default(autoincrement()) @db.UnsignedInt
-  session    String @db.VarChar(100)
-}
-
-model sessions {
-  id         BigInt    @id @default(autoincrement())
-  name       String?   @db.VarChar(100)
-  start_date DateTime? @db.Date
-  end_date   DateTime? @db.Date
-  created_at DateTime? @default(now()) @db.Timestamp(0)
-}
-
-model set_session_tbl {
-  set_session_id Int    @id @default(autoincrement()) @db.UnsignedInt
-  set_session    String @db.VarChar(100)
-}
-
-model set_term_tbl {
-  set_term_id Int    @id @default(autoincrement()) @db.UnsignedInt
-  set_term    String @db.VarChar(100)
-}
-
-model staff {
-  staff_id        Int     @id @default(autoincrement()) @db.UnsignedInt
-  school_id       BigInt? @db.UnsignedBigInt
-  unique_id       String  @db.VarChar(100)
-  firstname       String  @db.VarChar(100)
-  lastname        String  @db.VarChar(100)
-  image           String  @db.VarChar(100)
-  email           String  @db.VarChar(100)
-  telephone       String  @db.VarChar(100)
-  class           String  @db.VarChar(100)
-  state_of_origin String  @db.VarChar(100)
-  date_of_birth   String  @db.VarChar(100)
-  home_address    String  @db.VarChar(100)
-  about           String  @db.Text
-  user            String  @db.VarChar(100)
-  password        String  @db.VarChar(100)
-  admin_verify    String  @db.VarChar(100)
-  email_verify    String  @db.VarChar(200)
-  v_email         String  @db.VarChar(100)
-  date            String  @db.VarChar(100)
-  updated         String  @db.VarChar(100)
-  role            String? @db.VarChar(50)
-}
-
-model student_answer {
-  id           Int    @id @default(autoincrement()) @db.UnsignedInt
-  cbt_id       String @db.VarChar(100)
-  student_pick String @db.VarChar(100)
-  class        String @db.VarChar(100)
-  course       String @db.VarChar(100)
-  student_id   String @db.VarChar(100)
-}
-
-model student_attendance {
-  id         Int    @id @default(autoincrement()) @db.UnsignedInt
-  student_id String @db.VarChar(100)
-  tick       String @db.VarChar(100)
-  term       String @db.VarChar(100)
-  session    String @db.VarChar(100)
-  staff_id   String @db.VarChar(100)
-  date       String @db.VarChar(100)
-  count      String @db.VarChar(100)
-  updated    String @db.VarChar(100)
-}
-
-model submit_assignment {
-  id            Int    @id @default(autoincrement()) @db.UnsignedInt
-  assignment_id String @db.VarChar(100)
-  student_id    String @db.VarChar(100)
-  assignment    String @db.Text
-  score         String @db.VarChar(100)
-}
-
-model term {
-  term_id Int    @id @default(autoincrement()) @db.UnsignedInt
-  term    String @db.VarChar(100)
-}
-
-model terms {
-  id         BigInt    @id @default(autoincrement())
-  session_id BigInt?
-  name       String?   @db.VarChar(100)
-  start_date DateTime? @db.Date
-  end_date   DateTime? @db.Date
-  created_at DateTime? @default(now()) @db.Timestamp(0)
-}
-
-model test {
-  test_id          Int    @id @default(autoincrement()) @db.UnsignedInt
-  test_score_sixty String @db.VarChar(255)
-  test_score_forty String @db.VarChar(255)
-  total_score      String @db.VarChar(255)
-  grade            String @db.VarChar(255)
-  remark           String @db.VarChar(255)
-  student_id       String @db.VarChar(255)
-  term             String @db.VarChar(255)
-  session          String @db.VarChar(255)
-  course           String @db.VarChar(255)
-  cummulative      String @db.VarChar(255)
-  teacher_id       String @db.VarChar(255)
-  percentage       String @db.VarChar(255)
-  date             String @db.VarChar(255)
-}
-
-model typing_status {
-  id         BigInt    @id @default(autoincrement())
-  user_id    BigInt?
-  is_typing  Boolean?  @default(false)
-  updated_at DateTime? @default(now()) @db.Timestamp(0)
-}
-
-model users {
-  user_id           Int       @id @default(autoincrement()) @db.UnsignedInt
-  school_id         BigInt?   @db.UnsignedBigInt
-  student_id        String    @db.VarChar(100)
-  firstname         String    @db.VarChar(100)
-  middlename        String    @db.VarChar(255)
-  lastname          String    @db.VarChar(100)
-  father_name       String    @db.VarChar(100)
-  mother_name       String    @db.VarChar(100)
-  image             String    @db.VarChar(100)
-  parent_image      String    @db.VarChar(200)
-  email             String    @db.VarChar(100)
-  telephone         String    @db.VarChar(100)
-  class             String    @db.VarChar(100)
-  date_of_birth     String    @db.VarChar(100)
-  state_of_origin   String    @db.VarChar(100)
-  home_address      String    @db.VarChar(100)
-  about             String    @db.Text
-  year_of_admission String    @db.VarChar(100)
-  password          String    @db.VarChar(100)
-  admin_verify      String    @db.VarChar(100)
-  email_verify      String    @db.VarChar(100)
-  v_email           String    @db.VarChar(100)
-  date              DateTime  @default(now()) @db.Timestamp(0)
-  updated           String    @db.VarChar(100)
-  last_login        DateTime? @db.DateTime(0)
-  status            String?   @default("active") @db.VarChar(20)
-}
-
-model video {
-  id       Int    @id @default(autoincrement()) @db.UnsignedInt
-  staff_id String @db.VarChar(100)
-  course   String @db.VarChar(100)
-  class    String @db.VarChar(100)
-  link     String @db.VarChar(100)
-  date     String @db.VarChar(100)
-  updated  String @db.VarChar(100)
-}
-
-enum school_fees_payment_status {
-  pending
-  success
-  failed
+  student        Student  @relation(fields: [studentId], references: [id])
+  classRoom      ClassRoom? @relation(fields: [classRoomId], references: [id])
+  session        AcademicSession? @relation(fields: [sessionId], references: [id])
+  term           AcademicTerm? @relation(fields: [termId], references: [id])
 }

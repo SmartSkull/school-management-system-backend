@@ -15,41 +15,49 @@ export class SchoolFeesService {
   }
 
   private async getCurrentSession(): Promise<string> {
-    const r = await this.prisma.set_session_tbl.findFirst();
-    return r?.set_session || '';
+    const r = await this.prisma.academicSession.findFirst({ orderBy: { createdAt: 'desc' } });
+    return r?.name || '';
   }
 
   private async getCurrentTerm(): Promise<string> {
-    const r = await this.prisma.set_term_tbl.findFirst();
-    return r?.set_term || '';
+    const r = await this.prisma.academicTerm.findFirst({ orderBy: { createdAt: 'desc' } });
+    return r?.name || '';
   }
 
   async getStudentFees(user: any, q: any) {
     const session = q.session || await this.getCurrentSession();
     const term = q.term || await this.getCurrentTerm();
 
-    if (!session || !term) throw new BadRequestException('No active session or term found.');
+    const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
+    const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term as any, sessionId: sessionEntity?.id } });
+    
+    const student = await this.prisma.student.findUnique({ 
+      where: { userId: BigInt(user.id) },
+      include: { classRoom: true }
+    });
+
+    if (!sessionEntity || !termEntity || !student) throw new BadRequestException('Session, Term, or Student not found.');
 
     const [config, payment, history] = await Promise.all([
-      this.prisma.school_fees_config.findFirst({
-        where: { class: user.class, session, term },
+      this.prisma.schoolFeeConfig.findFirst({
+        where: { classRoomId: student.classRoomId, sessionId: sessionEntity.id, termId: termEntity.id },
       }),
-      this.prisma.school_fees_payment.findFirst({
-        where: { student_id: user.student_id, session, term },
+      this.prisma.schoolFeePayment.findFirst({
+        where: { studentId: student.id, sessionId: sessionEntity.id, termId: termEntity.id },
       }),
-      this.getPaymentHistory(user.student_id),
+      this.getPaymentHistory(student.studentNo),
     ]);
 
     return this.ok({
       session,
       term,
-      class: user.class,
+      class: student.classRoom?.name,
       amount: config ? Number(config.amount) : null,
       description: config?.description || '',
       fee_configured: !!config,
       payment_status: payment?.status || 'not_paid',
-      paid_at: payment?.paid_at || null,
-      reference: payment?.paystack_reference || null,
+      paid_at: payment?.paidAt || null,
+      reference: payment?.reference || null,
       history: history.data,
     });
   }
@@ -58,52 +66,57 @@ export class SchoolFeesService {
     const session = body.session || await this.getCurrentSession();
     const term = body.term || await this.getCurrentTerm();
 
-    if (!session || !term) throw new BadRequestException('Session and term are required.');
-    if (!user.email) throw new BadRequestException('Student email is required for payment. Please update your profile.');
-
-    const config = await this.prisma.school_fees_config.findFirst({
-      where: { class: user.class, session, term },
+    const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
+    const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term as any, sessionId: sessionEntity?.id } });
+    
+    const student = await this.prisma.student.findUnique({ 
+      where: { userId: BigInt(user.id) },
+      include: { classRoom: true, user: true }
     });
-    if (!config) throw new NotFoundException(`No school fees configured for ${user.class} - ${term} term, ${session} session.`);
 
-    const existing = await this.prisma.school_fees_payment.findFirst({
-      where: { student_id: user.student_id, session, term, status: 'success' },
+    if (!sessionEntity || !termEntity || !student) throw new BadRequestException('Session, Term, or Student not found.');
+    if (!student.user.email) throw new BadRequestException('Student email is required for payment.');
+
+    const config = await this.prisma.schoolFeeConfig.findFirst({
+      where: { classRoomId: student.classRoomId, sessionId: sessionEntity.id, termId: termEntity.id },
+    });
+    if (!config) throw new NotFoundException(`No school fees configured for ${student.classRoom?.name} - ${term} term, ${session} session.`);
+
+    const existing = await this.prisma.schoolFeePayment.findFirst({
+      where: { studentId: student.id, sessionId: sessionEntity.id, termId: termEntity.id, status: 'SUCCESS' },
     });
     if (existing) throw new BadRequestException(`School fees for ${term} term, ${session} session have already been paid.`);
 
     const amount = Number(config.amount);
-    const reference = `FEES-${user.student_id}-${session.replace('/', '')}-${term}-${Date.now()}`.replace(/[^a-zA-Z0-9-]/g, '');
+    const reference = `FEES-${student.studentNo}-${session.replace('/', '')}-${term}-${Date.now()}`.replace(/[^a-zA-Z0-9-]/g, '');
 
     const paystackData = await this.paystackRequest('POST', '/transaction/initialize', {
-      email: user.email,
+      email: student.user.email,
       amount: Math.round(amount * 100),
       reference,
       metadata: {
-        student_id: user.student_id,
-        student_name: `${user.firstname} ${user.lastname}`,
-        class: user.class,
+        student_id: student.studentNo,
+        student_name: `${student.user.firstName} ${student.user.lastName}`,
+        class: student.classRoom?.name,
         session,
         term,
-        payment_type: 'school_fees',
       },
-      callback_url: process.env.PAYSTACK_CALLBACK_URL || `${process.env.APP_URL || 'http://localhost:3000'}/student/school-fees/verify`,
     });
 
-    await this.prisma.school_fees_payment.upsert({
-      where: { paystack_reference: reference },
+    await this.prisma.schoolFeePayment.upsert({
+      where: { reference: reference },
       create: {
-        student_id: user.student_id,
-        class: user.class,
-        session,
-        term,
+        studentId: student.id,
+        sessionId: sessionEntity.id,
+        termId: termEntity.id,
         amount,
-        paystack_reference: reference,
-        paystack_access_code: paystackData.access_code,
-        status: 'pending',
+        reference: reference,
+        paystackAccessCode: paystackData.access_code,
+        status: 'PENDING',
       },
       update: {
-        paystack_access_code: paystackData.access_code,
-        status: 'pending',
+        paystackAccessCode: paystackData.access_code,
+        status: 'PENDING',
       },
     });
 
@@ -114,125 +127,151 @@ export class SchoolFeesService {
       amount,
       session,
       term,
-    }, 'Payment initialized. Redirect student to authorization_url.');
+    });
   }
 
   async verifyPaystackPayment(reference: string) {
     if (!reference) throw new BadRequestException('Payment reference is required.');
 
-    const payment = await this.prisma.school_fees_payment.findFirst({
-      where: { paystack_reference: reference },
+    const payment = await this.prisma.schoolFeePayment.findUnique({
+      where: { reference },
+      include: { student: { include: { user: true } } }
     });
     if (!payment) throw new NotFoundException('Payment record not found.');
 
-    if (payment.status === 'success') {
-      return this.ok({ status: 'success', reference, paid_at: payment.paid_at }, 'Payment already verified.');
+    if (payment.status === 'SUCCESS') {
+      return this.ok({ status: 'SUCCESS', reference, paid_at: payment.paidAt }, 'Payment already verified.');
     }
 
     const paystackData = await this.paystackRequest('GET', `/transaction/verify/${reference}`);
 
     if (paystackData.status === 'success') {
-      await this.prisma.school_fees_payment.updateMany({
-        where: { paystack_reference: reference },
-        data: { status: 'success', paid_at: new Date() },
+      await this.prisma.schoolFeePayment.update({
+        where: { id: payment.id },
+        data: { status: 'SUCCESS', paidAt: new Date() },
       });
 
-      await this.prisma.notifications.create({
+      await this.prisma.notification.create({
         data: {
-          user_id: payment.student_id as any,
-          user_type: 'student',
+          userId: payment.student.userId,
           title: 'School Fees Payment Successful',
-          message: `Your school fees payment of ₦${payment.amount} for ${payment.term} term, ${payment.session} session has been confirmed.`,
-          is_read: false,
-          created_at: new Date(),
+          message: `Your school fees payment of ₦${payment.amount} has been confirmed.`,
         },
       });
 
       return this.ok({
-        status: 'success',
+        status: 'SUCCESS',
         reference,
         amount: Number(payment.amount),
-        session: payment.session,
-        term: payment.term,
         paid_at: new Date(),
       }, 'Payment verified successfully.');
     }
 
-    await this.prisma.school_fees_payment.updateMany({
-      where: { paystack_reference: reference },
-      data: { status: 'failed' },
+    await this.prisma.schoolFeePayment.update({
+      where: { id: payment.id },
+      data: { status: 'FAILED' },
     });
     throw new BadRequestException(`Payment verification failed. Paystack status: ${paystackData.status}`);
   }
 
-  async getPaymentHistory(studentId: string) {
-    const payments = await this.prisma.school_fees_payment.findMany({
-      where: { student_id: studentId },
-      orderBy: { created_at: 'desc' },
+  async getPaymentHistory(studentNo: string) {
+    const student = await this.prisma.student.findUnique({ 
+      where: { studentNo },
+      include: { user: true, classRoom: true }
     });
-    const student = await this.prisma.users.findFirst({
-      where: { student_id: studentId },
-      select: { firstname: true, lastname: true, class: true },
+    if (!student) throw new NotFoundException('Student not found');
+
+    const payments = await this.prisma.schoolFeePayment.findMany({
+      where: { studentId: student.id },
+      orderBy: { createdAt: 'desc' },
     });
-    return this.ok(payments.map(payment => ({ ...payment, ...student })));
+    return this.ok(payments.map(p => ({ 
+      ...p, 
+      firstname: student.user.firstName, 
+      lastname: student.user.lastName, 
+      class: student.classRoom?.name 
+    })));
   }
 
   async getFeesConfig(q: any) {
     const where: any = {};
-    if (q.class) where.class = q.class;
-    if (q.session) where.session = q.session;
-    if (q.term) where.term = q.term;
+    if (q.class) {
+      const classRoom = await this.prisma.classRoom.findFirst({ where: { name: q.class } });
+      if (classRoom) where.classRoomId = classRoom.id;
+    }
+    if (q.session) {
+      const session = await this.prisma.academicSession.findFirst({ where: { name: q.session } });
+      if (session) where.sessionId = session.id;
+    }
+    if (q.term) {
+      const term = await this.prisma.academicTerm.findFirst({ where: { name: q.term as any } });
+      if (term) where.termId = term.id;
+    }
 
-    return this.ok(await this.prisma.school_fees_config.findMany({
+    const configs = await this.prisma.schoolFeeConfig.findMany({
       where,
-      orderBy: [{ session: 'desc' }, { term: 'asc' }, { class: 'asc' }],
-    }));
+      orderBy: { createdAt: 'desc' },
+      include: { classRoom: true, session: true, term: true }
+    });
+
+    return this.ok(configs.map(c => ({
+      ...c,
+      class: c.classRoom.name,
+      session: c.session.name,
+      term: c.term.name,
+    })));
   }
 
   async setFeesConfig(body: any) {
-    const { class: cls, session, term, amount, description } = body;
-    if (!cls || !session || !term || amount === undefined) {
+    const { class: cls, session: sess, term: t, amount, description } = body;
+    if (!cls || !sess || !t || amount === undefined) {
       throw new BadRequestException('Class, session, term and amount are required.');
     }
 
-    const config = await this.prisma.school_fees_config.upsert({
+    const classRoom = await this.prisma.classRoom.findFirst({ where: { name: cls } });
+    const session = await this.prisma.academicSession.findFirst({ where: { name: sess } });
+    const term = await this.prisma.academicTerm.findFirst({ where: { name: t as any, sessionId: session?.id } });
+
+    if (!classRoom || !session || !term) throw new BadRequestException('Class, Session, or Term not found.');
+
+    const config = await this.prisma.schoolFeeConfig.upsert({
       where: {
-        class_session_term: { class: cls, session, term },
+        classRoomId_sessionId_termId: { 
+          classRoomId: classRoom.id, 
+          sessionId: session.id, 
+          termId: term.id 
+        },
       },
       create: {
-        class: cls,
-        session,
-        term,
+        classRoomId: classRoom.id,
+        sessionId: session.id,
+        termId: term.id,
         amount: Number(amount),
         description: description || '',
       },
       update: {
         amount: Number(amount),
         description: description || '',
-        updated_at: new Date(),
       },
     });
     return this.ok(config, 'School fees config saved successfully.');
   }
 
   async updateFeesConfig(id: number, body: any) {
-    const config = await this.prisma.school_fees_config.findUnique({ where: { id } });
+    const config = await this.prisma.schoolFeeConfig.findUnique({ where: { id: BigInt(id) } });
     if (!config) throw new NotFoundException('School fees config not found.');
 
     const update: any = {};
-    ['class', 'session', 'term', 'description'].forEach(key => {
-      if (body[key] !== undefined) update[key] = body[key];
-    });
     if (body.amount !== undefined) update.amount = Number(body.amount);
-    update.updated_at = new Date();
+    if (body.description !== undefined) update.description = body.description;
 
-    return this.ok(await this.prisma.school_fees_config.update({ where: { id }, data: update }), 'School fees config updated successfully.');
+    return this.ok(await this.prisma.schoolFeeConfig.update({ where: { id: BigInt(id) }, data: update }), 'School fees config updated successfully.');
   }
 
   async deleteFeesConfig(id: number) {
-    const config = await this.prisma.school_fees_config.findUnique({ where: { id } });
+    const config = await this.prisma.schoolFeeConfig.findUnique({ where: { id: BigInt(id) } });
     if (!config) throw new NotFoundException('School fees config not found.');
-    await this.prisma.school_fees_config.delete({ where: { id } });
+    await this.prisma.schoolFeeConfig.delete({ where: { id: BigInt(id) } });
     return this.ok(null, 'School fees config deleted successfully.');
   }
 
@@ -240,47 +279,40 @@ export class SchoolFeesService {
     const page = Math.max(1, parseInt(q.page) || 1);
     const perPage = Math.min(parseInt(q.per_page) || 20, 100);
     const where: any = {};
+    
     if (q.status) where.status = q.status;
-    if (q.session) where.session = q.session;
-    if (q.term) where.term = q.term;
-    if (q.class) where.class = q.class;
+    if (q.session) {
+      const session = await this.prisma.academicSession.findFirst({ where: { name: q.session } });
+      if (session) where.sessionId = session.id;
+    }
+    if (q.term) {
+      const term = await this.prisma.academicTerm.findFirst({ where: { name: q.term as any } });
+      if (term) where.termId = term.id;
+    }
 
     const [total, payments] = await Promise.all([
-      this.prisma.school_fees_payment.count({ where }),
-      this.prisma.school_fees_payment.findMany({
+      this.prisma.schoolFeePayment.count({ where }),
+      this.prisma.schoolFeePayment.findMany({
         where,
-        orderBy: { created_at: 'desc' },
+        orderBy: { createdAt: 'desc' },
         take: perPage,
         skip: (page - 1) * perPage,
+        include: { student: { include: { user: true, classRoom: true } } }
       }),
     ]);
 
-    const studentIds = [...new Set(payments.map(payment => payment.student_id))];
-    const students = await this.prisma.users.findMany({
-      where: { student_id: { in: studentIds } },
-      select: { student_id: true, firstname: true, lastname: true, class: true },
-    });
-    const byId = new Map(students.map(student => [student.student_id, student]));
-
-    let rows = payments.map(payment => ({
-      ...payment,
-      firstname: byId.get(payment.student_id)?.firstname,
-      lastname: byId.get(payment.student_id)?.lastname,
-      student_class: byId.get(payment.student_id)?.class,
+    const rows = payments.map(p => ({
+      ...p,
+      id: p.id.toString(),
+      student_id: p.student.studentNo,
+      firstname: p.student.user.firstName,
+      lastname: p.student.user.lastName,
+      student_class: p.student.classRoom?.name,
     }));
-
-    if (q.search) {
-      const term = String(q.search).toLowerCase();
-      rows = rows.filter(row =>
-        row.student_id.toLowerCase().includes(term)
-        || String(row.firstname || '').toLowerCase().includes(term)
-        || String(row.lastname || '').toLowerCase().includes(term),
-      );
-    }
 
     return {
       success: true,
-      data: this.prisma.normalizeValue(rows),
+      data: rows,
       meta: { total, page, per_page: perPage, last_page: Math.ceil(total / perPage) },
     };
   }
@@ -288,32 +320,33 @@ export class SchoolFeesService {
   async getPaymentsSummary(q: any) {
     const session = q.session || await this.getCurrentSession();
     const term = q.term || await this.getCurrentTerm();
-    const where: any = {};
-    if (session) where.session = session;
-    if (term) where.term = term;
+    
+    const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
+    const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term as any, sessionId: sessionEntity?.id } });
+    
+    if (!sessionEntity || !termEntity) throw new BadRequestException('Session or Term not found.');
 
     const [students, payments] = await Promise.all([
-      this.prisma.users.findMany({ where: { admin_verify: '1' }, select: { student_id: true, class: true } }),
-      this.prisma.school_fees_payment.findMany({ where }),
+      this.prisma.student.findMany({ include: { classRoom: true } }),
+      this.prisma.schoolFeePayment.findMany({ 
+        where: { sessionId: sessionEntity.id, termId: termEntity.id, status: 'SUCCESS' } 
+      }),
     ]);
 
-    const successful = payments.filter(payment => payment.status === 'success');
-    const paidIds = new Set(successful.map(payment => payment.student_id));
-    const totalAmount = successful.reduce((sum, payment) => sum + Number(payment.amount), 0);
+    const totalAmount = payments.reduce((sum, payment) => sum + Number(payment.amount), 0);
+    const paidIds = new Set(payments.map(p => p.studentId));
+    
     const classSummary = new Map<string, any>();
-
     for (const student of students) {
-      const entry = classSummary.get(student.class) || { class: student.class, total_students: 0, paid_count: 0, unpaid_count: 0, total_amount: 0 };
+      const className = student.classRoom?.name || 'Unassigned';
+      const entry = classSummary.get(className) || { class: className, total_students: 0, paid_count: 0, unpaid_count: 0, total_amount: 0 };
       entry.total_students += 1;
-      classSummary.set(student.class, entry);
-    }
-
-    for (const payment of successful) {
-      const cls = students.find(student => student.student_id === payment.student_id)?.class || payment.class;
-      const entry = classSummary.get(cls) || { class: cls, total_students: 0, paid_count: 0, unpaid_count: 0, total_amount: 0 };
-      entry.paid_count += 1;
-      entry.total_amount += Number(payment.amount);
-      classSummary.set(cls, entry);
+      if (paidIds.has(student.id)) {
+        entry.paid_count += 1;
+        const payment = payments.find(p => p.studentId === student.id);
+        if (payment) entry.total_amount += Number(payment.amount);
+      }
+      classSummary.set(className, entry);
     }
 
     for (const entry of classSummary.values()) {

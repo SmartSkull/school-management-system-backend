@@ -70,12 +70,12 @@ export class AdminController {
 
   // Payments
   @Get('payments/pending') getPendingPayments() { return this.svc.getPendingPayments(); }
-  @Post('payments/:id/verify') verifyPayment(@Param('id') id: string) { return this.svc.verifyPayment(+id); }
+  @Post('payments/:id/verify') verifyPayment(@Param('id') id: string) { return this.svc.verifyPayment(id); }
 
   // Library
   @Get('library') getLibrary() { return this.svc.getLibrary(); }
-  @Put('library/:id/approve') approveLibrary(@Param('id') id: string) { return this.svc.approveLibrary(+id); }
-  @Delete('library/:id') deleteLibrary(@Param('id') id: string) { return this.svc.deleteLibrary(+id); }
+  @Put('library/:id/approve') approveLibrary(@Param('id') id: string) { return this.svc.approveLibrary(id); }
+  @Delete('library/:id') deleteLibrary(@Param('id') id: string) { return this.svc.deleteLibrary(id); }
 
   // Classes
   @Get('classes') getClasses() { return this.svc.getClasses(); }
