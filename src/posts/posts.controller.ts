@@ -39,4 +39,14 @@ export class PostsController {
   comment(@Param('id') id: string, @CurrentUser() user: any, @Body('comment') comment: string) {
     return this.svc.comment(+id, user, comment);
   }
+
+  @Put(':role/posts/:postId/comment/:commentId')
+  updateComment(@Param('commentId') commentId: string, @CurrentUser() user: any, @Body('comment') text: string) {
+    return this.svc.updateComment(+commentId, user, text);
+  }
+
+  @Delete(':role/posts/:postId/comment/:commentId')
+  deleteComment(@Param('commentId') commentId: string, @CurrentUser() user: any) {
+    return this.svc.deleteComment(+commentId, user);
+  }
 }

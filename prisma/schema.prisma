@@ -258,7 +258,7 @@ model Attendance {
   termId            BigInt
   present           Int      @default(0)
   absent            Int      @default(0)
-  comment          String?  @db.Text
+  teacherComment   String?  @db.Text
   principalComment  String?  @db.Text
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
@@ -393,6 +393,8 @@ model Message {
   receiverId BigInt
   body       String   @db.Text
   readAt     DateTime?
+  deletedAt  DateTime?
+  editedAt   DateTime?
   createdAt  DateTime @default(now())
 
   sender     User     @relation("SentMessages", fields: [senderId], references: [id])

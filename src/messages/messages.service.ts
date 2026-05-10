@@ -15,8 +15,8 @@ export class MessagesService {
       where: { OR: [{ senderId: userId }, { receiverId: userId }] },
       orderBy: { createdAt: 'desc' },
       include: { 
-        sender: { select: { id: true, firstName: true, lastName: true, image: true, uniqueId: true } },
-        receiver: { select: { id: true, firstName: true, lastName: true, image: true, uniqueId: true } }
+        sender: { select: { id: true, firstName: true, lastName: true, image: true, uniqueId: true, lastLoginAt: true } },
+        receiver: { select: { id: true, firstName: true, lastName: true, image: true, uniqueId: true, lastLoginAt: true } }
       }
     });
 
@@ -32,24 +32,25 @@ export class MessagesService {
 
       chatPartners.set(partner.id, partner);
       conversations.push({ 
-        user: {
-          id: partner.uniqueId,
-          db_id: partner.id.toString(),
-          firstname: partner.firstName,
-          lastname: partner.lastName,
-          image: partner.image
-        }, 
+        user_id: partner.uniqueId,
+        name: `${partner.firstName} ${partner.lastName}`,
+        image: partner.image,
         last_message: msg.body, 
-        last_time: msg.createdAt, 
-        unread_count: unreadCount 
+        unread: unreadCount,
+        created_at: msg.createdAt,
+        last_login_at: partner.lastLoginAt,
       });
     }
     return this.ok(conversations);
   }
 
   async getMessages(user: any, otherUniqueId: string) {
+    if (!otherUniqueId) throw new BadRequestException('with parameter is required');
     const userId = BigInt(user.id);
-    const otherUser = await this.prisma.user.findUnique({ where: { uniqueId: otherUniqueId } });
+    const otherUser = await this.prisma.user.findUnique({ 
+      where: { uniqueId: otherUniqueId },
+      select: { id: true, lastLoginAt: true }
+    });
     if (!otherUser) throw new NotFoundException('User not found');
 
     const messages = await this.prisma.message.findMany({
@@ -67,23 +68,35 @@ export class MessagesService {
       data: { readAt: new Date() },
     });
 
-    return this.ok(messages.map(m => ({ ...m, id: m.id.toString(), senderId: m.senderId.toString(), receiverId: m.receiverId.toString() })));
+    return this.ok({ 
+      messages: messages.map(m => ({ 
+        id: m.id.toString(), 
+        senderId: m.senderId.toString(), 
+        receiverId: m.receiverId.toString(), 
+        message: m.deletedAt ? '' : m.body,
+        body: m.deletedAt ? '' : m.body,
+        isMe: m.senderId === userId,
+        deleted: !!m.deletedAt,
+        edited: !!m.editedAt,
+        createdAt: m.createdAt,
+        readAt: m.readAt,
+      })),
+      partner_last_login_at: otherUser.lastLoginAt,
+    });
   }
 
   async sendMessage(user: any, body: any) {
-    if (!body.to || !body.message) throw new BadRequestException('to and message are required');
+    const to = body.to || body.receiver_id;
+    const message = body.message;
+    if (!to || !message) throw new BadRequestException('to and message are required');
     
-    const receiver = await this.prisma.user.findUnique({ where: { uniqueId: body.to } });
+    const receiver = await this.prisma.user.findUnique({ where: { uniqueId: to } });
     if (!receiver) throw new NotFoundException('Receiver not found');
 
-    const message = await this.prisma.message.create({
-      data: { 
-        senderId: BigInt(user.id), 
-        receiverId: receiver.id, 
-        body: body.message 
-      },
+    const msg = await this.prisma.message.create({
+      data: { senderId: BigInt(user.id), receiverId: receiver.id, body: message },
     });
-    return this.ok({ id: message.id.toString() }, 'Message sent');
+    return this.ok({ id: msg.id.toString() }, 'Message sent');
   }
 
   async getUnreadCount(user: any) {
@@ -91,6 +104,22 @@ export class MessagesService {
       where: { receiverId: BigInt(user.id), readAt: null } 
     });
     return this.ok({ count });
+  }
+
+  async editMessage(user: any, messageId: string, body: string) {
+    const msg = await this.prisma.message.findUnique({ where: { id: BigInt(messageId) } });
+    if (!msg) throw new NotFoundException('Message not found');
+    if (msg.senderId !== BigInt(user.id)) throw new BadRequestException('Not your message');
+    await this.prisma.message.update({ where: { id: BigInt(messageId) }, data: { body, editedAt: new Date() } });
+    return this.ok(null, 'Message updated');
+  }
+
+  async deleteMessage(user: any, messageId: string) {
+    const msg = await this.prisma.message.findUnique({ where: { id: BigInt(messageId) } });
+    if (!msg) throw new NotFoundException('Message not found');
+    if (msg.senderId !== BigInt(user.id)) throw new BadRequestException('Not your message');
+    await this.prisma.message.update({ where: { id: BigInt(messageId) }, data: { body: '', deletedAt: new Date() } });
+    return this.ok(null, 'Message deleted');
   }
 
   async deleteConversation(user: any, otherUniqueId: string) {
@@ -115,25 +144,34 @@ export class MessagesService {
     return this.ok({ filename: file.filename, original_name: file.originalname, type, size: file.size, url: `/uploads/messages/${file.filename}` }, 'File uploaded successfully');
   }
 
-  async getUsers(search?: string) {
+  async getUsers(search?: string, role?: string, className?: string) {
+    const where: any = {};
+    if (search) where.OR = [
+      { firstName: { contains: search } },
+      { lastName: { contains: search } },
+      { uniqueId: { contains: search } },
+    ];
+    if (role === 'student') {
+      where.role = 'STUDENT';
+      if (className) where.student = { classRoom: { name: className } };
+    } else if (role === 'staff') {
+      where.role = 'STAFF';
+    }
+
     const users = await this.prisma.user.findMany({
-      take: 100,
-      where: search ? {
-        OR: [
-          { firstName: { contains: search } },
-          { lastName: { contains: search } },
-          { uniqueId: { contains: search } }
-        ]
-      } : {},
-      select: { uniqueId: true, firstName: true, lastName: true, image: true, role: true }
+      take: 100, where,
+      select: { uniqueId: true, firstName: true, lastName: true, image: true, role: true,
+        student: { select: { classRoom: { select: { name: true } } } } },
+      orderBy: { firstName: 'asc' },
     });
-    
-    return this.ok(users.map(u => ({ 
-      id: u.uniqueId, 
-      firstname: u.firstName, 
-      lastname: u.lastName, 
-      image: u.image, 
-      type: u.role.toLowerCase() 
+
+    return this.ok(users.map(u => ({
+      id: u.uniqueId,
+      firstname: u.firstName,
+      lastname: u.lastName,
+      image: u.image,
+      role: u.role.toLowerCase(),
+      class: u.student?.classRoom?.name ?? null,
     })));
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '../database/prisma.service';
 
@@ -17,8 +17,8 @@ export class AdminService {
       this.prisma.user.count({ where: { role: 'STUDENT', status: 'PENDING' } }),
       this.prisma.user.count({ where: { role: 'STAFF' } }),
       this.prisma.user.count({ where: { role: 'STAFF', status: 'ACTIVE' } }),
-      this.prisma.academicSession.findFirst({ orderBy: { createdAt: 'desc' } }),
-      this.prisma.academicTerm.findFirst({ orderBy: { createdAt: 'desc' } }),
+      this.prisma.academicSession.findFirst({ where: { isCurrent: true } }),
+      this.prisma.academicTerm.findFirst({ where: { isCurrent: true } }),
       this.prisma.user.findMany({ where: { role: 'STUDENT' }, orderBy: { createdAt: 'desc' }, take: 3, select: { firstName: true, lastName: true, createdAt: true } }),
       this.prisma.schoolFeePayment.findMany({ orderBy: { createdAt: 'desc' }, take: 3, include: { student: { include: { user: true } } } }),
       this.prisma.student.groupBy({ by: ['classRoomId'], _count: { _all: true } }),
@@ -267,23 +267,56 @@ export class AdminService {
     return this.ok(null, 'Current session updated successfully');
   }
 
+  async deleteTerm(id: string) {
+    await this.prisma.academicTerm.delete({ where: { id: BigInt(id) } });
+    return this.ok(null, 'Term deleted successfully');
+  }
+
+  async updateTerm(id: string, data: { name?: string }) {
+    await this.prisma.academicTerm.update({ where: { id: BigInt(id) }, data: { ...(data.name && { name: data.name as any }) } });
+    return this.ok(null, 'Term updated successfully');
+  }
+
   async deleteSession(name: string) {
     await this.prisma.academicSession.deleteMany({ where: { name } });
     return this.ok(null, 'Session deleted successfully');
   }
 
   async getTerms() {
-    const terms = await this.prisma.academicTerm.findMany({ orderBy: { createdAt: 'asc' } });
-    return this.ok(terms.map(t => ({ ...t, id: t.id.toString(), term: t.name })));
+    const terms = await this.prisma.academicTerm.findMany({
+      orderBy: { createdAt: 'asc' },
+      include: { session: true },
+    });
+    return this.ok(terms.map(t => ({ ...t, id: t.id.toString(), term: t.name, sessionName: t.session?.name })));
   }
 
-  async setCurrentTerm(term: string) {
-    // Current term is usually scoped to current session. 
-    const session = await this.prisma.academicSession.findFirst({ where: { isCurrent: true } });
-    if (!session) throw new BadRequestException('Set a current session first');
-    await this.prisma.academicTerm.updateMany({ where: { sessionId: session.id }, data: { isCurrent: false } });
-    await this.prisma.academicTerm.update({ where: { sessionId_name: { sessionId: session.id, name: term as any } }, data: { isCurrent: true } });
+  async setCurrentTerm(termId: string) {
+    const term = await this.prisma.academicTerm.findUnique({ where: { id: BigInt(termId) } });
+    if (!term) throw new BadRequestException('Term not found');
+    await this.prisma.academicTerm.updateMany({ where: { sessionId: term.sessionId }, data: { isCurrent: false } });
+    await this.prisma.academicTerm.update({ where: { id: BigInt(termId) }, data: { isCurrent: true } });
     return this.ok(null, 'Current term updated successfully');
+  }
+
+  async getAllPayments(q: any) {
+    const page = Math.max(1, parseInt(q.page) || 1);
+    const limit = parseInt(q.limit) || 20;
+    const where: any = {};
+    if (q.status) where.status = q.status;
+    const [total, payments] = await Promise.all([
+      this.prisma.schoolFeePayment.count({ where }),
+      this.prisma.schoolFeePayment.findMany({
+        where, orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * limit, take: limit,
+        include: { student: { include: { user: true } } },
+      }),
+    ]);
+    return { success: true, data: payments.map(p => ({
+      ...p, id: p.id.toString(),
+      student_id: p.student.studentNo,
+      firstname: p.student.user.firstName,
+      lastname: p.student.user.lastName,
+    })), meta: { total, page, per_page: limit, last_page: Math.ceil(total / limit) } };
   }
 
   async getPendingPayments() {
@@ -416,7 +449,13 @@ export class AdminService {
       where: { name: term as any, sessionId: sessionEntity?.id } 
     });
 
-    if (!sessionEntity || !termEntity) throw new BadRequestException('Session or Term not found.');
+    if (!sessionEntity || !termEntity) {
+      const [classes, sessions] = await Promise.all([
+        this.prisma.classRoom.findMany({ orderBy: { name: 'asc' } }),
+        this.prisma.academicSession.findMany({ orderBy: { name: 'desc' } }),
+      ]);
+      return this.ok({ students: [], classes, sessions, current_session: session, current_term: term });
+    }
 
     const where: any = { sessionId: sessionEntity.id, termId: termEntity.id };
     const userWhere: any = { role: 'STUDENT' };
@@ -465,7 +504,7 @@ export class AdminService {
     const term = q.term || await this.getCurrentTerm();
     
     const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
-    const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term as any, sessionId: sessionEntity?.id } });
+    const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term.toUpperCase() as any, sessionId: sessionEntity?.id } });
     const user = await this.prisma.user.findUnique({ where: { uniqueId: studentId }, include: { student: true } });
 
     if (!user || !user.student || !sessionEntity || !termEntity) throw new NotFoundException('Student or Session/Term not found');
@@ -482,7 +521,7 @@ export class AdminService {
     const term = body.term || await this.getCurrentTerm();
     
     const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
-    const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term as any, sessionId: sessionEntity?.id } });
+    const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term.toUpperCase() as any, sessionId: sessionEntity?.id } });
     const user = await this.prisma.user.findUnique({ where: { uniqueId: studentId }, include: { student: true } });
 
     if (!user || !user.student || !sessionEntity || !termEntity) return;
@@ -508,7 +547,7 @@ export class AdminService {
     const term = body.term || await this.getCurrentTerm();
     
     const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
-    const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term as any, sessionId: sessionEntity?.id } });
+    const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term.toUpperCase() as any, sessionId: sessionEntity?.id } });
     const user = await this.prisma.user.findUnique({ where: { uniqueId: studentId }, include: { student: true } });
 
     if (!user || !user.student || !sessionEntity || !termEntity) return;
@@ -593,13 +632,24 @@ export class AdminService {
     return this.ok(null, 'School days deleted successfully');
   }
 
+  async getNotifications(user: any) {
+    return this.ok(await this.prisma.notification.findMany({ where: { userId: BigInt(user.id) }, orderBy: { createdAt: 'desc' } }));
+  }
+
+  async markNotificationsRead(user: any) {
+    await this.prisma.notification.updateMany({ where: { userId: BigInt(user.id), readAt: null }, data: { readAt: new Date() } });
+    return this.ok(null, 'Notifications marked as read');
+  }
+
   private async getCurrentSession(): Promise<string> {
-    const r = await this.prisma.academicSession.findFirst({ orderBy: { createdAt: 'desc' } });
+    const r = await this.prisma.academicSession.findFirst({ where: { isCurrent: true } })
+      ?? await this.prisma.academicSession.findFirst({ orderBy: { createdAt: 'desc' } });
     return r?.name || '';
   }
 
   private async getCurrentTerm(): Promise<string> {
-    const r = await this.prisma.academicTerm.findFirst({ orderBy: { createdAt: 'desc' } });
+    const r = await this.prisma.academicTerm.findFirst({ where: { isCurrent: true } })
+      ?? await this.prisma.academicTerm.findFirst({ orderBy: { createdAt: 'desc' } });
     return r?.name || '';
   }
 

@@ -1,5 +1,5 @@
-import { PrismaClient as TargetClient } from '@generated/prisma';
 import { PrismaClient as LegacyClient } from '@generated/legacy-client';
+import { PrismaClient as TargetClient } from '@generated/prisma';
 import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 import * as dotenv from 'dotenv';
 
@@ -141,7 +141,7 @@ async function migrateAcademicRecords() {
           termId,
           present: parseInt(a.present) || 0,
           absent: parseInt(a.absent) || 0,
-          comment: a.comment,
+          teacherComment: a.comment,
           principalComment: a.principal_comment,
         }
       });

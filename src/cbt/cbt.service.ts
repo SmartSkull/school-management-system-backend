@@ -31,16 +31,21 @@ export class CbtService {
         course: test.subject?.name,
         question_count: test._count.questions,
         duration: test.durationMin,
-        completed: !!result
+        completed: !!result,
+        score: result ? Number(result.score) : undefined,
+        percentage: result ? Number(result.percentage) : undefined,
       };
     }));
     return this.ok(data);
   }
 
-  async startTest(user: any, testId: string) {
+  async startTest(user: any, course: string) {
     const student = await this.prisma.student.findUnique({ where: { userId: BigInt(user.id) } });
-    const test = await this.prisma.cbtTest.findUnique({ 
-      where: { id: BigInt(testId) },
+    const test = await this.prisma.cbtTest.findFirst({ 
+      where: {
+        classRoomId: student?.classRoomId ?? null,
+        subject: { name: { contains: course } },
+      },
       include: { questions: true }
     });
     if (!test) throw new NotFoundException('Test not found');
@@ -83,10 +88,13 @@ export class CbtService {
     return this.ok(null, 'Answer submitted');
   }
 
-  async submitTest(user: any, testId: string) {
+  async submitTest(user: any, course: string) {
     const student = await this.prisma.student.findUnique({ where: { userId: BigInt(user.id) } });
-    const test = await this.prisma.cbtTest.findUnique({ 
-      where: { id: BigInt(testId) },
+    const test = await this.prisma.cbtTest.findFirst({ 
+      where: {
+        classRoomId: student?.classRoomId ?? null,
+        subject: { name: { contains: course } },
+      },
       include: { questions: true }
     });
     if (!test || !student) throw new NotFoundException('Test or Student not found');

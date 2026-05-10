@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 
 @Injectable()
@@ -233,7 +233,7 @@ export class StaffService {
   async deleteResult(body: any) {
     const { course, session, term, student_ids } = body;
     const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
-    const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term as any, sessionId: sessionEntity?.id } });
+    const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term.toUpperCase() as any, sessionId: sessionEntity?.id } });
     const subject = await this.prisma.subject.findFirst({ where: { name: course } });
 
     if (!Array.isArray(student_ids)) throw new BadRequestException('student_ids must be an array');
@@ -338,7 +338,7 @@ export class StaffService {
     if (!student_id || !comment || !session || !term) throw new BadRequestException('All fields required');
     
     const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
-    const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term as any, sessionId: sessionEntity?.id } });
+    const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term.toUpperCase() as any, sessionId: sessionEntity?.id } });
     const student = await this.prisma.student.findUnique({ where: { studentNo: student_id } });
 
     if (!sessionEntity || !termEntity || !student) throw new BadRequestException('Session, Term, or Student not found');
@@ -351,12 +351,12 @@ export class StaffService {
           termId: termEntity.id,
         }
       },
-      update: { comment },
+      update: { teacherComment: comment },
       create: {
         studentId: student.id,
         sessionId: sessionEntity.id,
         termId: termEntity.id,
-        comment,
+        teacherComment: comment,
       }
     });
     return this.ok(null, 'Comment added successfully');
@@ -469,6 +469,15 @@ export class StaffService {
 
   async getSchoolDays() {
     return { success: true, data: await this.prisma.schoolDays.findMany({ orderBy: { createdAt: 'desc' } }) };
+  }
+
+  async getNotifications(user: any) {
+    return { success: true, data: await this.prisma.notification.findMany({ where: { userId: BigInt(user.id) }, orderBy: { createdAt: 'desc' } }) };
+  }
+
+  async markNotificationsRead(user: any) {
+    await this.prisma.notification.updateMany({ where: { userId: BigInt(user.id), readAt: null }, data: { readAt: new Date() } });
+    return { success: true, data: null, message: 'Notifications marked as read' };
   }
 
   private async resultsWithTotals(where: any) {

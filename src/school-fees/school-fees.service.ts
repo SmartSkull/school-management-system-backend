@@ -29,7 +29,7 @@ export class SchoolFeesService {
     const term = q.term || await this.getCurrentTerm();
 
     const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
-    const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term as any, sessionId: sessionEntity?.id } });
+    const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term.toUpperCase() as any, sessionId: sessionEntity?.id } });
     
     const student = await this.prisma.student.findUnique({ 
       where: { userId: BigInt(user.id) },
@@ -37,6 +37,25 @@ export class SchoolFeesService {
     });
 
     if (!sessionEntity || !termEntity || !student) throw new BadRequestException('Session, Term, or Student not found.');
+    if (!student.classRoomId) {
+      // No classroom assigned — try to find any fee config for this period so student can still pay
+      const fallbackConfig = await this.prisma.schoolFeeConfig.findFirst({
+        where: { sessionId: sessionEntity.id, termId: termEntity.id },
+      });
+      const payment = await this.prisma.schoolFeePayment.findFirst({
+        where: { studentId: student.id, sessionId: sessionEntity.id, termId: termEntity.id },
+      });
+      return this.ok({
+        session, term, class: null,
+        amount: fallbackConfig ? Number(fallbackConfig.amount) : null,
+        description: fallbackConfig?.description || '',
+        fee_configured: !!fallbackConfig,
+        payment_status: payment?.status || 'not_paid',
+        paid_at: payment?.paidAt || null,
+        reference: payment?.reference || null,
+        history: [],
+      });
+    }
 
     const [config, payment, history] = await Promise.all([
       this.prisma.schoolFeeConfig.findFirst({
@@ -67,7 +86,7 @@ export class SchoolFeesService {
     const term = body.term || await this.getCurrentTerm();
 
     const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
-    const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term as any, sessionId: sessionEntity?.id } });
+    const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term.toUpperCase() as any, sessionId: sessionEntity?.id } });
     
     const student = await this.prisma.student.findUnique({ 
       where: { userId: BigInt(user.id) },
@@ -78,9 +97,11 @@ export class SchoolFeesService {
     if (!student.user.email) throw new BadRequestException('Student email is required for payment.');
 
     const config = await this.prisma.schoolFeeConfig.findFirst({
-      where: { classRoomId: student.classRoomId, sessionId: sessionEntity.id, termId: termEntity.id },
+      where: student.classRoomId
+        ? { classRoomId: student.classRoomId, sessionId: sessionEntity.id, termId: termEntity.id }
+        : { sessionId: sessionEntity.id, termId: termEntity.id },
     });
-    if (!config) throw new NotFoundException(`No school fees configured for ${student.classRoom?.name} - ${term} term, ${session} session.`);
+    if (!config) throw new NotFoundException(`No school fees configured for ${term} term, ${session} session.`);
 
     const existing = await this.prisma.schoolFeePayment.findFirst({
       where: { studentId: student.id, sessionId: sessionEntity.id, termId: termEntity.id, status: 'SUCCESS' },
@@ -90,10 +111,12 @@ export class SchoolFeesService {
     const amount = Number(config.amount);
     const reference = `FEES-${student.studentNo}-${session.replace('/', '')}-${term}-${Date.now()}`.replace(/[^a-zA-Z0-9-]/g, '');
 
+    const appUrl = process.env.APP_URL || 'http://localhost:3001';
     const paystackData = await this.paystackRequest('POST', '/transaction/initialize', {
       email: student.user.email,
       amount: Math.round(amount * 100),
       reference,
+      callback_url: `${appUrl}/student/payments/callback`,
       metadata: {
         student_id: student.studentNo,
         student_name: `${student.user.firstName} ${student.user.lastName}`,
@@ -322,7 +345,7 @@ export class SchoolFeesService {
     const term = q.term || await this.getCurrentTerm();
     
     const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
-    const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term as any, sessionId: sessionEntity?.id } });
+    const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term.toUpperCase() as any, sessionId: sessionEntity?.id } });
     
     if (!sessionEntity || !termEntity) throw new BadRequestException('Session or Term not found.');
 

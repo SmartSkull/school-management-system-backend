@@ -64,12 +64,17 @@ export class AdminController {
   @Get('sessions') getSessions() { return this.svc.getSessions(); }
   @Post('sessions') createSession(@Body('session') s: string) { return this.svc.createSession(s); }
   @Put('sessions/:session/current') setCurrentSession(@Param('session') s: string) { return this.svc.setCurrentSession(s); }
+  @Post('sessions/set-current') setCurrentSessionByBody(@Body('name') name: string) { return this.svc.setCurrentSession(name); }
   @Delete('sessions/:session') deleteSession(@Param('session') s: string) { return this.svc.deleteSession(s); }
+  @Post('sessions/delete') deleteSessionByBody(@Body('name') name: string) { return this.svc.deleteSession(name); }
   @Get('terms') getTerms() { return this.svc.getTerms(); }
   @Put('terms/:term/current') setCurrentTerm(@Param('term') t: string) { return this.svc.setCurrentTerm(t); }
+  @Delete('terms/:id') deleteTerm(@Param('id') id: string) { return this.svc.deleteTerm(id); }
+  @Put('terms/:id') updateTerm(@Param('id') id: string, @Body() body: any) { return this.svc.updateTerm(id, body); }
 
   // Payments
   @Get('payments/pending') getPendingPayments() { return this.svc.getPendingPayments(); }
+  @Get('payments') getAllPayments(@Query() q: any) { return this.svc.getAllPayments(q); }
   @Post('payments/:id/verify') verifyPayment(@Param('id') id: string) { return this.svc.verifyPayment(id); }
 
   // Library
@@ -102,4 +107,7 @@ export class AdminController {
   @Get('school-days') getSchoolDays() { return this.svc.getSchoolDays(); }
   @Post('school-days') setSchoolDays(@Body() body: any) { return this.svc.setSchoolDays(body); }
   @Delete('school-days/:session/:term') deleteSchoolDays(@Param('session') s: string, @Param('term') t: string) { return this.svc.deleteSchoolDays(s, t); }
+
+  @Get('notifications') getNotifications(@CurrentUser() user: any) { return this.svc.getNotifications(user); }
+  @Post('notifications/read') markNotificationsRead(@CurrentUser() user: any) { return this.svc.markNotificationsRead(user); }
 }

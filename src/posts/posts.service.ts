@@ -29,10 +29,14 @@ export class PostsService {
       });
       return { 
         ...post, 
+        id: post.id.toString(),
         post_id: post.id.toString(),
-        has_liked: !!liked,
-        likes_count: post._count.likes,
-        comments_count: post._count.comments,
+        title: post.text?.split('\n')[0]?.slice(0, 80) || '',
+        content: post.text,
+        created_at: post.createdAt,
+        liked: !!liked,
+        likes: post._count.likes,
+        comments: post._count.comments,
         author_name: `${post.author.firstName} ${post.author.lastName}`,
         author_image: post.author.image,
       };
@@ -112,12 +116,25 @@ export class PostsService {
   async comment(postId: number, user: any, comment: string) {
     if (!comment) throw new BadRequestException('Comment is required');
     const created = await this.prisma.comment.create({ 
-      data: { 
-        postId: BigInt(postId), 
-        text: comment, 
-        authorId: BigInt(user.id) 
-      } 
+      data: { postId: BigInt(postId), text: comment, authorId: BigInt(user.id) } 
     });
-    return this.ok({ id: created.id.toString() }, 'Comment added');
+    return this.ok({ id: created.id.toString(), text: created.text, author: { firstName: user.firstName, lastName: user.lastName } }, 'Comment added');
+  }
+
+  async updateComment(commentId: number, user: any, text: string) {
+    if (!text) throw new BadRequestException('Comment text is required');
+    const c = await this.prisma.comment.findUnique({ where: { id: BigInt(commentId) } });
+    if (!c) throw new NotFoundException('Comment not found');
+    if (c.authorId !== BigInt(user.id)) throw new ForbiddenException('Not your comment');
+    await this.prisma.comment.update({ where: { id: BigInt(commentId) }, data: { text } });
+    return this.ok(null, 'Comment updated');
+  }
+
+  async deleteComment(commentId: number, user: any) {
+    const c = await this.prisma.comment.findUnique({ where: { id: BigInt(commentId) } });
+    if (!c) throw new NotFoundException('Comment not found');
+    if (c.authorId !== BigInt(user.id)) throw new ForbiddenException('Not your comment');
+    await this.prisma.comment.delete({ where: { id: BigInt(commentId) } });
+    return this.ok(null, 'Comment deleted');
   }
 }

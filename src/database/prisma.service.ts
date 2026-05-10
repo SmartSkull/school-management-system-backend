@@ -1,9 +1,12 @@
+import { PrismaClient } from '@generated/prisma';
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { PrismaMariaDb } from '@prisma/adapter-mariadb';
-import { PrismaClient } from '@generated/prisma';
 
 @Injectable()
-export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+export class PrismaService
+  extends PrismaClient
+  implements OnModuleInit, OnModuleDestroy
+{
   constructor() {
     const adapter = new PrismaMariaDb({
       host: process.env.DB_HOST || 'localhost',
@@ -15,6 +18,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     });
 
     super({ adapter });
+
+    (BigInt.prototype as any).toJSON = function () {
+      return this.toString();
+    };
   }
 
   async onModuleInit() {
@@ -25,23 +32,34 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     await this.$disconnect();
   }
 
-  normalizeValue(value: any): any {
-    if (typeof value === 'bigint') {
-      return value <= Number.MAX_SAFE_INTEGER && value >= Number.MIN_SAFE_INTEGER
-        ? Number(value)
-        : value.toString();
-    }
+normalizeValue(value: any): any {
+  if (typeof value === 'bigint') {
+    const max = BigInt(Number.MAX_SAFE_INTEGER);
+    const min = BigInt(Number.MIN_SAFE_INTEGER);
 
-    if (Array.isArray(value)) {
-      return value.map(item => this.normalizeValue(item));
-    }
-
-    if (value && typeof value === 'object' && !(value instanceof Date) && !Buffer.isBuffer(value)) {
-      return Object.fromEntries(
-        Object.entries(value).map(([key, nested]) => [key, this.normalizeValue(nested)]),
-      );
-    }
-
-    return value;
+    return value <= max && value >= min
+      ? Number(value)
+      : value.toString();
   }
+
+  if (Array.isArray(value)) {
+    return value.map(item => this.normalizeValue(item));
+  }
+
+  if (
+    value &&
+    typeof value === 'object' &&
+    !(value instanceof Date) &&
+    !Buffer.isBuffer(value)
+  ) {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, nested]) => [
+        key,
+        this.normalizeValue(nested),
+      ]),
+    );
+  }
+
+  return value;
+}
 }

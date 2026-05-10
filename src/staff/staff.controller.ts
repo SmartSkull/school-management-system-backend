@@ -71,4 +71,7 @@ export class StaffController {
   @Get('classes') getClasses() { return this.svc.getClasses(); }
   @Get('courses') getCourses() { return this.svc.getCourses(); }
   @Get('school-days') getSchoolDays() { return this.svc.getSchoolDays(); }
+
+  @Get('notifications') getNotifications(@CurrentUser() user: any) { return this.svc.getNotifications(user); }
+  @Post('notifications/read') markNotificationsRead(@CurrentUser() user: any) { return this.svc.markNotificationsRead(user); }
 }
