@@ -32,7 +32,14 @@ const migrations = [
     ],
   },
   {
-    name: 'add_LibraryResource_classRoomId',
+    name: 'add_CbtTest_sessionId_termId',
+    sql: [
+      "ALTER TABLE `CbtTest` ADD COLUMN `sessionId` BIGINT NULL",
+      "ALTER TABLE `CbtTest` ADD COLUMN `termId` BIGINT NULL",
+      "ALTER TABLE `CbtTest` ADD CONSTRAINT `CbtTest_sessionId_fkey` FOREIGN KEY (`sessionId`) REFERENCES `AcademicSession`(`id`) ON DELETE SET NULL ON UPDATE CASCADE",
+      "ALTER TABLE `CbtTest` ADD CONSTRAINT `CbtTest_termId_fkey` FOREIGN KEY (`termId`) REFERENCES `AcademicTerm`(`id`) ON DELETE SET NULL ON UPDATE CASCADE",
+    ],
+  },
     sql: [
       "ALTER TABLE `LibraryResource` ADD COLUMN `classRoomId` BIGINT NULL",
       "ALTER TABLE `LibraryResource` ADD CONSTRAINT `LibraryResource_classRoomId_fkey` FOREIGN KEY (`classRoomId`) REFERENCES `ClassRoom`(`id`) ON DELETE SET NULL ON UPDATE CASCADE",

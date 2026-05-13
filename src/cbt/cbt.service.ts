@@ -162,12 +162,23 @@ export class CbtService {
       const classRoom = await this.prisma.classRoom.findFirst({ where: { name: className } });
       if (!classRoom) throw new BadRequestException(`Class "${className}" not found`);
 
+      let sessionId: bigint | undefined;
+      let termId: bigint | undefined;
+      if (body.session) {
+        const s = await this.prisma.academicSession.findFirst({ where: { name: body.session } });
+        if (s) sessionId = s.id;
+      }
+      if (body.term) {
+        const t = await this.prisma.academicTerm.findFirst({ where: { name: body.term as any } });
+        if (t) termId = t.id;
+      }
+
       let test = await this.prisma.cbtTest.findFirst({
-        where: { subjectId: subject.id, classRoomId: classRoom.id },
+        where: { subjectId: subject.id, classRoomId: classRoom.id, sessionId: sessionId ?? null, termId: termId ?? null },
       });
       if (!test) {
         test = await this.prisma.cbtTest.create({
-          data: { title: `${course} — ${className}`, subjectId: subject.id, classRoomId: classRoom.id },
+          data: { title: `${course} — ${className}`, subjectId: subject.id, classRoomId: classRoom.id, sessionId, termId },
         });
       }
       testId = test.id;
@@ -188,23 +199,36 @@ export class CbtService {
     return this.ok({ id: question.id.toString() }, 'Question created successfully');
   }
 
-  async getQuestions(className: string, subjectName: string) {
-    if (!className && !subjectName) {
-      return this.ok(await this.prisma.cbtQuestion.findMany({
-        orderBy: { id: 'asc' },
-        include: { test: { include: { classRoom: true, subject: true } } },
-      }));
+  async getQuestions(className: string, subjectName: string, sessionName?: string, termName?: string) {
+    const where: any = {};
+    if (className) where.classRoom = { name: className };
+    if (subjectName) where.subject = { name: subjectName };
+    if (sessionName) {
+      const session = await this.prisma.academicSession.findFirst({ where: { name: sessionName } });
+      if (session) where.sessionId = session.id;
+    }
+    if (termName) {
+      const term = await this.prisma.academicTerm.findFirst({ where: { name: termName as any } });
+      if (term) where.termId = term.id;
     }
 
-    const test = await this.prisma.cbtTest.findFirst({
-      where: { classRoom: { name: className }, subject: { name: subjectName } }
+    const tests = await this.prisma.cbtTest.findMany({
+      where: Object.keys(where).length ? where : undefined,
+      include: { classRoom: true, subject: true },
     });
-    if (!test) return this.ok([]);
-    
-    return this.ok(await this.prisma.cbtQuestion.findMany({ 
-      where: { testId: test.id },
-      orderBy: { id: 'asc' }
-    }));
+    if (!tests.length) return this.ok([]);
+
+    const questions = await this.prisma.cbtQuestion.findMany({
+      where: { testId: { in: tests.map(t => t.id) } },
+      orderBy: { id: 'asc' },
+    });
+
+    const testMap = new Map(tests.map(t => [t.id.toString(), t]));
+    return this.ok(questions.map(q => ({
+      ...q,
+      class: testMap.get(q.testId.toString())?.classRoom?.name,
+      course: testMap.get(q.testId.toString())?.subject?.name,
+    })));
   }
 
   async updateQuestion(id: string, body: any) {

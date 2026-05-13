@@ -40,7 +40,9 @@ export class CbtController {
 
   @Get('staff/cbt/questions')
   @UseGuards(StaffGuard)
-  getQuestions(@Query('class') cls: string, @Query('course') course: string) { return this.svc.getQuestions(cls, course); }
+  getQuestions(@Query('class') cls: string, @Query('course') course: string, @Query('session') session: string, @Query('term') term: string) {
+    return this.svc.getQuestions(cls, course, session, term);
+  }
 
   @Delete('staff/cbt/questions/:id')
   @UseGuards(StaffGuard)
