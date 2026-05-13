@@ -211,7 +211,8 @@ export class SchoolFeesService {
       orderBy: { createdAt: 'desc' },
     });
     return this.ok(payments.map(p => ({ 
-      ...p, 
+      ...p,
+      amount: Number(p.amount),
       firstname: student.user.firstName, 
       lastname: student.user.lastName, 
       class: student.classRoom?.name 
@@ -329,6 +330,7 @@ export class SchoolFeesService {
     const rows = payments.map(p => ({
       ...p,
       id: p.id.toString(),
+      amount: Number(p.amount),
       student_id: p.student.user.uniqueId,
       firstname: p.student.user.firstName,
       lastname: p.student.user.lastName,
