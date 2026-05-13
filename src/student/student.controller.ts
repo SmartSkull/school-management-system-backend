@@ -17,7 +17,7 @@ export class StudentController {
   @Put('profile') updateProfile(@CurrentUser() user: any, @Body() body: any) { return this.svc.updateProfile(user, body); }
 
   @Post('profile/image')
-  @UseInterceptors(FileInterceptor('image', { storage: diskStorage({ destination: './uploads', filename: (_, f, cb) => cb(null, `${Date.now()}${extname(f.originalname)}`) }) }))
+  @UseInterceptors(FileInterceptor('image', { storage: diskStorage({ destination: './uploads', filename: (_, f, cb) => cb(null, `${Date.now()}${extname(f.originalname)}`) }), limits: { fileSize: 5 * 1024 * 1024 } }))
   updateImage(@CurrentUser() user: any, @UploadedFile() file: Express.Multer.File) {
     return this.svc.updateImage(user, file);
   }
