@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Put, Body, Query, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { memoryStorage } from 'multer';
 import { StudentService } from './student.service';
 import { StudentGuard } from '../common/guards/auth.guard';
 import { CurrentUser } from '../common/decorators/user.decorator';
@@ -17,7 +16,7 @@ export class StudentController {
   @Put('profile') updateProfile(@CurrentUser() user: any, @Body() body: any) { return this.svc.updateProfile(user, body); }
 
   @Post('profile/image')
-  @UseInterceptors(FileInterceptor('image', { storage: diskStorage({ destination: './uploads', filename: (_, f, cb) => cb(null, `${Date.now()}${extname(f.originalname)}`) }), limits: { fileSize: 5 * 1024 * 1024 } }))
+  @UseInterceptors(FileInterceptor('image', { storage: memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } }))
   updateImage(@CurrentUser() user: any, @UploadedFile() file: Express.Multer.File) {
     return this.svc.updateImage(user, file);
   }

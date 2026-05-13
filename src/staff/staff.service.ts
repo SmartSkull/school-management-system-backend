@@ -1,5 +1,6 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
+import { uploadToCloudinary } from '../common/cloudinary';
 
 @Injectable()
 export class StaffService {
@@ -103,8 +104,9 @@ export class StaffService {
 
   async updateImage(user: any, file: Express.Multer.File) {
     if (!file) throw new BadRequestException('No image provided');
-    await this.prisma.user.update({ where: { id: user.id }, data: { image: file.filename } });
-    return this.ok({ image: file.filename }, 'Image updated successfully');
+    const url = await uploadToCloudinary(file, 'florieren/staff');
+    await this.prisma.user.update({ where: { id: user.id }, data: { image: url } });
+    return this.ok({ image: url }, 'Image updated successfully');
   }
 
   async getStudents(user: any, cls?: string, search?: string) {
@@ -426,6 +428,7 @@ export class StaffService {
     const classRoom = await this.prisma.classRoom.findFirst({ where: { name: body.class } });
     const subject = await this.prisma.subject.findFirst({ where: { name: body.subject } });
 
+    const fileUrl = file ? await uploadToCloudinary(file, 'florieren/assignments') : null;
     const assignment = await this.prisma.assignment.create({ 
       data: { 
         title: body.subject || 'Assignment', 
@@ -434,7 +437,7 @@ export class StaffService {
         staffId: staff!.id, 
         classRoomId: classRoom?.id,
         subjectId: subject?.id,
-        file: file?.filename 
+        file: fileUrl
       } 
     });
     return this.ok({ id: assignment.id.toString() }, 'Assignment created successfully');
@@ -471,7 +474,7 @@ export class StaffService {
     if (body.assignment) data.content = body.assignment;
     if (body.deadline) data.dueAt = new Date(body.deadline);
     if (body.subject) data.title = body.subject;
-    if (file) data.file = file.filename;
+    if (file) data.file = await uploadToCloudinary(file, 'florieren/assignments');
     
     await this.prisma.assignment.update({ where: { id: BigInt(id) }, data });
     return this.ok(null, 'Assignment updated successfully');
@@ -507,6 +510,7 @@ export class StaffService {
     const classRoom = await this.prisma.classRoom.findFirst({ where: { name: body.class } });
     const subject = await this.prisma.subject.findFirst({ where: { name: body.course } });
 
+    const fileUrl = await uploadToCloudinary(file, 'florieren/library');
     const item = await this.prisma.libraryResource.create({ 
       data: { 
         title: body.course, 
@@ -514,7 +518,7 @@ export class StaffService {
         staffId: staff!.id, 
         classRoomId: classRoom?.id,
         subjectId: subject?.id,
-        file: file.filename, 
+        file: fileUrl, 
         status: 'PENDING'
       } 
     });

@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { memoryStorage } from 'multer';
 import { PostsService } from './posts.service';
 import { JwtAuthGuard } from '../common/guards/auth.guard';
 import { CurrentUser } from '../common/decorators/user.decorator';
@@ -18,13 +17,13 @@ export class PostsController {
   show(@Param('id') id: string, @CurrentUser() user: any) { return this.svc.show(+id, user); }
 
   @Post('admin/posts')
-  @UseInterceptors(FileInterceptor('image', { storage: diskStorage({ destination: './uploads', filename: (_, f, cb) => cb(null, `${Date.now()}${extname(f.originalname)}`) }) }))
+  @UseInterceptors(FileInterceptor('image', { storage: memoryStorage() }))
   store(@CurrentUser() user: any, @Body() body: any, @UploadedFile() file: Express.Multer.File) {
     return this.svc.store(user, body, file);
   }
 
   @Put('admin/posts/:id')
-  @UseInterceptors(FileInterceptor('image', { storage: diskStorage({ destination: './uploads', filename: (_, f, cb) => cb(null, `${Date.now()}${extname(f.originalname)}`) }) }))
+  @UseInterceptors(FileInterceptor('image', { storage: memoryStorage() }))
   update(@CurrentUser() user: any, @Param('id') id: string, @Body() body: any, @UploadedFile() file: Express.Multer.File) {
     return this.svc.update(user, +id, body, file);
   }

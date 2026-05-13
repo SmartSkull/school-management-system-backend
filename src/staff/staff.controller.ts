@@ -3,16 +3,12 @@ import {
   UseGuards, UseInterceptors, UploadedFile, UploadedFiles,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { memoryStorage } from 'multer';
 import { StaffService } from './staff.service';
 import { StaffGuard } from '../common/guards/auth.guard';
 import { CurrentUser } from '../common/decorators/user.decorator';
 
-const imageStorage = diskStorage({
-  destination: './uploads',
-  filename: (_, file, cb) => cb(null, `${Date.now()}${extname(file.originalname)}`),
-});
+const imageStorage = memoryStorage();
 
 @Controller('staff')
 @UseGuards(StaffGuard)
@@ -44,7 +40,7 @@ export class StaffController {
   @Post('comment') addComment(@Body() body: any) { return this.svc.addComment(body); }
 
   @Post('assignments')
-  @UseInterceptors(FileInterceptor('file', { storage: diskStorage({ destination: './uploads/assignments', filename: (_, f, cb) => cb(null, `${Date.now()}_${f.originalname}`) }) }))
+  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   createAssignment(@CurrentUser() user: any, @Body() body: any, @UploadedFile() file: Express.Multer.File) {
     return this.svc.createAssignment(user, body, file);
   }
@@ -52,7 +48,7 @@ export class StaffController {
   @Get('assignments') getAssignments(@CurrentUser() user: any) { return this.svc.getAssignments(user); }
 
   @Put('assignments/:id')
-  @UseInterceptors(FileInterceptor('file', { storage: diskStorage({ destination: './uploads/assignments', filename: (_, f, cb) => cb(null, `${Date.now()}_${f.originalname}`) }) }))
+  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   updateAssignment(@CurrentUser() user: any, @Param('id') id: string, @Body() body: any, @UploadedFile() file: Express.Multer.File) {
     return this.svc.updateAssignment(user, +id, body, file);
   }
@@ -62,7 +58,7 @@ export class StaffController {
   @Get('library') getLibrary(@CurrentUser() user: any) { return this.svc.getLibrary(user); }
 
   @Post('library')
-  @UseInterceptors(FileInterceptor('pdf', { storage: diskStorage({ destination: './uploads', filename: (_, f, cb) => cb(null, `${Date.now()}_${f.originalname}`) }) }))
+  @UseInterceptors(FileInterceptor('pdf', { storage: memoryStorage() }))
   uploadLibrary(@CurrentUser() user: any, @Body() body: any, @UploadedFile() file: Express.Multer.File) {
     return this.svc.uploadLibrary(user, body, file);
   }

@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
+import { uploadToCloudinary } from '../common/cloudinary';
 
 @Injectable()
 export class StudentService {
@@ -71,8 +72,9 @@ export class StudentService {
 
   async updateImage(user: any, file: Express.Multer.File) {
     if (!file) throw new BadRequestException('No image provided');
-    await this.prisma.user.update({ where: { id: BigInt(user.id) }, data: { image: file.filename } });
-    return this.ok({ image: file.filename }, 'Image updated successfully');
+    const url = await uploadToCloudinary(file, 'florieren/students');
+    await this.prisma.user.update({ where: { id: BigInt(user.id) }, data: { image: url } });
+    return this.ok({ image: url }, 'Image updated successfully');
   }
 
   async getResults(user: any, q: any) {

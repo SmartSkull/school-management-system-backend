@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { memoryStorage } from 'multer';
 import { MessagesService } from './messages.service';
 import { JwtAuthGuard } from '../common/guards/auth.guard';
 import { CurrentUser } from '../common/decorators/user.decorator';
@@ -38,7 +37,7 @@ export class MessagesController {
   deleteConversation(@CurrentUser() user: any, @Query('uid') otherId: string) { return this.svc.deleteConversation(user, otherId); }
 
   @Post(':role/messages/upload')
-  @UseInterceptors(FileInterceptor('file', { storage: diskStorage({ destination: './uploads/messages', filename: (_, f, cb) => cb(null, `${Date.now()}${extname(f.originalname)}`) }) }))
+  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   uploadAttachment(@CurrentUser() user: any, @UploadedFile() file: Express.Multer.File) {
     return this.svc.uploadAttachment(file);
   }
