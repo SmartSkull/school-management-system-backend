@@ -49,7 +49,7 @@ export class SchoolFeesService {
       });
       return this.ok({
         session, term, class: null,
-        amount: fallbackConfig ? Number(fallbackConfig.amount) : null,
+        amount: payment ? Number(payment.amount) : (fallbackConfig ? Number(fallbackConfig.amount) : null),
         description: fallbackConfig?.description || '',
         fee_configured: !!fallbackConfig,
         payment_status: payment?.status || 'not_paid',
@@ -73,7 +73,7 @@ export class SchoolFeesService {
       session,
       term,
       class: student.classRoom?.name,
-      amount: config ? Number(config.amount) : null,
+      amount: payment ? Number(payment.amount) : (config ? Number(config.amount) : null),
       description: config?.description || '',
       fee_configured: !!config,
       payment_status: payment?.status || 'not_paid',
