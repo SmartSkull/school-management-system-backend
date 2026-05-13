@@ -5,10 +5,13 @@ import OpenAI from 'openai';
 
 @Injectable()
 export class BookgameService {
-  private openai: OpenAI;
+  private _openai: OpenAI | null = null;
 
-  constructor() {
-    this.openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  private get openai(): OpenAI {
+    if (!this._openai) {
+      this._openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    }
+    return this._openai;
   }
 
   private ok(data: any = null, message = 'Success') {
