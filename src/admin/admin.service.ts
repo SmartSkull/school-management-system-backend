@@ -39,7 +39,7 @@ export class AdminService {
       current_session: session?.name,
       current_term: term?.name,
       recentStudents: recentUsers.map(u => ({ firstname: u.firstName, lastname: u.lastName, date: u.createdAt })),
-      recentPayments: recentPayments.map(p => ({ student_id: p.student.studentNo, date: p.createdAt })),
+      recentPayments: recentPayments.map(p => ({ student_id: p.student.user.uniqueId, date: p.createdAt })),
     });
   }
 
@@ -107,7 +107,7 @@ export class AdminService {
           create: {
             studentNo: studentId,
             classRoomId: classRoom?.id,
-          }
+          } as any
         }
       }
     });
@@ -303,6 +303,18 @@ export class AdminService {
     const limit = parseInt(q.limit) || 20;
     const where: any = {};
     if (q.status) where.status = q.status;
+    if (q.session) {
+      const session = await this.prisma.academicSession.findFirst({ where: { name: q.session } });
+      if (session) where.sessionId = session.id;
+    }
+    if (q.term) {
+      const term = await this.prisma.academicTerm.findFirst({ where: { name: q.term as any } });
+      if (term) where.termId = term.id;
+    }
+    if (q.class) {
+      const classRoom = await this.prisma.classRoom.findFirst({ where: { name: q.class } });
+      if (classRoom) where.student = { classRoomId: classRoom.id };
+    }
     const [total, payments] = await Promise.all([
       this.prisma.schoolFeePayment.count({ where }),
       this.prisma.schoolFeePayment.findMany({
@@ -313,7 +325,7 @@ export class AdminService {
     ]);
     return { success: true, data: payments.map(p => ({
       ...p, id: p.id.toString(),
-      student_id: p.student.studentNo,
+      student_id: p.student.user.uniqueId,
       firstname: p.student.user.firstName,
       lastname: p.student.user.lastName,
     })), meta: { total, page, per_page: limit, last_page: Math.ceil(total / limit) } };
@@ -328,7 +340,7 @@ export class AdminService {
     return this.ok(payments.map(p => ({
       ...p,
       id: p.id.toString(),
-      student_id: p.student.studentNo,
+      student_id: p.student.user.uniqueId,
       firstname: p.student.user.firstName,
       lastname: p.student.user.lastName,
     })));

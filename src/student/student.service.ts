@@ -10,12 +10,14 @@ export class StudentService {
   }
 
   private async getCurrentSession(): Promise<string> {
-    const r = await this.prisma.academicSession.findFirst({ orderBy: { createdAt: 'desc' } });
+    const r = await this.prisma.academicSession.findFirst({ where: { isCurrent: true } })
+      ?? await this.prisma.academicSession.findFirst({ orderBy: { createdAt: 'desc' } });
     return r?.name || '';
   }
 
   private async getCurrentTerm(): Promise<string> {
-    const r = await this.prisma.academicTerm.findFirst({ orderBy: { createdAt: 'desc' } });
+    const r = await this.prisma.academicTerm.findFirst({ where: { isCurrent: true } })
+      ?? await this.prisma.academicTerm.findFirst({ orderBy: { createdAt: 'desc' } });
     return r?.name || '';
   }
 
@@ -26,7 +28,16 @@ export class StudentService {
       this.prisma.notification.count({ where: { userId: BigInt(user.id), readAt: null } }),
       this.assignmentsWithStaff({ classRoom: { name: user.class } }, 5),
     ]);
-    return this.ok({ user, current_session: session, current_term: term, unread_notifications: unread, recent_assignments: assignments });
+    return this.ok({
+      user: {
+        firstname: user.firstName,
+        lastname: user.lastName,
+        class: user.class ?? user.student?.classRoom?.name ?? '',
+        image: user.image,
+        uniqueId: user.uniqueId,
+      },
+      current_session: session, current_term: term, unread_notifications: unread, recent_assignments: assignments
+    });
   }
 
   async profile(user: any) {
@@ -150,7 +161,12 @@ export class StudentService {
     }
 
     // Fetch first term scores keyed by course
-    const firstTermRows = await this.resultsWithTotals({ student_id: studentId, session, term: 'first' });
+    const firstTermEntity = await this.prisma.academicTerm.findFirst({
+      where: { name: 'FIRST' as any, session: { name: session } },
+    });
+    const firstTermRows = firstTermEntity
+      ? await this.resultsWithTotals({ studentId: BigInt(studentId), sessionId: firstTermEntity.sessionId, termId: firstTermEntity.id })
+      : [];
     const firstTermMap: Record<string, number> = {};
     for (const r of firstTermRows as any[]) {
       firstTermMap[r.course] = parseFloat(r.total_score) || 0;
@@ -159,7 +175,12 @@ export class StudentService {
     // Fetch second term scores keyed by course (only needed for third term)
     const secondTermMap: Record<string, number> = {};
     if (termLower === 'third') {
-      const secondTermRows = await this.resultsWithTotals({ student_id: studentId, session, term: 'second' });
+      const secondTermEntity = await this.prisma.academicTerm.findFirst({
+        where: { name: 'SECOND' as any, session: { name: session } },
+      });
+      const secondTermRows = secondTermEntity
+        ? await this.resultsWithTotals({ studentId: BigInt(studentId), sessionId: secondTermEntity.sessionId, termId: secondTermEntity.id })
+        : [];
       for (const r of secondTermRows as any[]) {
         secondTermMap[r.course] = parseFloat(r.total_score) || 0;
       }

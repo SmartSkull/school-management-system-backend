@@ -48,6 +48,36 @@ export class PublicController {
     return { success: true, data: posts.map(p => ({ ...p, id: p.id.toString(), author_name: `${p.author.firstName} ${p.author.lastName}` })) };
   }
 
+  @Get('public/approved-results-meta')
+  async approvedResultsMeta() {
+    const [sessionTermRows, classRooms] = await Promise.all([
+      this.prisma.result.findMany({
+        where: { approvedAt: { not: null } },
+        select: {
+          session: { select: { name: true } },
+          term: { select: { name: true } },
+        },
+        distinct: ['sessionId', 'termId'],
+      }),
+      this.prisma.classRoom.findMany({
+        where: {
+          students: {
+            some: { results: { some: { approvedAt: { not: null } } } }
+          }
+        },
+        select: { name: true },
+        orderBy: { name: 'asc' },
+      }),
+    ]);
+
+    return { success: true, data: {
+      sessions: [...new Set(sessionTermRows.map(r => r.session.name))],
+      terms: [...new Set(sessionTermRows.map(r => r.term.name))],
+      classes: classRooms.map(c => c.name),
+    }};
+  }
+
+
   @Get('public/students/search')
   async searchStudents(@Query('q') q: string) {
     if (!q) return { success: true, data: [] };

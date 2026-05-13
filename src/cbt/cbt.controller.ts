@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Body, Param, Query, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -45,6 +45,10 @@ export class CbtController {
   @Delete('staff/cbt/questions/:id')
   @UseGuards(StaffGuard)
   deleteQuestion(@Param('id') id: string) { return this.svc.deleteQuestion(id); }
+
+  @Put('staff/cbt/questions/:id')
+  @UseGuards(StaffGuard)
+  updateQuestion(@Param('id') id: string, @Body() body: any) { return this.svc.updateQuestion(id, body); }
 
   @Get('staff/cbt/results')
   @UseGuards(StaffGuard)

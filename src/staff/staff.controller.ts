@@ -31,12 +31,13 @@ export class StaffController {
     return this.svc.updateImage(user, file);
   }
 
-  @Get('students') getStudents(@CurrentUser() user: any, @Query('class') cls: string) { return this.svc.getStudents(user, cls); }
+  @Get('students') getStudents(@CurrentUser() user: any, @Query('class') cls: string, @Query('search') search: string) { return this.svc.getStudents(user, cls, search); }
   @Get('students/:id') getStudentDetails(@Param('id') id: string) { return this.svc.getStudentDetails(id); }
 
   @Post('results') uploadResult(@CurrentUser() user: any, @Body() body: any) { return this.svc.uploadResult(user, body); }
   @Get('results') getResults(@CurrentUser() user: any, @Query() q: any) { return this.svc.getResults(user, q); }
   @Delete('results') deleteResult(@Body() body: any) { return this.svc.deleteResult(body); }
+  @Post('results/delete') deleteResultByBody(@Body() body: any) { return this.svc.deleteResult(body); }
 
   @Get('attendance') getAttendance(@Query() q: any) { return this.svc.getAttendance(q); }
   @Post('attendance') updateAttendance(@Body() body: any) { return this.svc.updateAttendance(body); }

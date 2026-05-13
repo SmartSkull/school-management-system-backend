@@ -17,5 +17,6 @@
     "paths": {
       "@generated/*": ["node_modules/@generated/*"]
     }
-  }
+  },
+  "exclude": ["node_modules", "dist", "prisma"]
 }

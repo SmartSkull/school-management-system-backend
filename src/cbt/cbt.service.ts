@@ -173,6 +173,21 @@ export class CbtService {
     }));
   }
 
+  async updateQuestion(id: string, body: any) {
+    await this.prisma.cbtQuestion.update({
+      where: { id: BigInt(id) },
+      data: {
+        question: body.question,
+        optionA: body.optionA,
+        optionB: body.optionB,
+        optionC: body.optionC,
+        optionD: body.optionD,
+        answer: body.answer,
+      },
+    });
+    return this.ok(null, 'Question updated successfully');
+  }
+
   async deleteQuestion(id: string) {
     await this.prisma.cbtQuestion.delete({ where: { id: BigInt(id) } });
     return this.ok(null, 'Question deleted successfully');

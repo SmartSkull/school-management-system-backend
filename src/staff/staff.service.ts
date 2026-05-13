@@ -10,22 +10,28 @@ export class StaffService {
   }
 
   private async getCurrentSession(): Promise<string> {
-    const r = await this.prisma.academicSession.findFirst({ orderBy: { createdAt: 'desc' } });
+    const r = await this.prisma.academicSession.findFirst({ where: { isCurrent: true } })
+      ?? await this.prisma.academicSession.findFirst({ orderBy: { createdAt: 'desc' } });
     return r?.name || '';
   }
 
   private async getCurrentTerm(): Promise<string> {
-    const r = await this.prisma.academicTerm.findFirst({ orderBy: { createdAt: 'desc' } });
+    const r = await this.prisma.academicTerm.findFirst({ where: { isCurrent: true } })
+      ?? await this.prisma.academicTerm.findFirst({ orderBy: { createdAt: 'desc' } });
     return r?.name || '';
   }
 
   async dashboard(user: any) {
     const session = await this.getCurrentSession();
     const term = await this.getCurrentTerm();
-    
-    // Find staff record to get the classroom relation
+
+    // The guard resolves staff role as the Staff record with { user: User } included.
+    // userInfo is the nested User (has firstName, lastName, image, uniqueId).
+    const userInfo = user.user ?? user;
+
+    // Re-fetch staff with classRooms (guard include may not have it)
     const staff = await this.prisma.staff.findUnique({ 
-      where: { userId: BigInt(user.id) },
+      where: { id: BigInt(user.id) },
       include: { classRooms: true }
     });
 
@@ -44,19 +50,23 @@ export class StaffService {
     });
 
     return this.ok({ 
-      user, 
+      user: {
+        firstname: userInfo.firstName,
+        lastname: userInfo.lastName,
+        image: userInfo.image,
+        uniqueId: userInfo.uniqueId,
+      },
       current_session: session, 
       current_term: term, 
-      student_count: studentCount, 
+      total_students: studentCount,
+      total_assignments: assignments.length,
+      total_library: libraryItems.length,
       analytics: { 
-        assignments: { 
-          total: assignments.length, 
-          recent: assignments.slice(0, 5) 
-        }, 
+        assignments: { total: assignments.length, recent: assignments.slice(0, 5) }, 
         library: { 
           total: libraryItems.length, 
-          verified: libraryItems.filter((i: any) => i.status == 'APPROVED').length, 
-          pending: libraryItems.filter((i: any) => i.status == 'PENDING').length 
+          verified: libraryItems.filter((i: any) => i.status === 'APPROVED').length, 
+          pending: libraryItems.filter((i: any) => i.status === 'PENDING').length 
         } 
       } 
     });
@@ -97,21 +107,37 @@ export class StaffService {
     return this.ok({ image: file.filename }, 'Image updated successfully');
   }
 
-  async getStudents(user: any, cls?: string) {
-    const where: any = { role: 'STUDENT', status: 'ACTIVE' };
+  async getStudents(user: any, cls?: string, search?: string) {
+    const conditions: any[] = [{ role: 'STUDENT' }, { status: 'ACTIVE' }];
+
     if (cls) {
-      where.student = { classRoom: { name: cls } };
+      conditions.push({ student: { classRoom: { name: cls } } });
     } else {
-      // Get staff's classroom
       const staff = await this.prisma.staff.findUnique({ where: { userId: BigInt(user.id) }, include: { classRooms: true } });
-      if (staff?.classRooms?.length) where.student = { classRoomId: staff.classRooms[0].id };
+      if (staff?.classRooms?.length) conditions.push({ student: { classRoomId: staff.classRooms[0].id } });
     }
-    
-    const students = await this.prisma.user.findMany({ 
-      where,
+
+    if (search) {
+      conditions.push({ OR: [
+        { firstName: { contains: search } },
+        { lastName: { contains: search } },
+        { uniqueId: { contains: search } },
+        { email: { contains: search } },
+      ]});
+    }
+
+    const students = await this.prisma.user.findMany({
+      where: { AND: conditions },
       include: { student: { include: { classRoom: true } } }
     });
-    return this.ok(students);
+    return this.ok(students.map(s => ({
+      student_id: s.uniqueId,
+      firstname: s.firstName,
+      lastname: s.lastName,
+      email: s.email,
+      class: s.student?.classRoom?.name ?? '',
+      image: s.image,
+    })));
   }
 
   async getStudentDetails(id: string) {
@@ -143,7 +169,7 @@ export class StaffService {
       let count = 0;
       for (const r of body.results) {
         if (!r.student_id) continue;
-        const student = await this.prisma.student.findUnique({ where: { studentNo: r.student_id } });
+        const student = await this.prisma.student.findFirst({ where: { user: { uniqueId: r.student_id } } });
         if (!student) continue;
 
         await this.prisma.result.upsert({
@@ -190,13 +216,44 @@ export class StaffService {
     });
 
     if (q.student_id) {
-      const student = await this.prisma.student.findUnique({ where: { studentNo: q.student_id } });
+      const studentRecord = await this.prisma.student.findFirst({ 
+        where: { user: { uniqueId: q.student_id } },
+        include: { user: true, classRoom: true }
+      });
       const results = await this.resultsWithTotals({ 
-        studentId: student?.id, 
+        studentId: studentRecord?.id, 
         sessionId: sessionEntity?.id, 
         termId: termEntity?.id 
       });
-      return this.ok({ results });
+
+      // Get teacher for this class via classRoom.classTeacher
+      const classWithTeacher = studentRecord?.classRoom ? await this.prisma.classRoom.findUnique({
+        where: { id: studentRecord.classRoom.id },
+        include: { classTeacher: { include: { user: true } } }
+      }) : null;
+      const classTeacher = classWithTeacher?.classTeacher ?? null;
+
+      // Get principal
+      const principal = await this.prisma.user.findFirst({ where: { role: 'ADMIN' }, select: { firstName: true, lastName: true, image: true } });
+
+      // Get attendance
+      const attendance = await this.prisma.attendance.findFirst({
+        where: { studentId: studentRecord?.id, sessionId: sessionEntity?.id, termId: termEntity?.id }
+      });
+
+      return this.ok({
+        results,
+        student: studentRecord ? {
+          firstName: studentRecord.user.firstName,
+          lastName: studentRecord.user.lastName,
+          image: studentRecord.user.image,
+          uniqueId: studentRecord.user.uniqueId,
+        } : null,
+        class: studentRecord?.classRoom?.name,
+        teacher: classTeacher ? { name: `${classTeacher.user.firstName} ${classTeacher.user.lastName}`, image: classTeacher.user.image } : null,
+        principal: principal ? { name: `${principal.firstName} ${principal.lastName}`, image: principal.image } : null,
+        attendance,
+      });
     }
 
     const cls = q.class || user.class;
@@ -206,19 +263,21 @@ export class StaffService {
     });
     
     const studentIds = students.map(s => s.student?.id).filter(Boolean) as bigint[];
+    const approvedFilter = q.approved === 'approved' ? { not: null } : q.approved === 'pending' ? null : undefined;
     const results = await this.prisma.result.findMany({
       where: {
         sessionId: sessionEntity?.id,
         termId: termEntity?.id,
         studentId: { in: studentIds },
         ...(q.course ? { subject: { name: q.course } } : {}),
+        ...(approvedFilter !== undefined ? { approvedAt: approvedFilter } : {}),
       },
       include: { student: { include: { user: true } }, subject: true }
     });
 
     const data = results.map(r => ({
       ...r,
-      student_id: r.student.studentNo,
+      student_id: r.student.user.uniqueId,
       firstname: r.student.user.firstName,
       lastname: r.student.user.lastName,
       course: r.subject.name,
@@ -240,7 +299,7 @@ export class StaffService {
     
     let count = 0;
     for (const id of student_ids) {
-      const student = await this.prisma.student.findUnique({ where: { studentNo: id } });
+      const student = await this.prisma.student.findFirst({ where: { user: { uniqueId: id } } });
       if (!student) continue;
       
       const affected = await this.prisma.result.deleteMany({ 
@@ -261,7 +320,7 @@ export class StaffService {
     });
 
     if (q.student_id) {
-      const student = await this.prisma.student.findUnique({ where: { studentNo: q.student_id } });
+      const student = await this.prisma.student.findFirst({ where: { user: { uniqueId: q.student_id } } });
       const att = await this.prisma.attendance.findFirst({ 
         where: { studentId: student?.id, sessionId: sessionEntity?.id, termId: termEntity?.id } 
       });
@@ -307,8 +366,8 @@ export class StaffService {
     return this.ok(null, 'Attendance updated successfully');
   }
 
-  private async upsertAttendance(studentNo: string, present: number, absent: number, sessionId: bigint, termId: bigint) {
-    const student = await this.prisma.student.findUnique({ where: { studentNo } });
+  private async upsertAttendance(studentUniqueId: string, present: number, absent: number, sessionId: bigint, termId: bigint) {
+    const student = await this.prisma.student.findFirst({ where: { user: { uniqueId: studentUniqueId } } });
     if (!student) return;
 
     await this.prisma.attendance.upsert({
@@ -339,7 +398,7 @@ export class StaffService {
     
     const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
     const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term.toUpperCase() as any, sessionId: sessionEntity?.id } });
-    const student = await this.prisma.student.findUnique({ where: { studentNo: student_id } });
+    const student = await this.prisma.student.findFirst({ where: { user: { uniqueId: student_id } } });
 
     if (!sessionEntity || !termEntity || !student) throw new BadRequestException('Session, Term, or Student not found');
 
@@ -388,7 +447,19 @@ export class StaffService {
       orderBy: { createdAt: 'desc' },
       include: { classRoom: true }
     });
-    return this.ok(assignments.map(a => ({ ...a, class: a.classRoom?.name })));
+    return this.ok(assignments.map(a => ({
+      id: a.id.toString(),
+      title: a.title,
+      subject: a.title,
+      assignment: a.content,
+      description: a.content,
+      class: a.classRoom?.name ?? '',
+      deadline: a.dueAt,
+      due_date: a.dueAt,
+      file: a.file,
+      file_url: a.file ? `/uploads/assignments/${a.file}` : null,
+      createdAt: a.createdAt,
+    })));
   }
 
   async updateAssignment(user: any, id: number, body: any, file?: Express.Multer.File) {
@@ -425,7 +496,8 @@ export class StaffService {
       ...i, 
       id: i.id.toString(),
       class: i.classRoom?.name,
-      course: i.subject?.name 
+      course: i.subject?.name,
+      file_url: i.file ? `/uploads/${i.file}` : null,
     })));
   }
 
@@ -481,12 +553,14 @@ export class StaffService {
   }
 
   private async resultsWithTotals(where: any) {
-    const rows = await this.prisma.result.findMany({ where });
+    const rows = await this.prisma.result.findMany({ where, include: { subject: true } });
     return rows.map(row => ({
       ...row,
+      course: row.subject.name,
       testScore: Number(row.testScore),
       examScore: Number(row.examScore),
-      total_score: (Number(row.testScore) || 0) + (Number(row.examScore) || 0),
+      totalScore: Number(row.testScore) + Number(row.examScore),
+      total_score: Number(row.testScore) + Number(row.examScore),
     }));
   }
 }
