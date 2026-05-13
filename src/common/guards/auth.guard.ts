@@ -36,7 +36,10 @@ export class JwtAuthGuard implements CanActivate {
 
   protected async resolveUser(payload: any): Promise<any> {
       if (payload.role === 'student') {
-        return this.prisma.user.findFirst({ where: { uniqueId: payload.id } });
+        return this.prisma.user.findFirst({
+          where: { uniqueId: payload.id },
+          include: { student: { include: { classRoom: true } } },
+        });
       }
 
       if (payload.role === 'staff') {
