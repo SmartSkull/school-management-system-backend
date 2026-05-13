@@ -189,6 +189,13 @@ export class CbtService {
   }
 
   async getQuestions(className: string, subjectName: string) {
+    if (!className && !subjectName) {
+      return this.ok(await this.prisma.cbtQuestion.findMany({
+        orderBy: { id: 'asc' },
+        include: { test: { include: { classRoom: true, subject: true } } },
+      }));
+    }
+
     const test = await this.prisma.cbtTest.findFirst({
       where: { classRoom: { name: className }, subject: { name: subjectName } }
     });
