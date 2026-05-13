@@ -40,6 +40,8 @@ const migrations = [
       "ALTER TABLE `CbtTest` ADD CONSTRAINT `CbtTest_termId_fkey` FOREIGN KEY (`termId`) REFERENCES `AcademicTerm`(`id`) ON DELETE SET NULL ON UPDATE CASCADE",
     ],
   },
+  {
+    name: 'add_LibraryResource_classRoomId',
     sql: [
       "ALTER TABLE `LibraryResource` ADD COLUMN `classRoomId` BIGINT NULL",
       "ALTER TABLE `LibraryResource` ADD CONSTRAINT `LibraryResource_classRoomId_fkey` FOREIGN KEY (`classRoomId`) REFERENCES `ClassRoom`(`id`) ON DELETE SET NULL ON UPDATE CASCADE",

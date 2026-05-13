@@ -148,16 +148,17 @@ export class CbtService {
     const staff = await this.prisma.staff.findUnique({ where: { userId: BigInt(user.id) } });
 
     let testId: bigint;
+    let resolvedSubjectId: bigint | undefined;
 
     if (body.test_id) {
       testId = BigInt(body.test_id);
     } else {
-      // Resolve or create CbtTest from course + class
       const { course, class: className } = body;
       if (!course || !className) throw new BadRequestException('course and class are required');
 
       const subject = await this.prisma.subject.findFirst({ where: { name: { contains: course } } });
       if (!subject) throw new BadRequestException(`Subject "${course}" not found`);
+      resolvedSubjectId = subject.id;
 
       const classRoom = await this.prisma.classRoom.findFirst({ where: { name: className } });
       if (!classRoom) throw new BadRequestException(`Class "${className}" not found`);
@@ -188,6 +189,7 @@ export class CbtService {
       data: {
         testId,
         staffId: staff?.id,
+        subjectId: resolvedSubjectId,
         question: body.question,
         optionA: body.optionA,
         optionB: body.optionB,
@@ -203,27 +205,46 @@ export class CbtService {
     const where: any = {};
     if (className) where.classRoom = { name: className };
     if (subjectName) where.subject = { name: subjectName };
-    if (sessionName) {
-      const session = await this.prisma.academicSession.findFirst({ where: { name: sessionName } });
-      if (session) where.sessionId = session.id;
-    }
-    if (termName) {
-      const term = await this.prisma.academicTerm.findFirst({ where: { name: termName as any } });
-      if (term) where.termId = term.id;
+
+    // Only filter by session/term if columns exist (after migration)
+    let sessionId: bigint | undefined;
+    let termId: bigint | undefined;
+    try {
+      if (sessionName) {
+        const session = await this.prisma.academicSession.findFirst({ where: { name: sessionName } });
+        if (session) { sessionId = session.id; where.sessionId = session.id; }
+      }
+      if (termName) {
+        const term = await this.prisma.academicTerm.findFirst({ where: { name: termName as any } });
+        if (term) { termId = term.id; where.termId = term.id; }
+      }
+    } catch { /* columns not yet migrated, skip */ }
+
+    let tests: any[];
+    try {
+      tests = await this.prisma.cbtTest.findMany({
+        where: Object.keys(where).length ? where : undefined,
+        include: { classRoom: true, subject: true },
+      });
+    } catch {
+      // Fallback without session/term filter if columns missing
+      const fallbackWhere: any = {};
+      if (className) fallbackWhere.classRoom = { name: className };
+      if (subjectName) fallbackWhere.subject = { name: subjectName };
+      tests = await this.prisma.cbtTest.findMany({
+        where: Object.keys(fallbackWhere).length ? fallbackWhere : undefined,
+        include: { classRoom: true, subject: true },
+      });
     }
 
-    const tests = await this.prisma.cbtTest.findMany({
-      where: Object.keys(where).length ? where : undefined,
-      include: { classRoom: true, subject: true },
-    });
     if (!tests.length) return this.ok([]);
 
     const questions = await this.prisma.cbtQuestion.findMany({
-      where: { testId: { in: tests.map(t => t.id) } },
+      where: { testId: { in: tests.map((t: any) => t.id) } },
       orderBy: { id: 'asc' },
     });
 
-    const testMap = new Map(tests.map(t => [t.id.toString(), t]));
+    const testMap = new Map(tests.map((t: any) => [t.id.toString(), t]));
     return this.ok(questions.map(q => ({
       ...q,
       class: testMap.get(q.testId.toString())?.classRoom?.name,
