@@ -146,17 +146,44 @@ export class CbtService {
 
   async createQuestion(user: any, body: any) {
     const staff = await this.prisma.staff.findUnique({ where: { userId: BigInt(user.id) } });
-    const question = await this.prisma.cbtQuestion.create({ 
-      data: { 
-        testId: BigInt(body.test_id),
+
+    let testId: bigint;
+
+    if (body.test_id) {
+      testId = BigInt(body.test_id);
+    } else {
+      // Resolve or create CbtTest from course + class
+      const { course, class: className } = body;
+      if (!course || !className) throw new BadRequestException('course and class are required');
+
+      const subject = await this.prisma.subject.findFirst({ where: { name: { contains: course } } });
+      if (!subject) throw new BadRequestException(`Subject "${course}" not found`);
+
+      const classRoom = await this.prisma.classRoom.findFirst({ where: { name: className } });
+      if (!classRoom) throw new BadRequestException(`Class "${className}" not found`);
+
+      let test = await this.prisma.cbtTest.findFirst({
+        where: { subjectId: subject.id, classRoomId: classRoom.id },
+      });
+      if (!test) {
+        test = await this.prisma.cbtTest.create({
+          data: { title: `${course} — ${className}`, subjectId: subject.id, classRoomId: classRoom.id },
+        });
+      }
+      testId = test.id;
+    }
+
+    const question = await this.prisma.cbtQuestion.create({
+      data: {
+        testId,
         staffId: staff?.id,
         question: body.question,
         optionA: body.optionA,
         optionB: body.optionB,
         optionC: body.optionC,
         optionD: body.optionD,
-        answer: body.answer
-      } 
+        answer: body.answer,
+      },
     });
     return this.ok({ id: question.id.toString() }, 'Question created successfully');
   }
