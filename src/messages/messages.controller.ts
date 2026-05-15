@@ -44,6 +44,6 @@ export class MessagesController {
 
   @Get(':role/users')
   getUsers(@CurrentUser() user: any, @Query('search') search: string, @Query('role') role: string, @Query('class') cls: string) {
-    return this.svc.getUsers(search, role, cls);
+    return this.svc.getUsers(user, search, role, cls);
   }
 }

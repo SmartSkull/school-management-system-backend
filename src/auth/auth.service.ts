@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '../database/prisma.service';
@@ -9,8 +9,9 @@ export class AuthService {
 
   // Student login: tries full name match + password check (lastname, bcrypt, or plain)
   // Student login: tries full name match + password check
-  async studentLogin(name: string, password: string) {
+  async studentLogin(name: string, password: string, schoolSlug?: string) {
     if (!name || !password) throw new UnauthorizedException('Invalid credentials');
+    const schoolId = await this.resolveSchoolId(schoolSlug);
 
     const nameTrimmed = name.trim();
     const parts = nameTrimmed.split(' ');
@@ -22,6 +23,7 @@ export class AuthService {
       users = await this.prisma.user.findMany({
         where: {
           role: 'STUDENT',
+          ...(schoolId ? { schoolId } : {}),
           OR: [
             { firstName: { startsWith: first }, lastName: { startsWith: last } },
             { firstName: { startsWith: last }, lastName: { startsWith: first } },
@@ -34,6 +36,7 @@ export class AuthService {
       users = await this.prisma.user.findMany({
         where: {
           role: 'STUDENT',
+          ...(schoolId ? { schoolId } : {}),
           OR: [
             { firstName: { startsWith: first } },
             { lastName: { startsWith: first } },
@@ -84,10 +87,12 @@ export class AuthService {
 
   // Staff login: bcrypt OR fallback plain 'florieren'
   // Staff login: bcrypt OR fallback plain 'florieren'
-  async staffLogin(staffId: string, password: string) {
+  async staffLogin(staffId: string, password: string, schoolSlug?: string) {
+    const schoolId = await this.resolveSchoolId(schoolSlug);
     const user = await this.prisma.user.findFirst({
       where: {
         role: 'STAFF',
+        ...(schoolId ? { schoolId } : {}),
         OR: [
           { uniqueId: staffId },
           { email: staffId },
@@ -105,10 +110,12 @@ export class AuthService {
 
   // Admin login: staff record with user='admin', bcrypt OR fallback 'greatkings'
   // Admin login: user with role='ADMIN', bcrypt OR fallback 'florieren'
-  async adminLogin(adminId: string, password: string) {
+  async adminLogin(adminId: string, password: string, schoolSlug?: string) {
+    const schoolId = await this.resolveSchoolId(schoolSlug);
     const user = await this.prisma.user.findFirst({
       where: {
         role: 'ADMIN',
+        ...(schoolId ? { schoolId } : {}),
         OR: [
           { uniqueId: adminId },
           { email: adminId },
@@ -154,7 +161,7 @@ export class AuthService {
   }
 
   private buildTokenResponse(user: any, role: string, id: string) {
-    const token = this.jwt.sign({ id, role, email: user.email });
+    const token = this.jwt.sign({ id, role, email: user.email, schoolId: user.schoolId?.toString() });
     const refresh_token = this.jwt.sign(
       { id, role },
       { secret: process.env.JWT_SECRET + '_refresh', expiresIn: process.env.JWT_REFRESH_EXPIRY || '7d' },
@@ -165,6 +172,16 @@ export class AuthService {
       data: { user: this.normalizeValue({ ...safeUser, role }), token, refresh_token },
       message: 'Login successful',
     };
+  }
+
+  private async resolveSchoolId(slug?: string) {
+    if (!slug) return undefined;
+    const school = await this.prisma.school.findUnique({ where: { slug }, select: { id: true, status: true } });
+    if (!school) throw new UnauthorizedException('Invalid school');
+    if (school.status !== 'ACTIVE') {
+      throw new ForbiddenException('School is yet to be approved');
+    }
+    return school.id;
   }
 
   private normalizeValue(value: any): any {

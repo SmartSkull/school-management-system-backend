@@ -9,20 +9,20 @@ export class AuthController {
 
   @Post('student/login')
   @HttpCode(200)
-  studentLogin(@Body() body: { name: string; password: string }) {
-    return this.auth.studentLogin(body.name, body.password);
+  studentLogin(@Body() body: { name: string; password: string; school_slug?: string }) {
+    return this.auth.studentLogin(body.name, body.password, body.school_slug);
   }
 
   @Post('staff/login')
   @HttpCode(200)
-  staffLogin(@Body() body: { staff_id: string; password: string }) {
-    return this.auth.staffLogin(body.staff_id, body.password);
+  staffLogin(@Body() body: { staff_id: string; password: string; school_slug?: string }) {
+    return this.auth.staffLogin(body.staff_id, body.password, body.school_slug);
   }
 
   @Post('admin/login')
   @HttpCode(200)
-  adminLogin(@Body() body: { admin_id: string; password: string }) {
-    return this.auth.adminLogin(body.admin_id, body.password);
+  adminLogin(@Body() body: { admin_id: string; password: string; school_slug?: string }) {
+    return this.auth.adminLogin(body.admin_id, body.password, body.school_slug);
   }
 
   @Post('refresh')

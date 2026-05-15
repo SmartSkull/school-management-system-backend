@@ -10,21 +10,27 @@ export class AdminService {
     return { success: true, data, message };
   }
 
-  async dashboard() {
+  private schoolId(user: any): bigint | undefined {
+    return user?.schoolId ? BigInt(user.schoolId) : undefined;
+  }
+
+  async dashboard(user: any) {
+    const schoolId = this.schoolId(user);
+    const schoolWhere = schoolId ? { schoolId } : {};
     const [totalStudents, activeStudents, pendingStudents, totalStaff, activeStaff, session, term, recentUsers, recentPayments, grouped] = await Promise.all([
-      this.prisma.user.count({ where: { role: 'STUDENT' } }),
-      this.prisma.user.count({ where: { role: 'STUDENT', status: 'ACTIVE' } }),
-      this.prisma.user.count({ where: { role: 'STUDENT', status: 'PENDING' } }),
-      this.prisma.user.count({ where: { role: 'STAFF' } }),
-      this.prisma.user.count({ where: { role: 'STAFF', status: 'ACTIVE' } }),
-      this.prisma.academicSession.findFirst({ where: { isCurrent: true } }),
-      this.prisma.academicTerm.findFirst({ where: { isCurrent: true } }),
-      this.prisma.user.findMany({ where: { role: 'STUDENT' }, orderBy: { createdAt: 'desc' }, take: 3, select: { firstName: true, lastName: true, createdAt: true } }),
-      this.prisma.schoolFeePayment.findMany({ orderBy: { createdAt: 'desc' }, take: 3, include: { student: { include: { user: true } } } }),
-      this.prisma.student.groupBy({ by: ['classRoomId'], _count: { _all: true } }),
+      this.prisma.user.count({ where: { role: 'STUDENT', ...schoolWhere } }),
+      this.prisma.user.count({ where: { role: 'STUDENT', status: 'ACTIVE', ...schoolWhere } }),
+      this.prisma.user.count({ where: { role: 'STUDENT', status: 'PENDING', ...schoolWhere } }),
+      this.prisma.user.count({ where: { role: 'STAFF', ...schoolWhere } }),
+      this.prisma.user.count({ where: { role: 'STAFF', status: 'ACTIVE', ...schoolWhere } }),
+      this.prisma.academicSession.findFirst({ where: { isCurrent: true, ...schoolWhere } }),
+      this.prisma.academicTerm.findFirst({ where: { isCurrent: true, ...(schoolId ? { session: { schoolId } } : {}) } }),
+      this.prisma.user.findMany({ where: { role: 'STUDENT', ...schoolWhere }, orderBy: { createdAt: 'desc' }, take: 3, select: { firstName: true, lastName: true, createdAt: true } }),
+      this.prisma.schoolFeePayment.findMany({ where: schoolId ? { student: { user: { schoolId } } } : {}, orderBy: { createdAt: 'desc' }, take: 3, include: { student: { include: { user: true } } } }),
+      this.prisma.student.groupBy({ by: ['classRoomId'], where: schoolId ? { user: { schoolId } } : {}, _count: { _all: true } }),
     ]);
 
-    const classRooms = await this.prisma.classRoom.findMany();
+    const classRooms = await this.prisma.classRoom.findMany({ where: schoolWhere });
     const classMap = new Map(classRooms.map(c => [c.id.toString(), c.name]));
     
     const studentsByClass = grouped.map((row: any) => ({ 
@@ -43,13 +49,52 @@ export class AdminService {
     });
   }
 
-  async getStudents(q: any) {
+  async getSchool(user: any) {
+    const school = await this.findManagedSchool(user);
+    return this.ok(this.serializeSchool(school));
+  }
+
+  async updateSchool(user: any, data: any) {
+    const school = await this.findManagedSchool(user);
+    const update = this.pick(data, [
+      'name',
+      'slug',
+      'slogan',
+      'motto',
+      'description',
+      'email',
+      'contactEmail',
+      'contactName',
+      'telephone',
+      'alternatePhone',
+      'address',
+      'city',
+      'state',
+      'country',
+      'website',
+      'logo',
+      'primaryColor',
+      'secondaryColor',
+      'accentColor',
+    ]);
+
+    const updated = await this.prisma.school.update({
+      where: { id: school.id },
+      data: update,
+    });
+
+    return this.ok(this.serializeSchool(updated), 'School information updated successfully');
+  }
+
+  async getStudents(user: any, q: any) {
     const page = Math.max(1, parseInt(q.page) || 1);
     const perPage = Math.min(parseInt(q.per_page) || 20, 50);
     const where: any = { role: 'STUDENT' };
+    const schoolId = this.schoolId(user);
+    if (schoolId) where.schoolId = schoolId;
     
     if (q.class) {
-      where.student = { classRoom: { name: q.class } };
+      where.student = { classRoom: { name: q.class, ...(schoolId ? { schoolId } : {}) } };
     }
     
     if (q.status === '1') where.status = 'ACTIVE';
@@ -88,13 +133,15 @@ export class AdminService {
     return { success: true, data, meta: { total, page, per_page: perPage, last_page: Math.ceil(total / perPage) } };
   }
 
-  async createStudent(data: any) {
+  async createStudent(user: any, data: any) {
     const studentId = await this.generateStudentId();
-    const classRoom = await this.prisma.classRoom.findFirst({ where: { name: data.class } });
+    const schoolId = this.schoolId(user);
+    const classRoom = await this.prisma.classRoom.findFirst({ where: { name: data.class, ...(schoolId ? { schoolId } : {}) } });
     
     await this.prisma.user.create({ 
       data: {
         uniqueId: studentId,
+        schoolId,
         role: 'STUDENT',
         firstName: data.firstname || '',
         lastName: data.lastname || '',
@@ -166,10 +213,12 @@ export class AdminService {
     return this.ok(null, 'Student deleted successfully');
   }
 
-  async getStaff(q: any) {
+  async getStaff(user: any, q: any) {
     const page = Math.max(1, parseInt(q.page) || 1);
     const perPage = Math.min(parseInt(q.per_page) || 20, 50);
     const where: any = { role: { in: ['STAFF', 'ADMIN'] } };
+    const schoolId = this.schoolId(user);
+    if (schoolId) where.schoolId = schoolId;
     
     if (q.search) {
       where.OR = [
@@ -206,11 +255,13 @@ export class AdminService {
     return { success: true, data, meta: { total, page, per_page: perPage } };
   }
 
-  async createStaff(data: any) {
+  async createStaff(user: any, data: any) {
     const uniqueId = await this.generateStaffId();
+    const schoolId = this.schoolId(user);
     await this.prisma.user.create({ 
       data: {
         uniqueId: uniqueId,
+        schoolId,
         role: (data.role?.toUpperCase() === 'ADMIN' ? 'ADMIN' : 'STAFF') as any,
         firstName: data.firstname || '',
         lastName: data.lastname || '',
@@ -298,10 +349,12 @@ export class AdminService {
     return this.ok(null, 'Current term updated successfully');
   }
 
-  async getAllPayments(q: any) {
+  async getAllPayments(user: any, q: any) {
     const page = Math.max(1, parseInt(q.page) || 1);
     const limit = parseInt(q.limit) || 20;
     const where: any = {};
+    const schoolId = this.schoolId(user);
+    if (schoolId) where.student = { user: { schoolId } };
     if (q.status) where.status = q.status;
     if (q.session) {
       const session = await this.prisma.academicSession.findFirst({ where: { name: q.session } });
@@ -312,8 +365,8 @@ export class AdminService {
       if (term) where.termId = term.id;
     }
     if (q.class) {
-      const classRoom = await this.prisma.classRoom.findFirst({ where: { name: q.class } });
-      if (classRoom) where.student = { classRoomId: classRoom.id };
+      const classRoom = await this.prisma.classRoom.findFirst({ where: { name: q.class, ...(schoolId ? { schoolId } : {}) } });
+      if (classRoom) where.student = { ...(where.student ?? {}), classRoomId: classRoom.id };
     }
     const [total, payments] = await Promise.all([
       this.prisma.schoolFeePayment.count({ where }),
@@ -331,9 +384,10 @@ export class AdminService {
     })), meta: { total, page, per_page: limit, last_page: Math.ceil(total / limit) } };
   }
 
-  async getPendingPayments() {
+  async getPendingPayments(user: any) {
+    const schoolId = this.schoolId(user);
     const payments = await this.prisma.schoolFeePayment.findMany({
-      where: { status: 'PENDING' },
+      where: { status: 'PENDING', ...(schoolId ? { student: { user: { schoolId } } } : {}) },
       orderBy: { createdAt: 'desc' },
       include: { student: { include: { user: true } } }
     });
@@ -354,8 +408,10 @@ export class AdminService {
     return this.ok(null, 'Payment verified successfully');
   }
 
-  async getLibrary() {
+  async getLibrary(user: any) {
+    const schoolId = this.schoolId(user);
     const library = await this.prisma.libraryResource.findMany({ 
+      where: schoolId ? { staff: { user: { schoolId } } } : {},
       orderBy: [{ status: 'asc' }, { createdAt: 'desc' }],
       include: { staff: { include: { user: true } } }
     });
@@ -380,8 +436,10 @@ export class AdminService {
     return this.ok(null, 'Book deleted successfully');
   }
 
-  async getClasses() {
+  async getClasses(user: any) {
+    const schoolId = this.schoolId(user);
     const classes = await this.prisma.classRoom.findMany({ 
+      where: { ...(schoolId ? { schoolId } : {}) },
       orderBy: { name: 'asc' },
       include: { 
         classTeacher: { include: { user: true } },
@@ -397,10 +455,12 @@ export class AdminService {
     })));
   }
 
-  async createClass(data: any) {
-    const teacher = await this.prisma.staff.findFirst({ where: { staffNo: data.class_teacher } });
+  async createClass(user: any, data: any) {
+    const schoolId = this.schoolId(user);
+    const teacher = await this.prisma.staff.findFirst({ where: { staffNo: data.class_teacher, ...(schoolId ? { user: { schoolId } } : {}) } });
     await this.prisma.classRoom.create({ 
       data: { 
+        schoolId,
         name: data.class, 
         classTeacherId: teacher?.id 
       } 
@@ -425,8 +485,10 @@ export class AdminService {
     return this.ok(null, 'Class deleted successfully');
   }
 
-  async getCourses() {
+  async getCourses(user: any) {
+    const schoolId = this.schoolId(user);
     const subjects = await this.prisma.subject.findMany({ 
+      where: schoolId ? { classRoom: { schoolId } } : {},
       orderBy: { name: 'asc' },
       include: { teacher: { include: { user: true } } }
     });
@@ -452,27 +514,28 @@ export class AdminService {
     return this.ok(null, 'Course deleted successfully');
   }
 
-  async getResults(q: any) {
+  async getResults(user: any, q: any) {
+    const schoolId = this.schoolId(user);
     const session = q.session || await this.getCurrentSession();
     const term = q.term || await this.getCurrentTerm();
     
-    const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
+    const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session, ...(schoolId ? { schoolId } : {}) } });
     const termEntity = await this.prisma.academicTerm.findFirst({ 
       where: { name: term as any, sessionId: sessionEntity?.id } 
     });
 
     if (!sessionEntity || !termEntity) {
       const [classes, sessions] = await Promise.all([
-        this.prisma.classRoom.findMany({ orderBy: { name: 'asc' } }),
-        this.prisma.academicSession.findMany({ orderBy: { name: 'desc' } }),
+        this.prisma.classRoom.findMany({ where: { ...(schoolId ? { schoolId } : {}) }, orderBy: { name: 'asc' } }),
+        this.prisma.academicSession.findMany({ where: { ...(schoolId ? { schoolId } : {}) }, orderBy: { name: 'desc' } }),
       ]);
       return this.ok({ students: [], classes, sessions, current_session: session, current_term: term });
     }
 
     const where: any = { sessionId: sessionEntity.id, termId: termEntity.id };
-    const userWhere: any = { role: 'STUDENT' };
+    const userWhere: any = { role: 'STUDENT', ...(schoolId ? { schoolId } : {}) };
     if (q.class) {
-      userWhere.student = { classRoom: { name: q.class } };
+      userWhere.student = { classRoom: { name: q.class, ...(schoolId ? { schoolId } : {}) } };
     }
 
     const [resultRows, users, classes, sessions] = await Promise.all([
@@ -481,8 +544,8 @@ export class AdminService {
         where: userWhere, 
         select: { uniqueId: true, firstName: true, lastName: true, image: true, student: { include: { classRoom: true } } } 
       }),
-      this.prisma.classRoom.findMany({ orderBy: { name: 'asc' } }),
-      this.prisma.academicSession.findMany({ orderBy: { name: 'desc' } }),
+      this.prisma.classRoom.findMany({ where: { ...(schoolId ? { schoolId } : {}) }, orderBy: { name: 'asc' } }),
+      this.prisma.academicSession.findMany({ where: { ...(schoolId ? { schoolId } : {}) }, orderBy: { name: 'desc' } }),
     ]);
 
     const byStudent = new Map(users.map(u => [u.uniqueId, u]));
@@ -511,13 +574,14 @@ export class AdminService {
     return this.ok({ students, classes, sessions, current_session: session, current_term: term });
   }
 
-  async getStudentResults(studentId: string, q: any) {
+  async getStudentResults(currentUser: any, studentId: string, q: any) {
+    const schoolId = this.schoolId(currentUser);
     const session = q.session || await this.getCurrentSession();
     const term = q.term || await this.getCurrentTerm();
     
-    const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
+    const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session, ...(schoolId ? { schoolId } : {}) } });
     const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term.toUpperCase() as any, sessionId: sessionEntity?.id } });
-    const user = await this.prisma.user.findUnique({ where: { uniqueId: studentId }, include: { student: true } });
+    const user = await this.prisma.user.findUnique({ where: { uniqueId: studentId, ...(schoolId ? { schoolId } : {}) }, include: { student: true } });
 
     if (!user || !user.student || !sessionEntity || !termEntity) throw new NotFoundException('Student or Session/Term not found');
 
@@ -693,6 +757,33 @@ export class AdminService {
       if (data[key] !== undefined) update[key] = data[key];
     });
     return update;
+  }
+
+  private async findManagedSchool(user: any) {
+    const currentUser = await this.prisma.user.findFirst({
+      where: { uniqueId: user.id },
+      select: { schoolId: true },
+    });
+
+    const school = currentUser?.schoolId
+      ? await this.prisma.school.findUnique({ where: { id: currentUser.schoolId } })
+      : await this.prisma.school.findFirst({ orderBy: { createdAt: 'asc' } });
+
+    if (!school) throw new NotFoundException('School not found');
+    return school;
+  }
+
+  private serializeSchool(school: any) {
+    return {
+      ...school,
+      id: school.id?.toString(),
+      location: [school.address, school.city, school.state, school.country].filter(Boolean).join(', '),
+      colors: {
+        primary: school.primaryColor,
+        secondary: school.secondaryColor,
+        accent: school.accentColor,
+      },
+    };
   }
 
   private async resultsWithTotals(where: any) {

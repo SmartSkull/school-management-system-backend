@@ -9,14 +9,18 @@ export class MessagesService {
     return { success: true, data, message };
   }
 
+  private schoolId(user: any): bigint | undefined {
+    return user?.schoolId ? BigInt(user.schoolId) : undefined;
+  }
+
   async getConversations(user: any) {
     const userId = BigInt(user.id);
     const rows = await this.prisma.message.findMany({
       where: { OR: [{ senderId: userId }, { receiverId: userId }] },
       orderBy: { createdAt: 'desc' },
       include: { 
-        sender: { select: { id: true, firstName: true, lastName: true, image: true, uniqueId: true, lastLoginAt: true } },
-        receiver: { select: { id: true, firstName: true, lastName: true, image: true, uniqueId: true, lastLoginAt: true } }
+        sender: { select: { id: true, schoolId: true, firstName: true, lastName: true, image: true, uniqueId: true, lastLoginAt: true } },
+        receiver: { select: { id: true, schoolId: true, firstName: true, lastName: true, image: true, uniqueId: true, lastLoginAt: true } }
       }
     });
 
@@ -25,6 +29,7 @@ export class MessagesService {
 
     for (const msg of rows) {
       const partner = msg.senderId === userId ? msg.receiver : msg.sender;
+      if (this.schoolId(user) && partner.schoolId !== this.schoolId(user)) continue;
       if (chatPartners.has(partner.id)) continue;
 
       const thread = rows.filter(m => m.senderId === partner.id || m.receiverId === partner.id);
@@ -49,9 +54,10 @@ export class MessagesService {
     const userId = BigInt(user.id);
     const otherUser = await this.prisma.user.findUnique({ 
       where: { uniqueId: otherUniqueId },
-      select: { id: true, lastLoginAt: true }
+      select: { id: true, schoolId: true, lastLoginAt: true }
     });
     if (!otherUser) throw new NotFoundException('User not found');
+    if (this.schoolId(user) && otherUser.schoolId !== this.schoolId(user)) throw new NotFoundException('User not found');
 
     const messages = await this.prisma.message.findMany({
       where: {
@@ -92,6 +98,7 @@ export class MessagesService {
     
     const receiver = await this.prisma.user.findUnique({ where: { uniqueId: to } });
     if (!receiver) throw new NotFoundException('Receiver not found');
+    if (this.schoolId(user) && receiver.schoolId !== this.schoolId(user)) throw new NotFoundException('Receiver not found');
 
     const msg = await this.prisma.message.create({
       data: { senderId: BigInt(user.id), receiverId: receiver.id, body: message },
@@ -126,6 +133,7 @@ export class MessagesService {
     const userId = BigInt(user.id);
     const otherUser = await this.prisma.user.findUnique({ where: { uniqueId: otherUniqueId } });
     if (!otherUser) throw new NotFoundException('User not found');
+    if (this.schoolId(user) && otherUser.schoolId !== this.schoolId(user)) throw new NotFoundException('User not found');
 
     await this.prisma.message.deleteMany({
       where: {
@@ -144,8 +152,10 @@ export class MessagesService {
     return this.ok({ filename: file.filename, original_name: file.originalname, type, size: file.size, url: `/uploads/messages/${file.filename}` }, 'File uploaded successfully');
   }
 
-  async getUsers(search?: string, role?: string, className?: string) {
+  async getUsers(user: any, search?: string, role?: string, className?: string) {
     const where: any = {};
+    const schoolId = this.schoolId(user);
+    if (schoolId) where.schoolId = schoolId;
     if (search) where.OR = [
       { firstName: { contains: search } },
       { lastName: { contains: search } },

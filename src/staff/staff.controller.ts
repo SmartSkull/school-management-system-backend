@@ -28,16 +28,16 @@ export class StaffController {
   }
 
   @Get('students') getStudents(@CurrentUser() user: any, @Query('class') cls: string, @Query('search') search: string) { return this.svc.getStudents(user, cls, search); }
-  @Get('students/:id') getStudentDetails(@Param('id') id: string) { return this.svc.getStudentDetails(id); }
+  @Get('students/:id') getStudentDetails(@CurrentUser() user: any, @Param('id') id: string) { return this.svc.getStudentDetails(user, id); }
 
   @Post('results') uploadResult(@CurrentUser() user: any, @Body() body: any) { return this.svc.uploadResult(user, body); }
   @Get('results') getResults(@CurrentUser() user: any, @Query() q: any) { return this.svc.getResults(user, q); }
-  @Delete('results') deleteResult(@Body() body: any) { return this.svc.deleteResult(body); }
-  @Post('results/delete') deleteResultByBody(@Body() body: any) { return this.svc.deleteResult(body); }
+  @Delete('results') deleteResult(@CurrentUser() user: any, @Body() body: any) { return this.svc.deleteResult(user, body); }
+  @Post('results/delete') deleteResultByBody(@CurrentUser() user: any, @Body() body: any) { return this.svc.deleteResult(user, body); }
 
-  @Get('attendance') getAttendance(@Query() q: any) { return this.svc.getAttendance(q); }
-  @Post('attendance') updateAttendance(@Body() body: any) { return this.svc.updateAttendance(body); }
-  @Post('comment') addComment(@Body() body: any) { return this.svc.addComment(body); }
+  @Get('attendance') getAttendance(@CurrentUser() user: any, @Query() q: any) { return this.svc.getAttendance(user, q); }
+  @Post('attendance') updateAttendance(@CurrentUser() user: any, @Body() body: any) { return this.svc.updateAttendance(user, body); }
+  @Post('comment') addComment(@CurrentUser() user: any, @Body() body: any) { return this.svc.addComment(user, body); }
 
   @Post('assignments')
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
@@ -65,8 +65,8 @@ export class StaffController {
 
   @Delete('library/:id') deleteLibrary(@CurrentUser() user: any, @Param('id') id: string) { return this.svc.deleteLibrary(user, +id); }
 
-  @Get('classes') getClasses() { return this.svc.getClasses(); }
-  @Get('courses') getCourses() { return this.svc.getCourses(); }
+  @Get('classes') getClasses(@CurrentUser() user: any) { return this.svc.getClasses(user); }
+  @Get('courses') getCourses(@CurrentUser() user: any) { return this.svc.getCourses(user); }
   @Get('school-days') getSchoolDays() { return this.svc.getSchoolDays(); }
 
   @Get('notifications') getNotifications(@CurrentUser() user: any) { return this.svc.getNotifications(user); }

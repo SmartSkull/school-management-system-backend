@@ -10,14 +10,20 @@ import { CurrentUser } from '../common/decorators/user.decorator';
 export class AdminController {
   constructor(private svc: AdminService) {}
 
-  @Get('dashboard') dashboard() { return this.svc.dashboard(); }
+  @Get('dashboard') dashboard(@CurrentUser() user: any) { return this.svc.dashboard(user); }
+
+  @Get('school')
+  getSchool(@CurrentUser() user: any) { return this.svc.getSchool(user); }
+
+  @Put('school')
+  updateSchool(@CurrentUser() user: any, @Body() body: any) { return this.svc.updateSchool(user, body); }
 
   // Students
   @Get('students')
-  getStudents(@Query() q: any) { return this.svc.getStudents(q); }
+  getStudents(@CurrentUser() user: any, @Query() q: any) { return this.svc.getStudents(user, q); }
 
   @Post('students')
-  createStudent(@Body() body: any) { return this.svc.createStudent(body); }
+  createStudent(@CurrentUser() user: any, @Body() body: any) { return this.svc.createStudent(user, body); }
 
   @Post('students/bulk-verify')
   bulkVerify(@Body('student_ids') ids: string[]) { return this.svc.bulkVerifyStudents(ids); }
@@ -41,9 +47,9 @@ export class AdminController {
   deleteStudent(@Param('id') id: string) { return this.svc.deleteStudent(id); }
 
   // Staff
-  @Get('staff') getStaff(@Query() q: any) { return this.svc.getStaff(q); }
+  @Get('staff') getStaff(@CurrentUser() user: any, @Query() q: any) { return this.svc.getStaff(user, q); }
 
-  @Post('staff') createStaff(@Body() body: any) { return this.svc.createStaff(body); }
+  @Post('staff') createStaff(@CurrentUser() user: any, @Body() body: any) { return this.svc.createStaff(user, body); }
 
   @Post('staff/verify')
   verifyStaffByBody(@Body('staff_id') id: string) { return this.svc.verifyStaff(id); }
@@ -73,30 +79,30 @@ export class AdminController {
   @Put('terms/:id') updateTerm(@Param('id') id: string, @Body() body: any) { return this.svc.updateTerm(id, body); }
 
   // Payments
-  @Get('payments/pending') getPendingPayments() { return this.svc.getPendingPayments(); }
-  @Get('payments') getAllPayments(@Query() q: any) { return this.svc.getAllPayments(q); }
+  @Get('payments/pending') getPendingPayments(@CurrentUser() user: any) { return this.svc.getPendingPayments(user); }
+  @Get('payments') getAllPayments(@CurrentUser() user: any, @Query() q: any) { return this.svc.getAllPayments(user, q); }
   @Post('payments/:id/verify') verifyPayment(@Param('id') id: string) { return this.svc.verifyPayment(id); }
 
   // Library
-  @Get('library') getLibrary() { return this.svc.getLibrary(); }
+  @Get('library') getLibrary(@CurrentUser() user: any) { return this.svc.getLibrary(user); }
   @Put('library/:id/approve') approveLibrary(@Param('id') id: string) { return this.svc.approveLibrary(id); }
   @Delete('library/:id') deleteLibrary(@Param('id') id: string) { return this.svc.deleteLibrary(id); }
 
   // Classes
-  @Get('classes') getClasses() { return this.svc.getClasses(); }
-  @Post('classes') createClass(@Body() body: any) { return this.svc.createClass(body); }
+  @Get('classes') getClasses(@CurrentUser() user: any) { return this.svc.getClasses(user); }
+  @Post('classes') createClass(@CurrentUser() user: any, @Body() body: any) { return this.svc.createClass(user, body); }
   @Put('classes/:class') updateClass(@Param('class') c: string, @Body() body: any) { return this.svc.updateClass(c, body); }
   @Delete('classes/:class') deleteClass(@Param('class') c: string) { return this.svc.deleteClass(c); }
 
   // Courses
-  @Get('courses') getCourses() { return this.svc.getCourses(); }
+  @Get('courses') getCourses(@CurrentUser() user: any) { return this.svc.getCourses(user); }
   @Post('courses') createCourse(@Body() body: any) { return this.svc.createCourse(body); }
   @Put('courses/:course') updateCourse(@Param('course') c: string, @Body() body: any) { return this.svc.updateCourse(c, body); }
   @Delete('courses/:course') deleteCourse(@Param('course') c: string) { return this.svc.deleteCourse(c); }
 
   // Results
-  @Get('results') getResults(@Query() q: any) { return this.svc.getResults(q); }
-  @Get('results/:student_id') getStudentResults(@Param('student_id') id: string, @Query() q: any) { return this.svc.getStudentResults(id, q); }
+  @Get('results') getResults(@CurrentUser() user: any, @Query() q: any) { return this.svc.getResults(user, q); }
+  @Get('results/:student_id') getStudentResults(@CurrentUser() user: any, @Param('student_id') id: string, @Query() q: any) { return this.svc.getStudentResults(user, id, q); }
   @Put('results/:student_id/approve') approveResults(@Param('student_id') id: string, @Body() body: any) { return this.svc.approveResults(id, body); }
   @Put('results/:student_id/unapprove') unapproveResults(@Param('student_id') id: string, @Body() body: any) { return this.svc.unapproveResults(id, body); }
   @Put('results/:student_id/principal-comment') updatePrincipalComment(@Param('student_id') id: string, @Body() body: any) { return this.svc.updatePrincipalComment(id, body); }

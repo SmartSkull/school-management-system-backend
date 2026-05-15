@@ -1,6 +1,7 @@
 import { PrismaClient } from '@generated/prisma';
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { PrismaMariaDb } from '@prisma/adapter-mariadb';
+import '../env';
 
 @Injectable()
 export class PrismaService
@@ -15,6 +16,8 @@ export class PrismaService
       password: process.env.DB_PASS || '',
       database: process.env.DB_NAME || 'florieren',
       connectionLimit: 10,
+      connectTimeout: 8000,
+      acquireTimeout: 12000,
     });
 
     super({ adapter });

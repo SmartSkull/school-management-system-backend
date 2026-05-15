@@ -24,7 +24,12 @@ export class JwtAuthGuard implements CanActivate {
     const user = await this.resolveUser(payload);
     if (!user) throw new UnauthorizedException('User not found');
 
-    req.user = { ...user, role: payload.role };
+    req.user = {
+      ...user,
+      role: payload.role,
+      schoolId: user.schoolId ?? user.user?.schoolId ?? (payload.schoolId ? BigInt(payload.schoolId) : undefined),
+      authUserId: user.userId ?? user.id,
+    };
     return true;
   }
 
@@ -37,7 +42,7 @@ export class JwtAuthGuard implements CanActivate {
   protected async resolveUser(payload: any): Promise<any> {
       if (payload.role === 'student') {
         return this.prisma.user.findFirst({
-          where: { uniqueId: payload.id },
+          where: { uniqueId: payload.id, ...(payload.schoolId ? { schoolId: BigInt(payload.schoolId) } : {}) },
           include: { student: { include: { classRoom: true } } },
         });
       }
@@ -45,7 +50,7 @@ export class JwtAuthGuard implements CanActivate {
       if (payload.role === 'staff') {
         return this.prisma.staff.findFirst({
           where: {
-            user: { uniqueId: payload.id, role: 'STAFF' },
+            user: { uniqueId: payload.id, role: 'STAFF', ...(payload.schoolId ? { schoolId: BigInt(payload.schoolId) } : {}) },
           },
           include: { user: true }
         });
@@ -53,7 +58,7 @@ export class JwtAuthGuard implements CanActivate {
 
       if (payload.role === 'admin') {
         return this.prisma.user.findFirst({
-          where: { uniqueId: payload.id, role: 'ADMIN' },
+          where: { uniqueId: payload.id, role: 'ADMIN', ...(payload.schoolId ? { schoolId: BigInt(payload.schoolId) } : {}) },
         });
       }
       return null;

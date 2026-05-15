@@ -10,6 +10,14 @@ export class StaffService {
     return { success: true, data, message };
   }
 
+  private schoolId(user: any): bigint | undefined {
+    return user?.schoolId ? BigInt(user.schoolId) : undefined;
+  }
+
+  private userId(user: any): bigint {
+    return BigInt(user.authUserId ?? user.userId ?? user.user?.id ?? user.id);
+  }
+
   private async getCurrentSession(): Promise<string> {
     const r = await this.prisma.academicSession.findFirst({ where: { isCurrent: true } })
       ?? await this.prisma.academicSession.findFirst({ orderBy: { createdAt: 'desc' } });
@@ -31,13 +39,14 @@ export class StaffService {
     const userInfo = user.user ?? user;
 
     // Re-fetch staff with classRooms (guard include may not have it)
+    const schoolId = this.schoolId(user);
     const staff = await this.prisma.staff.findUnique({ 
       where: { id: BigInt(user.id) },
       include: { classRooms: true }
     });
 
     const studentCount = await this.prisma.user.count({ 
-      where: { role: 'STUDENT', student: { classRoomId: staff?.classRooms[0]?.id } } 
+      where: { role: 'STUDENT', ...(schoolId ? { schoolId } : {}), student: { classRoomId: staff?.classRooms[0]?.id } } 
     });
 
     const assignments = await this.prisma.assignment.findMany({ 
@@ -75,7 +84,7 @@ export class StaffService {
 
   async profile(user: any) {
     const profile = await this.prisma.user.findUnique({ 
-      where: { id: user.id },
+      where: { id: this.userId(user), ...(this.schoolId(user) ? { schoolId: this.schoolId(user) } : {}) },
       include: { staff: true }
     });
     return this.ok(profile);
@@ -92,7 +101,7 @@ export class StaffService {
 
     if (Object.keys(update).length || Object.keys(staffUpdate).length) {
       await this.prisma.user.update({ 
-        where: { id: user.id }, 
+        where: { id: this.userId(user), ...(this.schoolId(user) ? { schoolId: this.schoolId(user) } : {}) }, 
         data: {
           ...update,
           staff: { update: staffUpdate }
@@ -105,17 +114,19 @@ export class StaffService {
   async updateImage(user: any, file: Express.Multer.File) {
     if (!file) throw new BadRequestException('No image provided');
     const url = await uploadToCloudinary(file, 'florieren/staff');
-    await this.prisma.user.update({ where: { id: user.id }, data: { image: url } });
+    await this.prisma.user.update({ where: { id: this.userId(user), ...(this.schoolId(user) ? { schoolId: this.schoolId(user) } : {}) }, data: { image: url } });
     return this.ok({ image: url }, 'Image updated successfully');
   }
 
   async getStudents(user: any, cls?: string, search?: string) {
+    const schoolId = this.schoolId(user);
     const conditions: any[] = [{ role: 'STUDENT' }, { status: 'ACTIVE' }];
+    if (schoolId) conditions.push({ schoolId });
 
     if (cls) {
       conditions.push({ student: { classRoom: { name: cls } } });
     } else {
-      const staff = await this.prisma.staff.findUnique({ where: { userId: BigInt(user.id) }, include: { classRooms: true } });
+      const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) }, include: { classRooms: true } });
       if (staff?.classRooms?.length) conditions.push({ student: { classRoomId: staff.classRooms[0].id } });
     }
 
@@ -142,9 +153,9 @@ export class StaffService {
     })));
   }
 
-  async getStudentDetails(id: string) {
+  async getStudentDetails(user: any, id: string) {
     const student = await this.prisma.user.findUnique({ 
-      where: { uniqueId: id },
+      where: { uniqueId: id, ...(this.schoolId(user) ? { schoolId: this.schoolId(user) } : {}) },
       include: { student: { include: { classRoom: true } } }
     });
     if (!student) throw new NotFoundException('Student not found');
@@ -160,7 +171,8 @@ export class StaffService {
       where: { name: term as any, sessionId: sessionEntity?.id } 
     });
 
-    const staff = await this.prisma.staff.findUnique({ where: { userId: user.id } });
+    const schoolId = this.schoolId(user);
+    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
     const subject = await this.prisma.subject.findFirst({ where: { name: body.course } });
 
     if (!sessionEntity || !termEntity || !staff || !subject) {
@@ -171,7 +183,7 @@ export class StaffService {
       let count = 0;
       for (const r of body.results) {
         if (!r.student_id) continue;
-        const student = await this.prisma.student.findFirst({ where: { user: { uniqueId: r.student_id } } });
+        const student = await this.prisma.student.findFirst({ where: { user: { uniqueId: r.student_id, ...(schoolId ? { schoolId } : {}) } } });
         if (!student) continue;
 
         await this.prisma.result.upsert({
@@ -218,8 +230,9 @@ export class StaffService {
     });
 
     if (q.student_id) {
+      const schoolId = this.schoolId(user);
       const studentRecord = await this.prisma.student.findFirst({ 
-        where: { user: { uniqueId: q.student_id } },
+        where: { user: { uniqueId: q.student_id, ...(schoolId ? { schoolId } : {}) } },
         include: { user: true, classRoom: true }
       });
       const results = await this.resultsWithTotals({ 
@@ -236,7 +249,7 @@ export class StaffService {
       const classTeacher = classWithTeacher?.classTeacher ?? null;
 
       // Get principal
-      const principal = await this.prisma.user.findFirst({ where: { role: 'ADMIN' }, select: { firstName: true, lastName: true, image: true } });
+      const principal = await this.prisma.user.findFirst({ where: { role: 'ADMIN', ...(schoolId ? { schoolId } : {}) }, select: { firstName: true, lastName: true, image: true } });
 
       // Get attendance
       const attendance = await this.prisma.attendance.findFirst({
@@ -259,8 +272,9 @@ export class StaffService {
     }
 
     const cls = q.class || user.class;
+    const schoolId = this.schoolId(user);
     const students = await this.prisma.user.findMany({ 
-      where: { role: 'STUDENT', student: { classRoom: { name: cls } } },
+      where: { role: 'STUDENT', ...(schoolId ? { schoolId } : {}), student: { classRoom: { name: cls, ...(schoolId ? { schoolId } : {}) } } },
       include: { student: true }
     });
     
@@ -291,7 +305,7 @@ export class StaffService {
     return this.ok(data);
   }
 
-  async deleteResult(body: any) {
+  async deleteResult(user: any, body: any) {
     const { course, session, term, student_ids } = body;
     const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
     const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term.toUpperCase() as any, sessionId: sessionEntity?.id } });
@@ -301,7 +315,8 @@ export class StaffService {
     
     let count = 0;
     for (const id of student_ids) {
-      const student = await this.prisma.student.findFirst({ where: { user: { uniqueId: id } } });
+      const schoolId = this.schoolId(user);
+      const student = await this.prisma.student.findFirst({ where: { user: { uniqueId: id, ...(schoolId ? { schoolId } : {}) } } });
       if (!student) continue;
       
       const affected = await this.prisma.result.deleteMany({ 
@@ -312,7 +327,7 @@ export class StaffService {
     return this.ok({ count }, `Successfully deleted ${count} result(s)`);
   }
 
-  async getAttendance(q: any) {
+  async getAttendance(user: any, q: any) {
     const session = q.session || await this.getCurrentSession();
     const term = q.term || await this.getCurrentTerm();
     
@@ -322,7 +337,8 @@ export class StaffService {
     });
 
     if (q.student_id) {
-      const student = await this.prisma.student.findFirst({ where: { user: { uniqueId: q.student_id } } });
+      const schoolId = this.schoolId(user);
+      const student = await this.prisma.student.findFirst({ where: { user: { uniqueId: q.student_id, ...(schoolId ? { schoolId } : {}) } } });
       const att = await this.prisma.attendance.findFirst({ 
         where: { studentId: student?.id, sessionId: sessionEntity?.id, termId: termEntity?.id } 
       });
@@ -330,8 +346,9 @@ export class StaffService {
     }
     
     if (q.class) {
+      const schoolId = this.schoolId(user);
       const students = await this.prisma.user.findMany({ 
-        where: { role: 'STUDENT', student: { classRoom: { name: q.class } } },
+        where: { role: 'STUDENT', ...(schoolId ? { schoolId } : {}), student: { classRoom: { name: q.class, ...(schoolId ? { schoolId } : {}) } } },
         include: { student: true }
       });
       const studentIds = students.map(s => s.student?.id).filter(Boolean) as bigint[];
@@ -343,7 +360,7 @@ export class StaffService {
     throw new BadRequestException('student_id or class is required');
   }
 
-  async updateAttendance(body: any) {
+  async updateAttendance(user: any, body: any) {
     const session = body.session || await this.getCurrentSession();
     const term = body.term || await this.getCurrentTerm();
     
@@ -358,18 +375,19 @@ export class StaffService {
       let count = 0;
       for (const s of body.students) {
         if (!s.student_id) continue;
-        await this.upsertAttendance(s.student_id, s.present || 0, s.absent || 0, sessionEntity.id, termEntity.id);
+        await this.upsertAttendance(user, s.student_id, s.present || 0, s.absent || 0, sessionEntity.id, termEntity.id);
         count++;
       }
       return this.ok({ count }, `Saved attendance for ${count} student(s)`);
     }
 
-    await this.upsertAttendance(body.student_id, body.present, body.absent, sessionEntity.id, termEntity.id);
+    await this.upsertAttendance(user, body.student_id, body.present, body.absent, sessionEntity.id, termEntity.id);
     return this.ok(null, 'Attendance updated successfully');
   }
 
-  private async upsertAttendance(studentUniqueId: string, present: number, absent: number, sessionId: bigint, termId: bigint) {
-    const student = await this.prisma.student.findFirst({ where: { user: { uniqueId: studentUniqueId } } });
+  private async upsertAttendance(user: any, studentUniqueId: string, present: number, absent: number, sessionId: bigint, termId: bigint) {
+    const schoolId = this.schoolId(user);
+    const student = await this.prisma.student.findFirst({ where: { user: { uniqueId: studentUniqueId, ...(schoolId ? { schoolId } : {}) } } });
     if (!student) return;
 
     await this.prisma.attendance.upsert({
@@ -394,13 +412,14 @@ export class StaffService {
     });
   }
 
-  async addComment(body: any) {
+  async addComment(user: any, body: any) {
     const { student_id, comment, session, term } = body;
     if (!student_id || !comment || !session || !term) throw new BadRequestException('All fields required');
     
     const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
     const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term.toUpperCase() as any, sessionId: sessionEntity?.id } });
-    const student = await this.prisma.student.findFirst({ where: { user: { uniqueId: student_id } } });
+    const schoolId = this.schoolId(user);
+    const student = await this.prisma.student.findFirst({ where: { user: { uniqueId: student_id, ...(schoolId ? { schoolId } : {}) } } });
 
     if (!sessionEntity || !termEntity || !student) throw new BadRequestException('Session, Term, or Student not found');
 
@@ -424,9 +443,10 @@ export class StaffService {
   }
 
   async createAssignment(user: any, body: any, file?: Express.Multer.File) {
-    const staff = await this.prisma.staff.findUnique({ where: { userId: user.id } });
-    const classRoom = await this.prisma.classRoom.findFirst({ where: { name: body.class } });
-    const subject = await this.prisma.subject.findFirst({ where: { name: body.subject } });
+    const schoolId = this.schoolId(user);
+    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
+    const classRoom = await this.prisma.classRoom.findFirst({ where: { name: body.class, ...(schoolId ? { schoolId } : {}) } });
+    const subject = await this.prisma.subject.findFirst({ where: { name: body.subject, ...(schoolId ? { classRoom: { schoolId } } : {}) } });
 
     const fileUrl = file ? await uploadToCloudinary(file, 'florieren/assignments') : null;
     const assignment = await this.prisma.assignment.create({ 
@@ -444,7 +464,7 @@ export class StaffService {
   }
 
   async getAssignments(user: any) {
-    const staff = await this.prisma.staff.findUnique({ where: { userId: user.id } });
+    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
     const assignments = await this.prisma.assignment.findMany({ 
       where: { staffId: staff?.id }, 
       orderBy: { createdAt: 'desc' },
@@ -466,7 +486,7 @@ export class StaffService {
   }
 
   async updateAssignment(user: any, id: number, body: any, file?: Express.Multer.File) {
-    const staff = await this.prisma.staff.findUnique({ where: { userId: user.id } });
+    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
     const assignment = await this.prisma.assignment.findUnique({ where: { id: BigInt(id) } });
     if (!assignment || assignment.staffId !== staff?.id) throw new NotFoundException('Assignment not found');
     
@@ -481,7 +501,7 @@ export class StaffService {
   }
 
   async deleteAssignment(user: any, id: number) {
-    const staff = await this.prisma.staff.findUnique({ where: { userId: user.id } });
+    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
     const assignment = await this.prisma.assignment.findUnique({ where: { id: BigInt(id) } });
     if (!assignment || assignment.staffId !== staff?.id) throw new NotFoundException('Assignment not found');
     await this.prisma.assignment.delete({ where: { id: BigInt(id) } });
@@ -489,7 +509,7 @@ export class StaffService {
   }
 
   async getLibrary(user: any) {
-    const staff = await this.prisma.staff.findUnique({ where: { userId: user.id } });
+    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
     const items = await this.prisma.libraryResource.findMany({ 
       where: { staffId: staff?.id }, 
       orderBy: { createdAt: 'desc' },
@@ -506,9 +526,10 @@ export class StaffService {
 
   async uploadLibrary(user: any, body: any, file: Express.Multer.File) {
     if (!file) throw new BadRequestException('No file provided');
-    const staff = await this.prisma.staff.findUnique({ where: { userId: user.id } });
-    const classRoom = await this.prisma.classRoom.findFirst({ where: { name: body.class } });
-    const subject = await this.prisma.subject.findFirst({ where: { name: body.course } });
+    const schoolId = this.schoolId(user);
+    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
+    const classRoom = await this.prisma.classRoom.findFirst({ where: { name: body.class, ...(schoolId ? { schoolId } : {}) } });
+    const subject = await this.prisma.subject.findFirst({ where: { name: body.course, ...(schoolId ? { classRoom: { schoolId } } : {}) } });
 
     const fileUrl = await uploadToCloudinary(file, 'florieren/library');
     const item = await this.prisma.libraryResource.create({ 
@@ -526,7 +547,7 @@ export class StaffService {
   }
 
   async deleteLibrary(user: any, id: number) {
-    const staff = await this.prisma.staff.findUnique({ where: { userId: user.id } });
+    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
     const item = await this.prisma.libraryResource.findUnique({ where: { id: BigInt(id) } });
     if (!item) throw new NotFoundException('Document not found');
     if (item.staffId !== staff?.id) throw new ForbiddenException('You can only delete your own documents');
@@ -534,12 +555,14 @@ export class StaffService {
     return this.ok(null, 'Document deleted successfully');
   }
 
-  async getClasses() {
-    return { success: true, data: await this.prisma.classRoom.findMany({ orderBy: { name: 'asc' } }) };
+  async getClasses(user: any) {
+    const schoolId = this.schoolId(user);
+    return { success: true, data: await this.prisma.classRoom.findMany({ where: { ...(schoolId ? { schoolId } : {}) }, orderBy: { name: 'asc' } }) };
   }
 
-  async getCourses() {
-    const courses = await this.prisma.subject.findMany({ orderBy: { name: 'asc' } });
+  async getCourses(user: any) {
+    const schoolId = this.schoolId(user);
+    const courses = await this.prisma.subject.findMany({ where: { ...(schoolId ? { classRoom: { schoolId } } : {}) }, orderBy: { name: 'asc' } });
     return { success: true, data: courses.map(c => ({ course_id: c.id.toString(), course: c.name })) };
   }
 

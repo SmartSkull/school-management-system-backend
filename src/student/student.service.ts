@@ -10,6 +10,10 @@ export class StudentService {
     return { success: true, data, message };
   }
 
+  private schoolId(user: any): bigint | undefined {
+    return user?.schoolId ? BigInt(user.schoolId) : undefined;
+  }
+
   private async getCurrentSession(): Promise<string> {
     const r = await this.prisma.academicSession.findFirst({ where: { isCurrent: true } })
       ?? await this.prisma.academicSession.findFirst({ orderBy: { createdAt: 'desc' } });
@@ -27,7 +31,7 @@ export class StudentService {
       this.getCurrentSession(),
       this.getCurrentTerm(),
       this.prisma.notification.count({ where: { userId: BigInt(user.id), readAt: null } }),
-      this.assignmentsWithStaff({ classRoom: { name: user.class } }, 5),
+      this.assignmentsWithStaff({ classRoom: { name: user.class, ...(this.schoolId(user) ? { schoolId: this.schoolId(user) } : {}) } }, 5),
     ]);
     return this.ok({
       user: {
@@ -114,11 +118,11 @@ export class StudentService {
       this.resultsWithTotals({ studentId: student.id, sessionId: sessionEntity.id, termId: termEntity.id }),
       this.prisma.attendance.findFirst({ where: { studentId: student.id, sessionId: sessionEntity.id, termId: termEntity.id } }),
       this.prisma.staff.findFirst({ 
-        where: { classRooms: { some: { name: user.class } } },
+        where: { classRooms: { some: { name: user.class, ...(this.schoolId(user) ? { schoolId: this.schoolId(user) } : {}) } }, user: { ...(this.schoolId(user) ? { schoolId: this.schoolId(user) } : {}) } },
         include: { user: { select: { firstName: true, lastName: true, image: true } } } 
       }),
       this.prisma.user.findFirst({ 
-        where: { role: 'ADMIN' }, 
+        where: { role: 'ADMIN', ...(this.schoolId(user) ? { schoolId: this.schoolId(user) } : {}) }, 
         select: { firstName: true, lastName: true, image: true } 
       }),
     ]);
@@ -126,7 +130,7 @@ export class StudentService {
     const results = await this.enrichWithCumulativeScores(rawResults, student.id.toString(), session, term);
 
     const classSize = await this.prisma.student.count({
-      where: { classRoom: { name: user.class } }
+      where: { classRoom: { name: user.class, ...(this.schoolId(user) ? { schoolId: this.schoolId(user) } : {}) }, user: { ...(this.schoolId(user) ? { schoolId: this.schoolId(user) } : {}) } }
     });
 
     return this.ok({
@@ -218,12 +222,12 @@ export class StudentService {
   }
 
   async getAssignments(user: any) {
-    return this.ok(await this.assignmentsWithStaff({ classRoom: { name: user.class } }));
+    return this.ok(await this.assignmentsWithStaff({ classRoom: { name: user.class, ...(this.schoolId(user) ? { schoolId: this.schoolId(user) } : {}) } }));
   }
 
   async getLibrary(user: any) {
     const items = await this.prisma.libraryResource.findMany({ 
-      where: { classRoom: { name: user.class }, status: 'APPROVED' }, 
+      where: { classRoom: { name: user.class, ...(this.schoolId(user) ? { schoolId: this.schoolId(user) } : {}) }, status: 'APPROVED' }, 
       orderBy: { createdAt: 'desc' },
       include: { staff: { include: { user: true } }, subject: true }
     });

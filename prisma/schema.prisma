@@ -55,12 +55,23 @@ model School {
   id             BigInt        @id @default(autoincrement())
   name           String        @db.VarChar(255)
   slug           String        @unique @db.VarChar(100)
+  slogan         String?       @db.VarChar(255)
+  motto          String?       @db.VarChar(255)
+  description    String?       @db.Text
   email          String?       @unique @db.VarChar(255)
+  contactEmail   String?       @db.VarChar(255)
+  contactName    String?       @db.VarChar(150)
   telephone      String?       @db.VarChar(50)
+  alternatePhone String?       @db.VarChar(50)
   address        String?       @db.Text
+  city           String?       @db.VarChar(100)
+  state          String?       @db.VarChar(100)
+  country        String?       @default("Nigeria") @db.VarChar(100)
+  website        String?       @db.VarChar(255)
   logo           String?       @db.VarChar(255)
   primaryColor   String        @default("#1a73e8") @db.VarChar(20)
   secondaryColor String        @default("#ffffff") @db.VarChar(20)
+  accentColor    String        @default("#84cc16") @db.VarChar(20)
   status         AccountStatus @default(PENDING)
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
