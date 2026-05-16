@@ -1,10 +1,11 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '../database/prisma.service';
+import { EmailService } from '../common/email.service';
 
 @Injectable()
 export class AdminService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private emailService: EmailService) {}
 
   private ok(data: any = null, message = 'Success') {
     return { success: true, data, message };
@@ -134,17 +135,19 @@ export class AdminService {
   }
 
   async createStudent(user: any, data: any) {
-    const studentId = await this.generateStudentId();
     const schoolId = this.schoolId(user);
+    const studentId = await this.generateStudentId(schoolId);
     const classRoom = await this.prisma.classRoom.findFirst({ where: { name: data.class, ...(schoolId ? { schoolId } : {}) } });
+    const firstName = data.firstName || data.firstname || '';
+    const lastName = data.lastName || data.lastname || '';
     
     await this.prisma.user.create({ 
       data: {
         uniqueId: studentId,
         schoolId,
         role: 'STUDENT',
-        firstName: data.firstname || '',
-        lastName: data.lastname || '',
+        firstName,
+        lastName,
         email: data.email || '',
         telephone: data.telephone || '',
         password: await bcrypt.hash(data.password || 'greatkings', 10),
@@ -158,6 +161,7 @@ export class AdminService {
         }
       }
     });
+    this.emailService.sendStudentCreated({ firstName, lastName, email: data.email || '', uniqueId: studentId, password: data.password || 'greatkings' });
     return this.ok({ student_id: studentId }, 'Student created successfully');
   }
 
@@ -256,8 +260,8 @@ export class AdminService {
   }
 
   async createStaff(user: any, data: any) {
-    const uniqueId = await this.generateStaffId();
     const schoolId = this.schoolId(user);
+    const uniqueId = await this.generateStaffId(schoolId);
     await this.prisma.user.create({ 
       data: {
         uniqueId: uniqueId,
@@ -277,6 +281,7 @@ export class AdminService {
         }
       }
     });
+    this.emailService.sendStaffCreated({ firstName: data.firstname || '', lastName: data.lastname || '', email: data.email || '', uniqueId, password: data.password || 'greatkings' });
     return this.ok({ unique_id: uniqueId }, 'Staff created successfully');
   }
 
@@ -729,26 +734,40 @@ export class AdminService {
     return r?.name || '';
   }
 
-  private async generateStudentId(): Promise<string> {
+  private async generateStudentId(schoolId?: bigint): Promise<string> {
     const year = new Date().getFullYear().toString().slice(-2);
+    const prefix = await this.schoolPrefix(schoolId);
     const last = await this.prisma.user.findFirst({ 
-      where: { role: 'STUDENT' }, 
+      where: { role: 'STUDENT', ...(schoolId ? { schoolId } : {}) }, 
       orderBy: { createdAt: 'desc' }, 
       select: { uniqueId: true } 
     });
     const num = last ? parseInt(last.uniqueId.replace(/\D/g, '').slice(-4) || '0') + 1 : 1;
-    return `GKA${year}${String(num).padStart(4, '0')}`;
+    return `${prefix}${year}${String(num).padStart(4, '0')}`;
   }
 
-  private async generateStaffId(): Promise<string> {
+  private async generateStaffId(schoolId?: bigint): Promise<string> {
     const year = new Date().getFullYear().toString().slice(-2);
+    const prefix = await this.schoolPrefix(schoolId);
     const last = await this.prisma.user.findFirst({ 
-      where: { role: 'STAFF' }, 
+      where: { role: 'STAFF', ...(schoolId ? { schoolId } : {}) }, 
       orderBy: { createdAt: 'desc' }, 
       select: { uniqueId: true } 
     });
     const num = last ? parseInt(last.uniqueId.replace(/\D/g, '').slice(-4) || '0') + 1 : 1;
-    return `GKS${year}${String(num).padStart(4, '0')}`;
+    return `${prefix}S${year}${String(num).padStart(4, '0')}`;
+  }
+
+  private async schoolPrefix(schoolId?: bigint): Promise<string> {
+    if (!schoolId) return 'SCH';
+    const school = await this.prisma.school.findUnique({ where: { id: schoolId }, select: { slug: true } });
+    if (!school?.slug) return 'SCH';
+    // Take up to 3 uppercase letters from the slug words
+    const words = school.slug.split('-').filter(Boolean);
+    const prefix = words.length >= 3
+      ? words.slice(0, 3).map(w => w[0]).join('').toUpperCase()
+      : words.map(w => w.slice(0, Math.ceil(3 / words.length))).join('').slice(0, 3).toUpperCase();
+    return prefix || 'SCH';
   }
 
   private pick(data: any, keys: string[]) {
@@ -761,7 +780,7 @@ export class AdminService {
 
   private async findManagedSchool(user: any) {
     const currentUser = await this.prisma.user.findFirst({
-      where: { uniqueId: user.id },
+      where: { uniqueId: user.uniqueId ?? String(user.id) },
       select: { schoolId: true },
     });
 

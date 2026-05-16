@@ -3,10 +3,11 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { PrismaService } from '../database/prisma.service';
 import { uploadToCloudinary } from '../common/cloudinary';
+import { EmailService } from '../common/email.service';
 
 @Controller()
 export class PublicController {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private emailService: EmailService) {}
 
   private schoolSelect = {
     id: true,
@@ -222,6 +223,21 @@ export class PublicController {
         status: 'PENDING',
       },
       select: this.schoolSelect,
+    });
+
+    this.emailService.sendSchoolRegistered({
+      name: school.name,
+      email: school.email ?? undefined,
+      slug: school.slug,
+      slogan: (school as any).slogan ?? undefined,
+      address: (school as any).address ?? undefined,
+      city: (school as any).city ?? undefined,
+      state: (school as any).state ?? undefined,
+      country: (school as any).country ?? undefined,
+      telephone: (school as any).telephone ?? undefined,
+      website: (school as any).website ?? undefined,
+      logo: (school as any).logo ?? undefined,
+      primaryColor: (school as any).primaryColor ?? undefined,
     });
 
     return {

@@ -47,6 +47,146 @@ const migrations = [
       "ALTER TABLE `LibraryResource` ADD CONSTRAINT `LibraryResource_classRoomId_fkey` FOREIGN KEY (`classRoomId`) REFERENCES `ClassRoom`(`id`) ON DELETE SET NULL ON UPDATE CASCADE",
     ],
   },
+  {
+    name: 'add_staff_attendance',
+    sql: [
+      `CREATE TABLE IF NOT EXISTS \`AttendanceLocation\` (
+        \`id\` BIGINT NOT NULL AUTO_INCREMENT,
+        \`schoolId\` BIGINT NOT NULL,
+        \`name\` VARCHAR(150) NOT NULL,
+        \`latitude\` DOUBLE NOT NULL,
+        \`longitude\` DOUBLE NOT NULL,
+        \`radiusMeters\` INT NOT NULL DEFAULT 100,
+        \`resumptionTime\` VARCHAR(5) NOT NULL DEFAULT '08:00',
+        \`isActive\` BOOLEAN NOT NULL DEFAULT TRUE,
+        \`createdAt\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+        \`updatedAt\` DATETIME(3) NOT NULL,
+        PRIMARY KEY (\`id\`),
+        CONSTRAINT \`AttendanceLocation_schoolId_fkey\` FOREIGN KEY (\`schoolId\`) REFERENCES \`School\`(\`id\`) ON DELETE RESTRICT ON UPDATE CASCADE
+      )`,
+      `CREATE TABLE IF NOT EXISTS \`StaffAttendance\` (
+        \`id\` BIGINT NOT NULL AUTO_INCREMENT,
+        \`staffId\` BIGINT NOT NULL,
+        \`locationId\` BIGINT NULL,
+        \`date\` DATE NOT NULL,
+        \`clockIn\` DATETIME(3) NULL,
+        \`clockOut\` DATETIME(3) NULL,
+        \`status\` ENUM('PRESENT','ABSENT','LATE') NOT NULL DEFAULT 'PRESENT',
+        \`lateMinutes\` INT NOT NULL DEFAULT 0,
+        \`note\` VARCHAR(255) NULL,
+        \`createdAt\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+        \`updatedAt\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+        PRIMARY KEY (\`id\`),
+        UNIQUE KEY \`StaffAttendance_staffId_date_key\` (\`staffId\`, \`date\`),
+        CONSTRAINT \`StaffAttendance_staffId_fkey\` FOREIGN KEY (\`staffId\`) REFERENCES \`Staff\`(\`id\`) ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT \`StaffAttendance_locationId_fkey\` FOREIGN KEY (\`locationId\`) REFERENCES \`AttendanceLocation\`(\`id\`) ON DELETE SET NULL ON UPDATE CASCADE
+      )`,
+    ],
+  },
+  {
+    name: 'add_AttendanceLocation_resumptionTime',
+    sql: [
+      "ALTER TABLE `AttendanceLocation` ADD COLUMN `resumptionTime` VARCHAR(5) NOT NULL DEFAULT '08:00'",
+    ],
+  },
+  {
+    name: 'add_leave_management',
+    sql: [
+      `CREATE TABLE IF NOT EXISTS \`LeaveRequest\` (
+        \`id\` BIGINT NOT NULL AUTO_INCREMENT,
+        \`staffId\` BIGINT NOT NULL,
+        \`type\` ENUM('ANNUAL','SICK','MATERNITY','PATERNITY','UNPAID','OTHER') NOT NULL DEFAULT 'OTHER',
+        \`startDate\` DATE NOT NULL,
+        \`endDate\` DATE NOT NULL,
+        \`days\` INT NOT NULL,
+        \`reason\` TEXT NOT NULL,
+        \`proofFile\` VARCHAR(255) NULL,
+        \`status\` ENUM('PENDING','APPROVED','REJECTED') NOT NULL DEFAULT 'PENDING',
+        \`adminNote\` TEXT NULL,
+        \`reviewedAt\` DATETIME(3) NULL,
+        \`reviewedBy\` BIGINT NULL,
+        \`createdAt\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+        \`updatedAt\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+        PRIMARY KEY (\`id\`),
+        CONSTRAINT \`LeaveRequest_staffId_fkey\` FOREIGN KEY (\`staffId\`) REFERENCES \`Staff\`(\`id\`) ON DELETE CASCADE ON UPDATE CASCADE
+      )`,
+    ],
+  },
+  {
+    name: 'add_leave_entitlements',
+    sql: [
+      `CREATE TABLE IF NOT EXISTS \`LeaveEntitlement\` (
+        \`id\` BIGINT NOT NULL AUTO_INCREMENT,
+        \`schoolId\` BIGINT NOT NULL,
+        \`type\` ENUM('ANNUAL','SICK','MATERNITY','PATERNITY','UNPAID','OTHER') NOT NULL,
+        \`days\` INT NOT NULL DEFAULT 0,
+        \`updatedAt\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+        PRIMARY KEY (\`id\`),
+        UNIQUE KEY \`LeaveEntitlement_schoolId_type_key\` (\`schoolId\`, \`type\`),
+        CONSTRAINT \`LeaveEntitlement_schoolId_fkey\` FOREIGN KEY (\`schoolId\`) REFERENCES \`School\`(\`id\`) ON DELETE CASCADE ON UPDATE CASCADE
+      )`,
+    ],
+  },
+  {
+    name: 'add_payroll_tables',
+    sql: [
+      `CREATE TABLE IF NOT EXISTS \`PayrollSalarySetup\` (
+        \`id\` BIGINT NOT NULL AUTO_INCREMENT,
+        \`staffId\` BIGINT NOT NULL,
+        \`basicSalary\` DECIMAL(12,2) NOT NULL,
+        \`housingAllowance\` DECIMAL(12,2) NOT NULL DEFAULT 0,
+        \`transportAllowance\` DECIMAL(12,2) NOT NULL DEFAULT 0,
+        \`otherAllowance\` DECIMAL(12,2) NOT NULL DEFAULT 0,
+        \`taxRate\` DECIMAL(5,2) NOT NULL DEFAULT 0,
+        \`pensionRate\` DECIMAL(5,2) NOT NULL DEFAULT 0,
+        \`effectiveFrom\` DATE NOT NULL,
+        \`createdAt\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+        \`updatedAt\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+        PRIMARY KEY (\`id\`),
+        UNIQUE KEY \`PayrollSalarySetup_staffId_key\` (\`staffId\`),
+        CONSTRAINT \`PayrollSalarySetup_staffId_fkey\` FOREIGN KEY (\`staffId\`) REFERENCES \`Staff\`(\`id\`) ON DELETE CASCADE ON UPDATE CASCADE
+      )`,
+      `CREATE TABLE IF NOT EXISTS \`PayrollDeduction\` (
+        \`id\` BIGINT NOT NULL AUTO_INCREMENT,
+        \`schoolId\` BIGINT NOT NULL,
+        \`staffId\` BIGINT NULL,
+        \`title\` VARCHAR(150) NOT NULL,
+        \`amount\` DECIMAL(12,2) NOT NULL,
+        \`recurring\` BOOLEAN NOT NULL DEFAULT FALSE,
+        \`month\` INT NULL,
+        \`year\` INT NULL,
+        \`note\` VARCHAR(255) NULL,
+        \`createdAt\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+        \`updatedAt\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+        PRIMARY KEY (\`id\`),
+        CONSTRAINT \`PayrollDeduction_schoolId_fkey\` FOREIGN KEY (\`schoolId\`) REFERENCES \`School\`(\`id\`) ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT \`PayrollDeduction_staffId_fkey\` FOREIGN KEY (\`staffId\`) REFERENCES \`Staff\`(\`id\`) ON DELETE CASCADE ON UPDATE CASCADE
+      )`,
+      `CREATE TABLE IF NOT EXISTS \`PayrollPayslip\` (
+        \`id\` BIGINT NOT NULL AUTO_INCREMENT,
+        \`staffId\` BIGINT NOT NULL,
+        \`month\` INT NOT NULL,
+        \`year\` INT NOT NULL,
+        \`basicSalary\` DECIMAL(12,2) NOT NULL,
+        \`housingAllowance\` DECIMAL(12,2) NOT NULL DEFAULT 0,
+        \`transportAllowance\` DECIMAL(12,2) NOT NULL DEFAULT 0,
+        \`otherAllowance\` DECIMAL(12,2) NOT NULL DEFAULT 0,
+        \`grossPay\` DECIMAL(12,2) NOT NULL,
+        \`taxAmount\` DECIMAL(12,2) NOT NULL DEFAULT 0,
+        \`pensionAmount\` DECIMAL(12,2) NOT NULL DEFAULT 0,
+        \`deductions\` DECIMAL(12,2) NOT NULL DEFAULT 0,
+        \`netPay\` DECIMAL(12,2) NOT NULL,
+        \`status\` ENUM('DRAFT','ISSUED','PAID') NOT NULL DEFAULT 'ISSUED',
+        \`generatedAt\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+        \`createdAt\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+        \`updatedAt\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+        PRIMARY KEY (\`id\`),
+        UNIQUE KEY \`PayrollPayslip_staffId_month_year_key\` (\`staffId\`, \`month\`, \`year\`),
+        KEY \`PayrollPayslip_year_month_idx\` (\`year\`, \`month\`),
+        CONSTRAINT \`PayrollPayslip_staffId_fkey\` FOREIGN KEY (\`staffId\`) REFERENCES \`Staff\`(\`id\`) ON DELETE CASCADE ON UPDATE CASCADE
+      )`,
+    ],
+  },
 ];
 
 async function columnExists(conn, table, column) {
@@ -67,7 +207,9 @@ async function run() {
           await conn.query(sql);
           console.log(`  ✓ ${sql.slice(0, 60)}...`);
         } catch (err) {
-          if (err.code === 'ER_DUP_FIELDNAME' || err.code === 'ER_DUP_KEY' || err.errno === 1060 || err.errno === 1061) {
+          if (err.code === 'ER_DUP_FIELDNAME' || err.code === 'ER_DUP_KEY' || err.errno === 1060 || err.errno === 1061
+              || err.errno === 1022 || err.code === 'ER_TABLE_EXISTS_ERROR' || err.errno === 1050
+              || (err.message && err.message.includes('Duplicate'))) {
             console.log(`  ⚠ Already exists, skipping.`);
           } else {
             throw err;

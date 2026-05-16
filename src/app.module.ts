@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { EmailService } from './common/email.service';
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './auth/auth.module';
 import { AdminModule } from './admin/admin.module';
@@ -10,6 +11,9 @@ import { CbtModule } from './cbt/cbt.module';
 import { BookgameModule } from './bookgame/bookgame.module';
 import { PublicModule } from './public/public.module';
 import { SchoolFeesModule } from './school-fees/school-fees.module';
+import { AttendanceModule } from './attendance/attendance.module';
+import { LeaveModule } from './leave/leave.module';
+import { PayrollModule } from './payroll/payroll.module';
 
 @Module({
   imports: [
@@ -24,6 +28,11 @@ import { SchoolFeesModule } from './school-fees/school-fees.module';
     BookgameModule,
     PublicModule,
     SchoolFeesModule,
+    AttendanceModule,
+    LeaveModule,
+    PayrollModule,
   ],
+  providers: [EmailService],
+  exports: [EmailService],
 })
 export class AppModule {}
