@@ -71,4 +71,12 @@ export class StaffController {
 
   @Get('notifications') getNotifications(@CurrentUser() user: any) { return this.svc.getNotifications(user); }
   @Post('notifications/read') markNotificationsRead(@CurrentUser() user: any) { return this.svc.markNotificationsRead(user); }
+
+  @Get('timetable/class') getClassTimetables(@CurrentUser() user: any) { return this.svc.getClassTimetables(user); }
+  @Post('timetable/class') saveClassTimetable(@CurrentUser() user: any, @Body() body: any) { return this.svc.saveClassTimetable(user, body); }
+  @Delete('timetable/class/:id') deleteClassTimetable(@CurrentUser() user: any, @Param('id') id: string) { return this.svc.deleteClassTimetable(user, id); }
+
+  @Get('timetable/exam') getExamTimetables(@CurrentUser() user: any) { return this.svc.getExamTimetables(user); }
+  @Post('timetable/exam') saveExamTimetable(@CurrentUser() user: any, @Body() body: any) { return this.svc.saveExamTimetable(user, body); }
+  @Delete('timetable/exam/:id') deleteExamTimetable(@CurrentUser() user: any, @Param('id') id: string) { return this.svc.deleteExamTimetable(user, id); }
 }

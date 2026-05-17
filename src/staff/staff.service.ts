@@ -579,6 +579,59 @@ export class StaffService {
     return { success: true, data: null, message: 'Notifications marked as read' };
   }
 
+  async getClassTimetables(user: any) {
+    const schoolId = this.schoolId(user);
+    const rows = await this.prisma.classTimetable.findMany({
+      where: schoolId ? { classRoom: { schoolId } } : {},
+      include: { classRoom: true },
+      orderBy: { createdAt: 'desc' },
+    });
+    return this.ok(rows.map(r => ({ ...r, id: r.id.toString(), classRoomId: r.classRoomId.toString(), classRoom: r.classRoom?.name })));
+  }
+
+  async saveClassTimetable(user: any, body: any) {
+    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
+    const { classRoomId, content, id } = body;
+    if (!classRoomId || !content) throw new BadRequestException('classRoomId and content are required');
+    if (id) {
+      await this.prisma.classTimetable.update({ where: { id: BigInt(id) }, data: { content, staffId: staff?.id } });
+      return this.ok(null, 'Class timetable updated');
+    }
+    await this.prisma.classTimetable.create({ data: { classRoomId: BigInt(classRoomId), content, staffId: staff?.id } });
+    return this.ok(null, 'Class timetable created');
+  }
+
+  async deleteClassTimetable(user: any, id: string) {
+    await this.prisma.classTimetable.delete({ where: { id: BigInt(id) } });
+    return this.ok(null, 'Class timetable deleted');
+  }
+
+  async getExamTimetables(user: any) {
+    const schoolId = this.schoolId(user);
+    const rows = await this.prisma.examTimetable.findMany({
+      where: schoolId ? { staff: { user: { schoolId } } } : {},
+      orderBy: { createdAt: 'desc' },
+    });
+    return this.ok(rows.map(r => ({ ...r, id: r.id.toString() })));
+  }
+
+  async saveExamTimetable(user: any, body: any) {
+    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
+    const { level, content, id } = body;
+    if (!level || !content) throw new BadRequestException('level and content are required');
+    if (id) {
+      await this.prisma.examTimetable.update({ where: { id: BigInt(id) }, data: { content, staffId: staff?.id } });
+      return this.ok(null, 'Exam timetable updated');
+    }
+    await this.prisma.examTimetable.create({ data: { level, content, staffId: staff?.id } });
+    return this.ok(null, 'Exam timetable created');
+  }
+
+  async deleteExamTimetable(user: any, id: string) {
+    await this.prisma.examTimetable.delete({ where: { id: BigInt(id) } });
+    return this.ok(null, 'Exam timetable deleted');
+  }
+
   private async resultsWithTotals(where: any) {
     const rows = await this.prisma.result.findMany({ where, include: { subject: true } });
     return rows.map(row => ({

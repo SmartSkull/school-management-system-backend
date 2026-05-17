@@ -132,6 +132,8 @@ model Student {
   motherName      String?   @db.VarChar(150)
   parentImage     String?   @db.VarChar(255)
   about           String?   @db.Text
+  religion        String?   @db.VarChar(50)
+  bloodGroup      String?   @db.VarChar(10)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 

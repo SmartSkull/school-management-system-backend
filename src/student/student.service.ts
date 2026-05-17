@@ -58,9 +58,10 @@ export class StudentService {
     const update: any = {};
     allowed.forEach(k => { if (data[k] !== undefined) update[k] = data[k]; });
     
-    const studentAllowed = ['dateOfBirth', 'stateOfOrigin', 'homeAddress', 'fatherName', 'motherName'];
+    const studentAllowed = ['dateOfBirth', 'stateOfOrigin', 'homeAddress', 'fatherName', 'motherName', 'religion', 'bloodGroup'];
     const studentUpdate: any = {};
     studentAllowed.forEach(k => { if (data[k] !== undefined) studentUpdate[k] = data[k]; });
+    if (studentUpdate.dateOfBirth) studentUpdate.dateOfBirth = new Date(studentUpdate.dateOfBirth);
 
     if (Object.keys(update).length || Object.keys(studentUpdate).length) {
       await this.prisma.user.update({ 
@@ -241,13 +242,25 @@ export class StudentService {
   }
 
   async getClassTimetable(user: any) {
-    // Timetable model is missing in normalized schema. Placeholder for now.
-    return this.ok([]);
+    const student = await this.prisma.student.findUnique({
+      where: { userId: BigInt(user.id) },
+      select: { classRoomId: true },
+    });
+    if (!student?.classRoomId) return this.ok(null);
+    const timetable = await this.prisma.classTimetable.findFirst({
+      where: { classRoomId: student.classRoomId },
+      orderBy: { updatedAt: 'desc' },
+    });
+    return this.ok(timetable ? { ...timetable, id: timetable.id.toString(), timetable: timetable.content } : null);
   }
 
   async getExamTimetable(user: any) {
-    // Timetable model is missing in normalized schema. Placeholder for now.
-    return this.ok([]);
+    const schoolId = this.schoolId(user);
+    const rows = await this.prisma.examTimetable.findMany({
+      where: schoolId ? { staff: { user: { schoolId } } } : {},
+      orderBy: { updatedAt: 'desc' },
+    });
+    return this.ok(rows.map(r => ({ ...r, id: r.id.toString(), timetable: r.content })));
   }
 
   async getNotifications(user: any) {
