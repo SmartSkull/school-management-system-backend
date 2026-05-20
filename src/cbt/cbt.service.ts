@@ -71,20 +71,19 @@ export class CbtService {
     const student = await this.prisma.student.findUnique({ where: { userId: BigInt(user.id) } });
     if (!student) throw new NotFoundException('Student not found');
 
-    await this.prisma.cbtAnswer.upsert({
-      where: { 
-        studentId_questionId: { 
-          studentId: student.id, 
-          questionId: BigInt(question_id) 
-        } 
-      },
-      update: { selected: answer },
-      create: { 
-        studentId: student.id, 
-        questionId: BigInt(question_id), 
-        selected: answer 
-      }
+    const existing = await this.prisma.cbtAnswer.findUnique({
+      where: { studentId_questionId: { studentId: student.id, questionId: BigInt(question_id) } },
     });
+    if (existing) {
+      await this.prisma.cbtAnswer.update({
+        where: { id: existing.id },
+        data: { selected: answer },
+      });
+    } else {
+      await this.prisma.cbtAnswer.create({
+        data: { studentId: student.id, questionId: BigInt(question_id), selected: answer },
+      });
+    }
     return this.ok(null, 'Answer submitted');
   }
 

@@ -271,6 +271,203 @@ export class AttendanceService {
     return { success: true, message: `${absent.length} staff marked absent` };
   }
 
+  // ── Student: clock in ─────────────────────────────────────────────────
+  async studentClockIn(user: any, body: { latitude: number; longitude: number }) {
+    const { latitude, longitude } = body;
+    if (latitude == null || longitude == null) throw new BadRequestException('Location required');
+
+    const schoolId = user.schoolId ?? user.user?.schoolId;
+    if (!schoolId) throw new ForbiddenException('No school associated');
+
+    const location = await this.prisma.attendanceLocation.findFirst({
+      where: { schoolId: BigInt(schoolId), isActive: true },
+    });
+    if (!location) throw new BadRequestException('No attendance location configured by admin');
+
+    const dist = distanceMetres(latitude, longitude, location.latitude, location.longitude);
+    if (dist > location.radiusMeters) {
+      throw new ForbiddenException(
+        `You are ${Math.round(dist)}m away from the allowed location (${location.radiusMeters}m radius). Clock-in denied.`,
+      );
+    }
+
+    const studentId = user.id ?? user.studentId;
+    const today = todayDate();
+
+    const existing = await this.prisma.studentAttendance.findUnique({
+      where: { studentId_date: { studentId: BigInt(studentId), date: today } },
+    });
+    if (existing?.clockIn) throw new BadRequestException('Already clocked in today');
+
+    const now = new Date();
+    const [rHour, rMin] = (location.resumptionTime ?? '08:00').split(':').map(Number);
+    const cutoff = new Date(today);
+    cutoff.setHours(rHour, rMin, 0, 0);
+    const lateMinutes = now > cutoff ? Math.floor((now.getTime() - cutoff.getTime()) / 60000) : 0;
+    const status = lateMinutes > 0 ? 'LATE' : 'PRESENT';
+
+    const record = await this.prisma.studentAttendance.upsert({
+      where: { studentId_date: { studentId: BigInt(studentId), date: today } },
+      create: { studentId: BigInt(studentId), locationId: location.id, date: today, clockIn: now, status, lateMinutes },
+      update: { clockIn: now, locationId: location.id, status, lateMinutes },
+    });
+
+    const lateLabel = lateMinutes > 0
+      ? lateMinutes < 60 ? `${lateMinutes} min late` : `${Math.floor(lateMinutes / 60)}h ${lateMinutes % 60 ? `${lateMinutes % 60}m ` : ''}late`
+      : '';
+    return { success: true, message: `Clocked in${lateLabel ? ` (${lateLabel})` : ''}`, data: this.serializeStudentRecord(record) };
+  }
+
+  // ── Student: clock out ────────────────────────────────────────────────
+  async studentClockOut(user: any, body: { latitude: number; longitude: number }) {
+    const { latitude, longitude } = body;
+    if (latitude == null || longitude == null) throw new BadRequestException('Location required');
+
+    const studentId = user.id ?? user.studentId;
+    const today = todayDate();
+
+    const record = await this.prisma.studentAttendance.findUnique({
+      where: { studentId_date: { studentId: BigInt(studentId), date: today } },
+      include: { location: true },
+    });
+    if (!record?.clockIn) throw new BadRequestException('You have not clocked in today');
+    if (record.clockOut) throw new BadRequestException('Already clocked out today');
+
+    if (record.location) {
+      const dist = distanceMetres(latitude, longitude, record.location.latitude, record.location.longitude);
+      if (dist > record.location.radiusMeters) {
+        throw new ForbiddenException(
+          `You are ${Math.round(dist)}m away from the clock-in location (${record.location.radiusMeters}m radius). Clock-out denied.`,
+        );
+      }
+    }
+
+    const updated = await this.prisma.studentAttendance.update({
+      where: { id: record.id },
+      data: { clockOut: new Date() },
+    });
+    return { success: true, message: 'Clocked out successfully', data: this.serializeStudentRecord(updated) };
+  }
+
+  // ── Student: today status ─────────────────────────────────────────────
+  async studentTodayStatus(user: any) {
+    const studentId = user.id ?? user.studentId;
+    const today = todayDate();
+
+    const record = await this.prisma.studentAttendance.findUnique({
+      where: { studentId_date: { studentId: BigInt(studentId), date: today } },
+    });
+
+    const schoolId = user.schoolId ?? user.user?.schoolId;
+    const location = schoolId
+      ? await this.prisma.attendanceLocation.findFirst({ where: { schoolId: BigInt(schoolId), isActive: true } })
+      : null;
+
+    return {
+      success: true,
+      data: {
+        record: record ? this.serializeStudentRecord(record) : null,
+        location: location ? this.serializeLocation(location) : null,
+      },
+    };
+  }
+
+  // ── Student: own history ──────────────────────────────────────────────
+  async studentHistory(user: any, query: any) {
+    const studentId = user.id ?? user.studentId;
+    const { month, year } = query;
+
+    const where: any = { studentId: BigInt(studentId) };
+    if (month && year) {
+      const start = new Date(Number(year), Number(month) - 1, 1);
+      const end = new Date(Number(year), Number(month), 1);
+      where.date = { gte: start, lt: end };
+    }
+
+    const records = await this.prisma.studentAttendance.findMany({
+      where,
+      orderBy: { date: 'desc' },
+      take: 60,
+    });
+    return { success: true, data: records.map((r) => this.serializeStudentRecord(r)) };
+  }
+
+  // ── Admin: student attendance report ─────────────────────────────────
+  async getStudentReport(user: any, query: any) {
+    const schoolId = user.schoolId ?? user.school?.id;
+    const { date, month, year } = query;
+
+    const where: any = { student: { user: { schoolId: BigInt(schoolId) } } };
+
+    if (date) {
+      const d = new Date(date);
+      where.date = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    } else if (month && year) {
+      where.date = { gte: new Date(Number(year), Number(month) - 1, 1), lt: new Date(Number(year), Number(month), 1) };
+    } else {
+      where.date = todayDate();
+    }
+
+    const records = await this.prisma.studentAttendance.findMany({
+      where,
+      include: { student: { include: { user: true } } },
+      orderBy: { date: 'desc' },
+    });
+
+    return {
+      success: true,
+      data: records.map((r) => ({
+        ...this.serializeStudentRecord(r),
+        student: {
+          id: r.student.id.toString(),
+          name: `${r.student.user.firstName} ${r.student.user.lastName}`,
+          studentNo: r.student.studentNo,
+          image: r.student.user.image,
+        },
+      })),
+    };
+  }
+
+  // ── Admin: mark absent students who haven't clocked in ────────────────
+  async markStudentsAbsent(user: any, body: { date?: string }) {
+    const schoolId = user.schoolId ?? user.school?.id;
+    const date = body.date ? new Date(body.date) : todayDate();
+    const dayDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+    const allStudents = await this.prisma.student.findMany({
+      where: { user: { schoolId: BigInt(schoolId), status: 'ACTIVE' } },
+    });
+
+    const existing = await this.prisma.studentAttendance.findMany({
+      where: { date: dayDate, student: { user: { schoolId: BigInt(schoolId) } } },
+      select: { studentId: true },
+    });
+    const presentIds = new Set(existing.map((e) => e.studentId.toString()));
+    const absent = allStudents.filter((s) => !presentIds.has(s.id.toString()));
+
+    if (absent.length > 0) {
+      await this.prisma.studentAttendance.createMany({
+        data: absent.map((s) => ({ studentId: s.id, date: dayDate, status: 'ABSENT' as const, lateMinutes: 0 })),
+        skipDuplicates: true,
+      });
+    }
+    return { success: true, message: `${absent.length} students marked absent` };
+  }
+
+  private serializeStudentRecord(r: any) {
+    return {
+      id: r.id.toString(),
+      studentId: r.studentId.toString(),
+      locationId: r.locationId?.toString() ?? null,
+      date: r.date,
+      clockIn: r.clockIn,
+      clockOut: r.clockOut,
+      status: r.status,
+      lateMinutes: r.lateMinutes,
+      note: r.note,
+    };
+  }
+
   private serializeRecord(r: any) {
     return {
       id: r.id.toString(),

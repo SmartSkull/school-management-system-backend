@@ -6,6 +6,12 @@ import { uploadToCloudinary } from '../common/cloudinary';
 export class StaffService {
   constructor(private prisma: PrismaService) {}
 
+  private safeBigInt(val: any): bigint | null {
+    if (!val) return null;
+    const n = Number(val);
+    return isNaN(n) ? null : BigInt(Math.trunc(n));
+  }
+
   private ok(data: any = null, message = 'Success') {
     return { success: true, data, message };
   }
@@ -34,30 +40,95 @@ export class StaffService {
     const session = await this.getCurrentSession();
     const term = await this.getCurrentTerm();
 
-    // The guard resolves staff role as the Staff record with { user: User } included.
-    // userInfo is the nested User (has firstName, lastName, image, uniqueId).
     const userInfo = user.user ?? user;
-
-    // Re-fetch staff with classRooms (guard include may not have it)
     const schoolId = this.schoolId(user);
     const staff = await this.prisma.staff.findUnique({ 
       where: { id: BigInt(user.id) },
       include: { classRooms: true }
     });
 
-    const studentCount = await this.prisma.user.count({ 
-      where: { role: 'STUDENT', ...(schoolId ? { schoolId } : {}), student: { classRoomId: staff?.classRooms[0]?.id } } 
+    const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
+    const termEntity = await this.prisma.academicTerm.findFirst({ 
+      where: { name: term as any, sessionId: sessionEntity?.id } 
     });
 
-    const assignments = await this.prisma.assignment.findMany({ 
-      where: { staffId: staff?.id }, 
-      orderBy: { createdAt: 'desc' } 
-    });
+    const classRoomId = staff?.classRooms[0]?.id;
 
-    const libraryItems = await this.prisma.libraryResource.findMany({ 
-      where: { staffId: staff?.id }, 
-      orderBy: { createdAt: 'desc' } 
-    });
+    const [studentCount, assignments, libraryItems] = await Promise.all([
+      this.prisma.user.count({ 
+        where: { role: 'STUDENT', ...(schoolId ? { schoolId } : {}), student: { classRoomId } } 
+      }),
+      this.prisma.assignment.findMany({ 
+        where: { staffId: staff?.id }, 
+        orderBy: { createdAt: 'desc' } 
+      }),
+      this.prisma.libraryResource.findMany({ 
+        where: { staffId: staff?.id }, 
+        orderBy: { createdAt: 'desc' } 
+      }),
+    ]);
+
+    // --- Chart 1: Student Performance Distribution (real results) ---
+    const results = sessionEntity && termEntity && classRoomId
+      ? await this.prisma.result.findMany({
+          where: {
+            sessionId: sessionEntity.id,
+            termId: termEntity.id,
+            student: { classRoomId, ...(schoolId ? { user: { schoolId } } : {}) },
+          },
+          select: { testScore: true, examScore: true },
+        })
+      : [];
+
+    const gradeBuckets = { A: 0, B: 0, C: 0, D: 0, F: 0 };
+    for (const r of results) {
+      const total = Number(r.testScore) + Number(r.examScore);
+      if (total >= 90) gradeBuckets.A++;
+      else if (total >= 80) gradeBuckets.B++;
+      else if (total >= 70) gradeBuckets.C++;
+      else if (total >= 60) gradeBuckets.D++;
+      else gradeBuckets.F++;
+    }
+    const performanceDistribution = [
+      { grade: 'A (90-100)', count: gradeBuckets.A },
+      { grade: 'B (80-89)', count: gradeBuckets.B },
+      { grade: 'C (70-79)', count: gradeBuckets.C },
+      { grade: 'D (60-69)', count: gradeBuckets.D },
+      { grade: 'F (<60)',   count: gradeBuckets.F },
+    ];
+
+    // --- Chart 2: Assignment Submission Trend (last 5 assignments) ---
+    const recentAssignments = assignments.slice(0, 5).reverse();
+    const assignmentTrend = await Promise.all(
+      recentAssignments.map(async (a, i) => {
+        const total = classRoomId
+          ? await this.prisma.user.count({ where: { role: 'STUDENT', ...(schoolId ? { schoolId } : {}), student: { classRoomId } } })
+          : studentCount;
+        const submitted = a.subjectId && sessionEntity && termEntity
+          ? await this.prisma.result.count({
+              where: {
+                subjectId: a.subjectId,
+                sessionId: sessionEntity.id,
+                termId: termEntity.id,
+                ...(classRoomId ? { student: { classRoomId, ...(schoolId ? { user: { schoolId } } : {}) } } : {}),
+              },
+            })
+          : 0;
+        return { week: `Assign ${i + 1}`, label: a.title?.slice(0, 12) ?? `Assign ${i + 1}`, submitted, total };
+      })
+    );
+
+    // --- Chart 3: Student Distribution by Class ---
+    const classRooms = schoolId
+      ? await this.prisma.classRoom.findMany({ where: { schoolId }, orderBy: { name: 'asc' } })
+      : staff?.classRooms ?? [];
+
+    const classDistribution = await Promise.all(
+      classRooms.map(async (c) => ({
+        name: c.name,
+        value: await this.prisma.student.count({ where: { classRoomId: c.id, ...(schoolId ? { user: { schoolId } } : {}) } }),
+      }))
+    );
 
     return this.ok({ 
       user: {
@@ -77,7 +148,10 @@ export class StaffService {
           total: libraryItems.length, 
           verified: libraryItems.filter((i: any) => i.status === 'APPROVED').length, 
           pending: libraryItems.filter((i: any) => i.status === 'PENDING').length 
-        } 
+        },
+        performanceDistribution,
+        assignmentTrend,
+        classDistribution,
       } 
     });
   }
@@ -642,5 +716,134 @@ export class StaffService {
       totalScore: Number(row.testScore) + Number(row.examScore),
       total_score: Number(row.testScore) + Number(row.examScore),
     }));
+  }
+
+  // ── Curriculum ────────────────────────────────────────────────────────────
+
+  async getTopics(user: any, q: any) {
+    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
+    const where: any = { staffId: staff?.id };
+    if (q.subjectId) where.subjectId = BigInt(q.subjectId);
+    if (q.classRoomId) where.classRoomId = BigInt(q.classRoomId);
+    if (q.term) where.term = q.term;
+    if (q.session) where.session = q.session;
+    const topics = await this.prisma.curriculumTopic.findMany({
+      where, orderBy: [{ session: 'desc' }, { term: 'asc' }, { week: 'asc' }],
+      include: { subject: true, classRoom: true },
+    });
+    return this.ok(topics.map(t => ({ ...t, id: t.id.toString(), staffId: t.staffId.toString(), subjectId: t.subjectId?.toString(), classRoomId: t.classRoomId?.toString(), subject: t.subject?.name, classRoom: t.classRoom?.name })));
+  }
+
+  async saveTopic(user: any, body: any) {
+    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
+    const data: any = {
+      staffId: staff!.id,
+      title: body.title,
+      description: body.description ?? null,
+      week: body.week ? Number(body.week) : null,
+      term: body.term ?? null,
+      session: body.session ?? null,
+      subjectId: this.safeBigInt(body.subjectId),
+      classRoomId: this.safeBigInt(body.classRoomId),
+    };
+    if (body.id) {
+      await this.prisma.curriculumTopic.update({ where: { id: BigInt(body.id) }, data });
+      return this.ok(null, 'Topic updated');
+    }
+    const t = await this.prisma.curriculumTopic.create({ data });
+    return this.ok({ id: t.id.toString() }, 'Topic created');
+  }
+
+  async deleteTopic(user: any, id: string) {
+    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
+    const topic = await this.prisma.curriculumTopic.findUnique({ where: { id: BigInt(id) } });
+    if (!topic || topic.staffId !== staff?.id) throw new NotFoundException('Topic not found');
+    await this.prisma.curriculumTopic.delete({ where: { id: BigInt(id) } });
+    return this.ok(null, 'Topic deleted');
+  }
+
+  async getLessonPlans(user: any, q: any) {
+    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
+    const where: any = { staffId: staff?.id };
+    if (q.topicId) where.topicId = BigInt(q.topicId);
+    if (q.subjectId) where.subjectId = BigInt(q.subjectId);
+    if (q.classRoomId) where.classRoomId = BigInt(q.classRoomId);
+    const plans = await this.prisma.lessonPlan.findMany({
+      where, orderBy: { createdAt: 'desc' },
+      include: { topic: true, subject: true, classRoom: true },
+    });
+    return this.ok(plans.map(p => ({ ...p, id: p.id.toString(), staffId: p.staffId.toString(), topicId: p.topicId?.toString(), subjectId: p.subjectId?.toString(), classRoomId: p.classRoomId?.toString(), topic: p.topic?.title, subject: p.subject?.name, classRoom: p.classRoom?.name })));
+  }
+
+  async saveLessonPlan(user: any, body: any) {
+    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
+    const data: any = {
+      staffId: staff!.id,
+      title: body.title,
+      objectives: body.objectives ?? null,
+      content: body.content ?? null,
+      resources: body.resources ?? null,
+      evaluation: body.evaluation ?? null,
+      date: body.date ? new Date(body.date) : null,
+      duration: body.duration ? Number(body.duration) : null,
+      topicId: this.safeBigInt(body.topicId),
+      subjectId: this.safeBigInt(body.subjectId),
+      classRoomId: this.safeBigInt(body.classRoomId),
+    };
+    if (body.id) {
+      await this.prisma.lessonPlan.update({ where: { id: BigInt(body.id) }, data });
+      return this.ok(null, 'Lesson plan updated');
+    }
+    const p = await this.prisma.lessonPlan.create({ data });
+    return this.ok({ id: p.id.toString() }, 'Lesson plan created');
+  }
+
+  async deleteLessonPlan(user: any, id: string) {
+    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
+    const plan = await this.prisma.lessonPlan.findUnique({ where: { id: BigInt(id) } });
+    if (!plan || plan.staffId !== staff?.id) throw new NotFoundException('Lesson plan not found');
+    await this.prisma.lessonPlan.delete({ where: { id: BigInt(id) } });
+    return this.ok(null, 'Lesson plan deleted');
+  }
+
+  async getWeeklySchemes(user: any, q: any) {
+    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
+    const where: any = { staffId: staff?.id };
+    if (q.subjectId) where.subjectId = BigInt(q.subjectId);
+    if (q.classRoomId) where.classRoomId = BigInt(q.classRoomId);
+    if (q.term) where.term = q.term;
+    if (q.session) where.session = q.session;
+    const schemes = await this.prisma.weeklyScheme.findMany({
+      where, orderBy: [{ session: 'desc' }, { term: 'asc' }, { week: 'asc' }],
+      include: { subject: true, classRoom: true },
+    });
+    return this.ok(schemes.map(s => ({ ...s, id: s.id.toString(), staffId: s.staffId.toString(), subjectId: s.subjectId?.toString(), classRoomId: s.classRoomId?.toString(), subject: s.subject?.name, classRoom: s.classRoom?.name })));
+  }
+
+  async saveWeeklyScheme(user: any, body: any) {
+    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
+    const data: any = {
+      staffId: staff!.id,
+      week: Number(body.week),
+      term: body.term,
+      session: body.session,
+      content: body.content,
+      subjectId: this.safeBigInt(body.subjectId),
+      classRoomId: this.safeBigInt(body.classRoomId),
+    };
+    if (body.id) {
+      await this.prisma.weeklyScheme.update({ where: { id: BigInt(body.id) }, data });
+      return this.ok(null, 'Weekly scheme updated');
+    }
+    const s = await this.prisma.weeklyScheme.create({ data });
+    return this.ok({ id: s.id.toString() }, 'Weekly scheme created');
+  }
+
+  async deleteWeeklyScheme(user: any, id: string) {
+    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
+    const scheme = await this.prisma.weeklyScheme.findUnique({ where: { id: BigInt(id) } });
+    if (!scheme || scheme.staffId !== staff?.id) throw new NotFoundException('Weekly scheme not found');
+    await this.prisma.weeklyScheme.delete({ where: { id: BigInt(id) } });
+    return this.ok(null, 'Weekly scheme deleted');
   }
 }

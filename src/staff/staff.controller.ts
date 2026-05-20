@@ -79,4 +79,16 @@ export class StaffController {
   @Get('timetable/exam') getExamTimetables(@CurrentUser() user: any) { return this.svc.getExamTimetables(user); }
   @Post('timetable/exam') saveExamTimetable(@CurrentUser() user: any, @Body() body: any) { return this.svc.saveExamTimetable(user, body); }
   @Delete('timetable/exam/:id') deleteExamTimetable(@CurrentUser() user: any, @Param('id') id: string) { return this.svc.deleteExamTimetable(user, id); }
+
+  @Get('curriculum/topics') getTopics(@CurrentUser() user: any, @Query() q: any) { return this.svc.getTopics(user, q); }
+  @Post('curriculum/topics') saveTopic(@CurrentUser() user: any, @Body() body: any) { return this.svc.saveTopic(user, body); }
+  @Delete('curriculum/topics/:id') deleteTopic(@CurrentUser() user: any, @Param('id') id: string) { return this.svc.deleteTopic(user, id); }
+
+  @Get('curriculum/lesson-plans') getLessonPlans(@CurrentUser() user: any, @Query() q: any) { return this.svc.getLessonPlans(user, q); }
+  @Post('curriculum/lesson-plans') saveLessonPlan(@CurrentUser() user: any, @Body() body: any) { return this.svc.saveLessonPlan(user, body); }
+  @Delete('curriculum/lesson-plans/:id') deleteLessonPlan(@CurrentUser() user: any, @Param('id') id: string) { return this.svc.deleteLessonPlan(user, id); }
+
+  @Get('curriculum/weekly-schemes') getWeeklySchemes(@CurrentUser() user: any, @Query() q: any) { return this.svc.getWeeklySchemes(user, q); }
+  @Post('curriculum/weekly-schemes') saveWeeklyScheme(@CurrentUser() user: any, @Body() body: any) { return this.svc.saveWeeklyScheme(user, body); }
+  @Delete('curriculum/weekly-schemes/:id') deleteWeeklyScheme(@CurrentUser() user: any, @Param('id') id: string) { return this.svc.deleteWeeklyScheme(user, id); }
 }

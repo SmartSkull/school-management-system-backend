@@ -145,6 +145,7 @@ model Student {
   cbtAnswers      CbtAnswer[]
   cbtResults      CbtResult[]
   scratchCards    ScratchCard[]
+  clockAttendances StudentAttendance[]
 }
 
 model Staff {
@@ -172,6 +173,9 @@ model Staff {
   salarySetup     PayrollSalarySetup?
   payrollDeductions PayrollDeduction[]
   payslips        PayrollPayslip[]
+  curriculumTopics CurriculumTopic[]
+  lessonPlans     LessonPlan[]
+  weeklySchemes   WeeklyScheme[]
 }
 
 model AcademicSession {
@@ -234,6 +238,9 @@ model ClassRoom {
   classTimetables ClassTimetable[]
   scratchCards   ScratchCard[]
   libraryResources LibraryResource[]
+  curriculumTopics CurriculumTopic[]
+  lessonPlans    LessonPlan[]
+  weeklySchemes  WeeklyScheme[]
 }
 
 model Subject {
@@ -251,6 +258,9 @@ model Subject {
   resources   LibraryResource[]
   cbtTests    CbtTest[]
   questions   CbtQuestion[]
+  curriculumTopics CurriculumTopic[]
+  lessonPlans LessonPlan[]
+  weeklySchemes WeeklyScheme[]
 
   @@unique([classRoomId, name])
 }
@@ -542,8 +552,9 @@ model AttendanceLocation {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  school      School   @relation(fields: [schoolId], references: [id])
-  attendances StaffAttendance[]
+  school           School   @relation(fields: [schoolId], references: [id])
+  attendances      StaffAttendance[]
+  studentAttendances StudentAttendance[]
 }
 
 enum AttendanceStatus {
@@ -569,6 +580,25 @@ model StaffAttendance {
   location     AttendanceLocation? @relation(fields: [locationId], references: [id])
 
   @@unique([staffId, date])
+}
+
+model StudentAttendance {
+  id           BigInt            @id @default(autoincrement())
+  studentId    BigInt
+  locationId   BigInt?
+  date         DateTime          @db.Date
+  clockIn      DateTime?
+  clockOut     DateTime?
+  status       AttendanceStatus  @default(PRESENT)
+  lateMinutes  Int               @default(0)
+  note         String?           @db.VarChar(255)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  student      Student           @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  location     AttendanceLocation? @relation(fields: [locationId], references: [id])
+
+  @@unique([studentId, date])
 }
 
 enum LeaveStatus {
@@ -691,4 +721,65 @@ model PayrollPayslip {
 
   @@unique([staffId, month, year])
   @@index([year, month])
+}
+
+
+model CurriculumTopic {
+  id          BigInt   @id @default(autoincrement())
+  staffId     BigInt
+  subjectId   BigInt?
+  classRoomId BigInt?
+  title       String   @db.VarChar(255)
+  description String?  @db.Text
+  week        Int?
+  term        String?  @db.VarChar(20)
+  session     String?  @db.VarChar(20)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  staff       Staff      @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  subject     Subject?   @relation(fields: [subjectId], references: [id])
+  classRoom   ClassRoom? @relation(fields: [classRoomId], references: [id])
+  lessonPlans LessonPlan[]
+}
+
+model LessonPlan {
+  id          BigInt          @id @default(autoincrement())
+  staffId     BigInt
+  topicId     BigInt?
+  subjectId   BigInt?
+  classRoomId BigInt?
+  title       String          @db.VarChar(255)
+  objectives  String?         @db.Text
+  content     String?         @db.Text
+  resources   String?         @db.Text
+  evaluation  String?         @db.Text
+  date        DateTime?       @db.Date
+  duration    Int?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  staff       Staff           @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  topic       CurriculumTopic? @relation(fields: [topicId], references: [id])
+  subject     Subject?        @relation(fields: [subjectId], references: [id])
+  classRoom   ClassRoom?      @relation(fields: [classRoomId], references: [id])
+}
+
+model WeeklyScheme {
+  id          BigInt   @id @default(autoincrement())
+  staffId     BigInt
+  subjectId   BigInt?
+  classRoomId BigInt?
+  week        Int
+  term        String   @db.VarChar(20)
+  session     String   @db.VarChar(20)
+  content     String   @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  staff       Staff      @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  subject     Subject?   @relation(fields: [subjectId], references: [id])
+  classRoom   ClassRoom? @relation(fields: [classRoomId], references: [id])
+
+  @@unique([staffId, subjectId, classRoomId, week, term, session])
 }
