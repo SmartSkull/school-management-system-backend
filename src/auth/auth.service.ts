@@ -161,6 +161,9 @@ export class AuthService {
   }
 
   private buildTokenResponse(user: any, role: string, id: string) {
+    // Update lastLoginAt
+    this.prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } }).catch(() => {});
+
     const token = this.jwt.sign({ id, role, email: user.email, schoolId: user.schoolId?.toString() });
     const refresh_token = this.jwt.sign(
       { id, role },
