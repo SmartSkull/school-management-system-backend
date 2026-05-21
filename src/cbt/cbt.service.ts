@@ -55,7 +55,13 @@ export class CbtService {
     });
     if (result) throw new ForbiddenException('You have already completed this test');
 
-    const shuffled = test.questions.sort(() => Math.random() - 0.5);
+    // Seeded shuffle per student — same questions, different order for each student
+    const seed = Number(BigInt(user.id) % BigInt(1000000));
+    const shuffled = [...test.questions].sort((a, b) => {
+      const ha = Math.sin(seed + Number(a.id)) * 10000;
+      const hb = Math.sin(seed + Number(b.id)) * 10000;
+      return (ha - Math.floor(ha)) - (hb - Math.floor(hb));
+    });
     return this.ok({ 
       id: test.id.toString(),
       title: test.title, 

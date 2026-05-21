@@ -14,7 +14,7 @@ function distanceMetres(lat1: number, lon1: number, lat2: number, lon2: number):
 
 function todayDate(): Date {
   const d = new Date();
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
 }
 
 @Injectable()
@@ -198,24 +198,27 @@ export class AttendanceService {
   // ── Admin: attendance report ───────────────────────────────────────────
   async getReport(user: any, query: any) {
     const schoolId = user.schoolId ?? user.school?.id;
+    if (!schoolId) throw new ForbiddenException('No school associated with this admin');
     const { date, month, year, staffId } = query;
 
-    const where: any = {
-      staff: { user: { schoolId: BigInt(schoolId) } },
-    };
+    const where: any = { staff: { user: { schoolId: BigInt(schoolId) } } };
 
     if (staffId) where.staffId = BigInt(staffId);
 
     if (date) {
       const d = new Date(date);
-      where.date = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+      const dayStart = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+      const dayEnd   = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1));
+      where.date = { gte: dayStart, lt: dayEnd };
     } else if (month && year) {
       const start = new Date(Number(year), Number(month) - 1, 1);
       const end = new Date(Number(year), Number(month), 1);
       where.date = { gte: start, lt: end };
     } else {
-      // default: today
-      where.date = todayDate();
+      const now = new Date();
+      const dayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+      const dayEnd   = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
+      where.date = { gte: dayStart, lt: dayEnd };
     }
 
     const records = await this.prisma.staffAttendance.findMany({
@@ -291,11 +294,12 @@ export class AttendanceService {
       );
     }
 
-    const studentId = user.id ?? user.studentId;
+    // studentId in StudentAttendance is User.id directly
+    const studentId = BigInt(user.id);
     const today = todayDate();
 
     const existing = await this.prisma.studentAttendance.findUnique({
-      where: { studentId_date: { studentId: BigInt(studentId), date: today } },
+      where: { studentId_date: { studentId, date: today } },
     });
     if (existing?.clockIn) throw new BadRequestException('Already clocked in today');
 
@@ -307,8 +311,8 @@ export class AttendanceService {
     const status = lateMinutes > 0 ? 'LATE' : 'PRESENT';
 
     const record = await this.prisma.studentAttendance.upsert({
-      where: { studentId_date: { studentId: BigInt(studentId), date: today } },
-      create: { studentId: BigInt(studentId), locationId: location.id, date: today, clockIn: now, status, lateMinutes },
+      where: { studentId_date: { studentId, date: today } },
+      create: { studentId, locationId: location.id, date: today, clockIn: now, status, lateMinutes },
       update: { clockIn: now, locationId: location.id, status, lateMinutes },
     });
 
@@ -323,11 +327,11 @@ export class AttendanceService {
     const { latitude, longitude } = body;
     if (latitude == null || longitude == null) throw new BadRequestException('Location required');
 
-    const studentId = user.id ?? user.studentId;
+    const studentId = BigInt(user.id);
     const today = todayDate();
 
     const record = await this.prisma.studentAttendance.findUnique({
-      where: { studentId_date: { studentId: BigInt(studentId), date: today } },
+      where: { studentId_date: { studentId, date: today } },
       include: { location: true },
     });
     if (!record?.clockIn) throw new BadRequestException('You have not clocked in today');
@@ -351,11 +355,11 @@ export class AttendanceService {
 
   // ── Student: today status ─────────────────────────────────────────────
   async studentTodayStatus(user: any) {
-    const studentId = user.id ?? user.studentId;
+    const studentId = BigInt(user.id);
     const today = todayDate();
 
     const record = await this.prisma.studentAttendance.findUnique({
-      where: { studentId_date: { studentId: BigInt(studentId), date: today } },
+      where: { studentId_date: { studentId, date: today } },
     });
 
     const schoolId = user.schoolId ?? user.user?.schoolId;
@@ -374,10 +378,10 @@ export class AttendanceService {
 
   // ── Student: own history ──────────────────────────────────────────────
   async studentHistory(user: any, query: any) {
-    const studentId = user.id ?? user.studentId;
+    const studentId = BigInt(user.id);
     const { month, year } = query;
 
-    const where: any = { studentId: BigInt(studentId) };
+    const where: any = { studentId };
     if (month && year) {
       const start = new Date(Number(year), Number(month) - 1, 1);
       const end = new Date(Number(year), Number(month), 1);
@@ -395,36 +399,59 @@ export class AttendanceService {
   // ── Admin: student attendance report ─────────────────────────────────
   async getStudentReport(user: any, query: any) {
     const schoolId = user.schoolId ?? user.school?.id;
+    if (!schoolId) throw new ForbiddenException('No school associated with this admin');
     const { date, month, year } = query;
 
-    const where: any = { student: { user: { schoolId: BigInt(schoolId) } } };
+    // studentId in StudentAttendance is User.id directly
+    // Get all user IDs belonging to this school
+    const schoolUsers = await this.prisma.user.findMany({
+      where: { schoolId: BigInt(schoolId), role: 'STUDENT' },
+      select: { id: true },
+    });
+    const userIds = schoolUsers.map(u => u.id);
+    const where: any = { studentId: { in: userIds } };
 
     if (date) {
       const d = new Date(date);
-      where.date = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+      const dayStart = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+      const dayEnd   = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1));
+      where.date = { gte: dayStart, lt: dayEnd };
     } else if (month && year) {
       where.date = { gte: new Date(Number(year), Number(month) - 1, 1), lt: new Date(Number(year), Number(month), 1) };
     } else {
-      where.date = todayDate();
+      const now = new Date();
+      const dayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+      const dayEnd   = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
+      where.date = { gte: dayStart, lt: dayEnd };
     }
 
     const records = await this.prisma.studentAttendance.findMany({
       where,
-      include: { student: { include: { user: true } } },
       orderBy: { date: 'desc' },
     });
 
+    // Fetch User info for each record (studentId = User.id)
+    const uniqueUserIds = [...new Set(records.map(r => r.studentId))];
+    const users = await this.prisma.user.findMany({
+      where: { id: { in: uniqueUserIds } },
+      select: { id: true, firstName: true, lastName: true, uniqueId: true, image: true },
+    });
+    const userMap = new Map(users.map(u => [u.id.toString(), u]));
+
     return {
       success: true,
-      data: records.map((r) => ({
-        ...this.serializeStudentRecord(r),
-        student: {
-          id: r.student.id.toString(),
-          name: `${r.student.user.firstName} ${r.student.user.lastName}`,
-          studentNo: r.student.studentNo,
-          image: r.student.user.image,
-        },
-      })),
+      data: records.map((r) => {
+        const u = userMap.get(r.studentId.toString());
+        return {
+          ...this.serializeStudentRecord(r),
+          student: {
+            id: r.studentId.toString(),
+            name: u ? `${u.firstName} ${u.lastName}` : 'Unknown',
+            studentNo: u?.uniqueId ?? '',
+            image: u?.image ?? null,
+          },
+        };
+      }),
     };
   }
 
