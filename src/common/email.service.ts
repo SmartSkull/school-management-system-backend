@@ -100,6 +100,21 @@ export class EmailService {
     await this.send(staff.email, 'Your Staff Account Has Been Created', html);
   }
 
+  async sendPasswordReset(to: string, code: string, name: string) {
+    const color = '#1a73e8';
+    const html = layout(color, `
+      <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#111827">Password Reset Request</h1>
+      <p style="margin:0 0 24px;color:#6b7280;font-size:15px">Hi ${name}, use the code below to reset your password. It expires in 15 minutes.</p>
+      <div style="text-align:center;margin:32px 0">
+        <span style="display:inline-block;background:#f3f4f6;border:2px dashed ${color};border-radius:12px;padding:16px 40px;font-size:36px;font-weight:800;letter-spacing:10px;color:#111827;font-family:monospace">${code}</span>
+      </div>
+      <div style="background:#fef3c7;border-left:4px solid #f59e0b;border-radius:4px;padding:16px;margin-bottom:24px">
+        <p style="margin:0;color:#92400e;font-size:14px">⚠️ If you did not request a password reset, ignore this email. Your password will not change.</p>
+      </div>
+    `);
+    await this.send(to, 'Your Password Reset Code', html);
+  }
+
   private async send(to: string, subject: string, html: string) {
     try {
       const recipient = process.env.RESEND_TEST_TO || to;

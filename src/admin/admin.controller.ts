@@ -114,6 +114,12 @@ export class AdminController {
   @Post('school-days') setSchoolDays(@Body() body: any) { return this.svc.setSchoolDays(body); }
   @Delete('school-days/:session/:term') deleteSchoolDays(@Param('session') s: string, @Param('term') t: string) { return this.svc.deleteSchoolDays(s, t); }
 
+  // Promotion
+  @Get('promotions/classes') getPromotionClasses(@CurrentUser() user: any) { return this.svc.getPromotionClasses(user); }
+  @Post('promotions/promote') promoteClass(@CurrentUser() user: any, @Body() body: any) { return this.svc.promoteClass(user, body); }
+  @Post('promotions/repeat') repeatStudents(@CurrentUser() user: any, @Body() body: any) { return this.svc.repeatStudents(user, body); }
+  @Post('promotions/transfer') transferStudent(@CurrentUser() user: any, @Body() body: any) { return this.svc.transferStudent(user, body); }
+
   @Get('notifications') getNotifications(@CurrentUser() user: any) { return this.svc.getNotifications(user); }
   @Post('notifications/read') markNotificationsRead(@CurrentUser() user: any) { return this.svc.markNotificationsRead(user); }
 }

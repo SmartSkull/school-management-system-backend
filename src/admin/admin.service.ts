@@ -713,6 +713,64 @@ export class AdminService {
     return this.ok(null, 'School days deleted successfully');
   }
 
+  // ── Promotions ────────────────────────────────────────────────────────
+  async getPromotionClasses(user: any) {
+    const schoolId = this.schoolId(user);
+    const classes = await this.prisma.classRoom.findMany({
+      where: { ...(schoolId ? { schoolId } : {}) },
+      orderBy: { name: 'asc' },
+      include: { _count: { select: { students: true } } },
+    });
+    return this.ok(classes.map(c => ({ id: c.id.toString(), name: c.name, studentCount: c._count.students })));
+  }
+
+  async promoteClass(user: any, body: { fromClassId: string; toClassId: string }) {
+    const { fromClassId, toClassId } = body;
+    if (!fromClassId || !toClassId) throw new BadRequestException('fromClassId and toClassId are required');
+    if (fromClassId === toClassId) throw new BadRequestException('Source and destination class must be different');
+
+    const students = await this.prisma.student.findMany({
+      where: { classRoomId: BigInt(fromClassId) },
+      select: { id: true },
+    });
+    if (!students.length) throw new BadRequestException('No students found in the selected class');
+
+    await this.prisma.student.updateMany({
+      where: { classRoomId: BigInt(fromClassId) },
+      data: { classRoomId: BigInt(toClassId) },
+    });
+    return this.ok({ count: students.length }, `${students.length} student(s) promoted successfully`);
+  }
+
+  async repeatStudents(user: any, body: { studentIds: string[] }) {
+    const { studentIds } = body;
+    if (!studentIds?.length) throw new BadRequestException('No students selected');
+
+    // Repeating = keep in same class, just return confirmation
+    // Optionally mark them — here we simply confirm they stay
+    const students = await this.prisma.student.findMany({
+      where: { user: { uniqueId: { in: studentIds } } },
+      include: { user: true },
+    });
+    if (!students.length) throw new NotFoundException('No students found');
+
+    return this.ok({ count: students.length }, `${students.length} student(s) marked to repeat`);
+  }
+
+  async transferStudent(user: any, body: { studentId: string; toClassId: string }) {
+    const { studentId, toClassId } = body;
+    if (!studentId || !toClassId) throw new BadRequestException('studentId and toClassId are required');
+
+    const student = await this.prisma.student.findUnique({ where: { id: BigInt(studentId) } });
+    if (!student) throw new NotFoundException('Student not found');
+
+    await this.prisma.student.update({
+      where: { id: BigInt(studentId) },
+      data: { classRoomId: BigInt(toClassId) },
+    });
+    return this.ok(null, 'Student transferred successfully');
+  }
+
   async getNotifications(user: any) {
     return this.ok(await this.prisma.notification.findMany({ where: { userId: BigInt(user.id) }, orderBy: { createdAt: 'desc' } }));
   }

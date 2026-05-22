@@ -43,16 +43,25 @@ export class StaffService {
     const userInfo = user.user ?? user;
     const schoolId = this.schoolId(user);
     const staff = await this.prisma.staff.findUnique({ 
-      where: { id: BigInt(user.id) },
+      where: { userId: this.userId(user) },
       include: { classRooms: true }
     });
+
+    // Resolve classRoomId: from assigned classrooms, or from most recent assignment
+    let classRoomId: bigint | undefined = staff?.classRooms[0]?.id;
+    if (!classRoomId) {
+      const latestAssignment = await this.prisma.assignment.findFirst({
+        where: { staffId: staff?.id, classRoomId: { not: null } },
+        orderBy: { createdAt: 'desc' },
+        select: { classRoomId: true },
+      });
+      classRoomId = latestAssignment?.classRoomId ?? undefined;
+    }
 
     const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
     const termEntity = await this.prisma.academicTerm.findFirst({ 
       where: { name: term as any, sessionId: sessionEntity?.id } 
     });
-
-    const classRoomId = staff?.classRooms[0]?.id;
 
     const [studentCount, assignments, libraryItems] = await Promise.all([
       this.prisma.user.count({ 
@@ -68,25 +77,67 @@ export class StaffService {
       }),
     ]);
 
-    // --- Chart 1: Student Performance Distribution (real results) ---
-    const results = sessionEntity && termEntity && classRoomId
+    // Find the last session+term that has results uploaded (by this staff or for their class)
+    const lastResult = await this.prisma.result.findFirst({
+      where: {
+        ...(classRoomId ? { student: { classRoomId, ...(schoolId ? { user: { schoolId } } : {}) } } : schoolId ? { student: { user: { schoolId } } } : {}),
+      },
+      orderBy: { createdAt: 'desc' },
+      select: { sessionId: true, termId: true },
+    });
+
+    const activeSessionId = lastResult?.sessionId ?? sessionEntity?.id;
+    const activeTermId    = lastResult?.termId    ?? termEntity?.id;
+
+    // --- Chart 1: Student Performance Distribution ---
+    // Group by student, average their total scores, then bucket by grade
+    const results = activeSessionId && activeTermId
       ? await this.prisma.result.findMany({
           where: {
-            sessionId: sessionEntity.id,
-            termId: termEntity.id,
-            student: { classRoomId, ...(schoolId ? { user: { schoolId } } : {}) },
+            sessionId: activeSessionId,
+            termId: activeTermId,
+            ...(classRoomId ? { student: { classRoomId, ...(schoolId ? { user: { schoolId } } : {}) } } : schoolId ? { student: { user: { schoolId } } } : {}),
           },
-          select: { testScore: true, examScore: true },
+          select: { studentId: true, testScore: true, examScore: true },
         })
       : [];
 
-    const gradeBuckets = { A: 0, B: 0, C: 0, D: 0, F: 0 };
+    // Group by student, average their total scores — strictly the teacher's class
+    const studentTotals = new Map<string, { sum: number; count: number }>();
     for (const r of results) {
+      const key = r.studentId.toString();
       const total = Number(r.testScore) + Number(r.examScore);
-      if (total >= 90) gradeBuckets.A++;
-      else if (total >= 80) gradeBuckets.B++;
-      else if (total >= 70) gradeBuckets.C++;
-      else if (total >= 60) gradeBuckets.D++;
+      const existing = studentTotals.get(key) ?? { sum: 0, count: 0 };
+      studentTotals.set(key, { sum: existing.sum + total, count: existing.count + 1 });
+    }
+
+    // --- Top 3 students by average score in the teacher's class ---
+    const top3Students = classRoomId
+      ? [...studentTotals.entries()]
+          .map(([studentId, { sum, count }]) => ({ studentId, avg: count > 0 ? sum / count : 0 }))
+          .sort((a, b) => b.avg - a.avg)
+          .slice(0, 3)
+      : [];
+
+    const top3 = await Promise.all(top3Students.map(async ({ studentId, avg }) => {
+      const student = await this.prisma.student.findUnique({
+        where: { id: BigInt(studentId) },
+        include: { user: true },
+      });
+      return {
+        name: student ? `${student.user.firstName} ${student.user.lastName}` : 'Unknown',
+        image: student?.user.image ?? null,
+        average: Math.round(avg * 10) / 10,
+      };
+    }));
+
+    const gradeBuckets = { A: 0, B: 0, C: 0, D: 0, F: 0 };
+    for (const [, { sum, count }] of studentTotals) {
+      const avg = count > 0 ? sum / count : 0;
+      if (avg >= 90) gradeBuckets.A++;
+      else if (avg >= 80) gradeBuckets.B++;
+      else if (avg >= 70) gradeBuckets.C++;
+      else if (avg >= 60) gradeBuckets.D++;
       else gradeBuckets.F++;
     }
     const performanceDistribution = [
@@ -97,26 +148,13 @@ export class StaffService {
       { grade: 'F (<60)',   count: gradeBuckets.F },
     ];
 
-    // --- Chart 2: Assignment Submission Trend (last 5 assignments) ---
+    // --- Chart 2: Assignments by subject (last 5) ---
     const recentAssignments = assignments.slice(0, 5).reverse();
-    const assignmentTrend = await Promise.all(
-      recentAssignments.map(async (a, i) => {
-        const total = classRoomId
-          ? await this.prisma.user.count({ where: { role: 'STUDENT', ...(schoolId ? { schoolId } : {}), student: { classRoomId } } })
-          : studentCount;
-        const submitted = a.subjectId && sessionEntity && termEntity
-          ? await this.prisma.result.count({
-              where: {
-                subjectId: a.subjectId,
-                sessionId: sessionEntity.id,
-                termId: termEntity.id,
-                ...(classRoomId ? { student: { classRoomId, ...(schoolId ? { user: { schoolId } } : {}) } } : {}),
-              },
-            })
-          : 0;
-        return { week: `Assign ${i + 1}`, label: a.title?.slice(0, 12) ?? `Assign ${i + 1}`, submitted, total };
-      })
-    );
+    const assignmentTrend = recentAssignments.map((a, i) => ({
+      week: `Assign ${i + 1}`,
+      label: a.title?.slice(0, 14) ?? `Assign ${i + 1}`,
+      date: a.createdAt?.toISOString().split('T')[0] ?? '',
+    }));
 
     // --- Chart 3: Student Distribution by Class ---
     const classRooms = schoolId
@@ -136,6 +174,7 @@ export class StaffService {
         lastname: userInfo.lastName,
         image: userInfo.image,
         uniqueId: userInfo.uniqueId,
+        class: staff?.classRooms[0]?.name ?? (classRoomId ? (await this.prisma.classRoom.findUnique({ where: { id: classRoomId }, select: { name: true } }))?.name : null),
       },
       current_session: session, 
       current_term: term, 
@@ -152,6 +191,7 @@ export class StaffService {
         performanceDistribution,
         assignmentTrend,
         classDistribution,
+        top3Students: top3,
       } 
     });
   }
@@ -429,7 +469,9 @@ export class StaffService {
       const records = await this.prisma.attendance.findMany({ 
         where: { studentId: { in: studentIds }, sessionId: sessionEntity?.id, termId: termEntity?.id } 
       });
-      return this.ok(records);
+      // Map uniqueId onto each record for frontend matching
+      const studentMap = new Map(students.map(s => [s.student!.id.toString(), s.uniqueId]));
+      return this.ok(records.map(r => ({ ...r, uniqueId: studentMap.get(r.studentId.toString()) ?? null })));
     }
     throw new BadRequestException('student_id or class is required');
   }

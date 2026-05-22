@@ -3,6 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard, StudentGuard, StaffGuard, AdminGuard } from '../common/guards/auth.guard';
+import { EmailService } from '../common/email.service';
 
 @Module({
   imports: [
@@ -12,7 +13,7 @@ import { JwtAuthGuard, StudentGuard, StaffGuard, AdminGuard } from '../common/gu
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtAuthGuard, StudentGuard, StaffGuard, AdminGuard],
+  providers: [AuthService, EmailService, JwtAuthGuard, StudentGuard, StaffGuard, AdminGuard],
   exports: [JwtModule, JwtAuthGuard, StudentGuard, StaffGuard, AdminGuard],
 })
 export class AuthModule {}

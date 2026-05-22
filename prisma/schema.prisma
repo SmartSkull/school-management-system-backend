@@ -783,3 +783,14 @@ model WeeklyScheme {
 
   @@unique([staffId, subjectId, classRoomId, week, term, session])
 }
+
+model PasswordResetToken {
+  id        BigInt   @id @default(autoincrement())
+  email     String   @db.VarChar(255)
+  code      String   @db.VarChar(10)
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email])
+}

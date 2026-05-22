@@ -25,6 +25,18 @@ export class AuthController {
     return this.auth.adminLogin(body.admin_id, body.password, body.school_slug);
   }
 
+  @Post('forgot-password')
+  @HttpCode(200)
+  forgotPassword(@Body('email') email: string) {
+    return this.auth.forgotPassword(email);
+  }
+
+  @Post('reset-password')
+  @HttpCode(200)
+  resetPassword(@Body() body: { email: string; code: string; password: string }) {
+    return this.auth.resetPassword(body.email, body.code, body.password);
+  }
+
   @Post('refresh')
   @HttpCode(200)
   refresh(@Body('refresh_token') token: string) {

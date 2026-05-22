@@ -131,7 +131,13 @@ export class StudentService {
     const results = await this.enrichWithCumulativeScores(rawResults, student.id.toString(), session, term);
 
     const classSize = await this.prisma.student.count({
-      where: { classRoom: { name: user.class, ...(this.schoolId(user) ? { schoolId: this.schoolId(user) } : {}) }, user: { ...(this.schoolId(user) ? { schoolId: this.schoolId(user) } : {}) } }
+      where: {
+        classRoomId: student.classRoomId ?? undefined,
+        user: {
+          status: 'ACTIVE',
+          ...(this.schoolId(user) ? { schoolId: this.schoolId(user) } : {}),
+        },
+      },
     });
 
     return this.ok({
