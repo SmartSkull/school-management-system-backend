@@ -794,3 +794,16 @@ model PasswordResetToken {
 
   @@index([email])
 }
+
+model OnlineClass {
+  id              Int      @id @default(autoincrement())
+  title           String   @db.VarChar(255)
+  className       String   @db.VarChar(100)
+  scheduledAt     DateTime
+  durationMinutes Int      @default(60)
+  roomName        String   @db.VarChar(255)
+  roomUrl         String   @db.VarChar(500)
+  schoolId        BigInt
+  staffId         BigInt
+  createdAt       DateTime @default(now())
+}

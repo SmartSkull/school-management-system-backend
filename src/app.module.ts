@@ -14,6 +14,7 @@ import { SchoolFeesModule } from './school-fees/school-fees.module';
 import { AttendanceModule } from './attendance/attendance.module';
 import { LeaveModule } from './leave/leave.module';
 import { PayrollModule } from './payroll/payroll.module';
+import { OnlineClassModule } from './online-class/online-class.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { PayrollModule } from './payroll/payroll.module';
     AttendanceModule,
     LeaveModule,
     PayrollModule,
+    OnlineClassModule,
   ],
   providers: [EmailService],
   exports: [EmailService],
