@@ -5,6 +5,9 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import * as fs from 'fs';
 
+// Allow BigInt values to be JSON-serialized (Prisma returns BigInt for id fields)
+(BigInt.prototype as any).toJSON = function () { return this.toString(); };
+
 async function bootstrap() {
   // Ensure upload dirs exist
   ['uploads', 'uploads/messages', 'uploads/bookgame', 'uploads/assignments', 'uploads/leave'].forEach(dir => {

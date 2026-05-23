@@ -521,4 +521,91 @@ export class AttendanceService {
       isActive: l.isActive,
     };
   }
+
+  // ── Staff: mark student attendance for their class ────────────────────
+  async staffMarkStudentAttendance(user: any, body: { date?: string; students: { uniqueId: string; status: 'PRESENT' | 'ABSENT' | 'LATE' }[] }) {
+    const schoolId = user.schoolId ?? user.user?.schoolId;
+    if (!schoolId) throw new ForbiddenException('No school associated');
+
+    const date = body.date ? new Date(body.date) : todayDate();
+    const uniqueIds = body.students.map(s => s.uniqueId);
+
+    const users = await this.prisma.user.findMany({
+      where: { uniqueId: { in: uniqueIds }, schoolId: BigInt(schoolId), role: 'STUDENT' },
+      select: { uniqueId: true, student: { select: { id: true } } },
+    });
+    const userMap = new Map(users.map(u => [u.uniqueId, u.student?.id]));
+
+    for (const s of body.students) {
+      const studentId = userMap.get(s.uniqueId);
+      if (!studentId) continue;
+      await this.prisma.studentAttendance.upsert({
+        where: { studentId_date: { studentId, date } },
+        create: { studentId, date, status: s.status, lateMinutes: 0 },
+        update: { status: s.status },
+      });
+    }
+
+    return { success: true, message: `Attendance marked for ${body.students.length} student(s)` };
+  }
+
+  // ── Staff: get today's student attendance for a class ─────────────────
+  async staffGetStudentAttendance(user: any, className?: string, date?: string) {
+    try {
+    const schoolId = user.schoolId ?? user.user?.schoolId;
+    if (!schoolId) throw new ForbiddenException('No school associated');
+
+    // Resolve class: use provided className or fall back to staff's assigned class
+    let resolvedClass = className;
+    if (!resolvedClass) {
+      const rawId = user.authUserId ?? user.userId ?? user.user?.id ?? user.id;
+      if (!rawId) throw new BadRequestException('Cannot resolve staff user id');
+      const staffUserId = BigInt(rawId);
+      const staff = await this.prisma.staff.findFirst({
+        where: { userId: staffUserId },
+        include: { classRooms: true },
+      });
+      let classRoomId = staff?.classRooms?.[0]?.id;
+      if (!classRoomId && staff?.id) {
+        const latest = await this.prisma.assignment.findFirst({
+          where: { staffId: staff.id, classRoomId: { not: null } },
+          orderBy: { createdAt: 'desc' },
+          select: { classRoomId: true },
+        });
+        classRoomId = latest?.classRoomId ?? undefined;
+      }
+      if (classRoomId) {
+        const room = await this.prisma.classRoom.findUnique({ where: { id: classRoomId }, select: { name: true } });
+        resolvedClass = room?.name;
+      }
+    }
+    if (!resolvedClass) return { success: true, data: [] };
+
+    const students = await this.prisma.user.findMany({
+      where: { schoolId: BigInt(schoolId), role: 'STUDENT', student: { classRoom: { name: resolvedClass } } },
+      select: { id: true, uniqueId: true, firstName: true, lastName: true, image: true, student: { select: { id: true } } },
+    });
+
+    const validStudents = students.filter(s => s.student != null);
+    const targetDate = date ? new Date(date) : todayDate();
+    const records = validStudents.length ? await this.prisma.studentAttendance.findMany({
+      where: { studentId: { in: validStudents.map(s => s.student!.id) }, date: targetDate },
+    }) : [];
+    const recordMap = new Map(records.map(r => [r.studentId.toString(), r.status]));
+
+    return {
+      success: true,
+      data: validStudents.map(s => ({
+        uniqueId: s.uniqueId,
+        firstname: s.firstName,
+        lastname: s.lastName,
+        image: s.image,
+        status: recordMap.get(s.student!.id.toString()) ?? null,
+      })),
+    };
+    } catch (e) {
+      console.error('[staffGetStudentAttendance] ERROR:', e);
+      throw e;
+    }
+  }
 }

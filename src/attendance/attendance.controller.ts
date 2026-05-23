@@ -93,4 +93,17 @@ export class AttendanceController {
   markStudentsAbsent(@CurrentUser() user: any, @Body() body: any) {
     return this.svc.markStudentsAbsent(user, body);
   }
+
+  // ── Staff: mark student attendance ────────────────────────────────────
+  @Get('staff/students')
+  @UseGuards(StaffGuard)
+  staffGetStudentAttendance(@CurrentUser() user: any, @Query('class') className?: string, @Query('date') date?: string) {
+    return this.svc.staffGetStudentAttendance(user, className, date);
+  }
+
+  @Post('staff/students')
+  @UseGuards(StaffGuard)
+  staffMarkStudentAttendance(@CurrentUser() user: any, @Body() body: any) {
+    return this.svc.staffMarkStudentAttendance(user, body);
+  }
 }
