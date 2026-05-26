@@ -115,6 +115,38 @@ export class EmailService {
     await this.send(to, 'Your Password Reset Code', html);
   }
 
+  async sendAbsentStudentParent(opts: {
+    parentEmail: string;
+    studentName: string;
+    className: string;
+    date: string;
+    schoolName: string;
+  }) {
+    if (!opts.parentEmail) return;
+    const color = '#dc2626';
+    const html = layout(color, `
+      <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#111827">Absence Notification 📋</h1>
+      <p style="margin:0 0 24px;color:#6b7280;font-size:15px">Dear Parent/Guardian,</p>
+
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:24px;margin-bottom:24px">
+        ${row('Student', opts.studentName)}
+        ${row('Class', opts.className)}
+        ${row('Date', opts.date)}
+        ${row('School', opts.schoolName)}
+        ${row('Status', '<span style="color:#dc2626;font-weight:700">ABSENT</span>')}
+      </div>
+
+      <div style="background:#fef3c7;border-left:4px solid #f59e0b;border-radius:4px;padding:16px;margin-bottom:24px">
+        <p style="margin:0;color:#92400e;font-size:14px">
+          ⚠️ Your child was marked absent today. If this is unexpected, please contact the school or the class teacher as soon as possible.
+        </p>
+      </div>
+
+      <p style="margin:0;color:#6b7280;font-size:14px">If your child was absent due to illness or another reason, please inform the school to update the records.</p>
+    `);
+    await this.send(opts.parentEmail, `Absence Alert: ${opts.studentName} was absent on ${opts.date}`, html);
+  }
+
   private async send(to: string, subject: string, html: string) {
     try {
       const recipient = process.env.RESEND_TEST_TO || to;

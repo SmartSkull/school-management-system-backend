@@ -2,6 +2,27 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { PrismaService } from '../database/prisma.service';
 import { uploadToCloudinary } from '../common/cloudinary';
 
+function computeGrade(total: number): string {
+  if (total >= 75) return 'A1';
+  if (total >= 70) return 'B2';
+  if (total >= 65) return 'B3';
+  if (total >= 60) return 'C4';
+  if (total >= 55) return 'C5';
+  if (total >= 50) return 'C6';
+  if (total >= 45) return 'D7';
+  if (total >= 40) return 'E8';
+  return 'F9';
+}
+
+function computeRemark(grade: string): string {
+  const map: Record<string, string> = {
+    A1: 'Excellent', B2: 'Very Good', B3: 'Good',
+    C4: 'Credit', C5: 'Credit', C6: 'Credit',
+    D7: 'Pass', E8: 'Pass', F9: 'Fail',
+  };
+  return map[grade] ?? 'Fail';
+}
+
 @Injectable()
 export class StudentService {
   constructor(private prisma: PrismaService) {}
@@ -331,14 +352,24 @@ export class StudentService {
       where, 
       include: { subject: true } 
     });
-    return rows.map(row => ({
-      ...row,
-      id: row.id.toString(),
-      course: row.subject.name,
-      test_score: row.testScore.toString(),
-      exam_score: row.examScore.toString(),
-      total_score: (Number(row.testScore) + Number(row.examScore)).toString(),
-    }));
+    return rows.map(row => {
+      const total = Number(row.testScore) + Number(row.examScore);
+      const grade = row.grade || computeGrade(total);
+      const remark = row.remark || computeRemark(grade);
+      return {
+        ...row,
+        id: row.id.toString(),
+        course: row.subject.name,
+        test_score: row.testScore.toString(),
+        exam_score: row.examScore.toString(),
+        total_score: total.toString(),
+        testScore: Number(row.testScore),
+        examScore: Number(row.examScore),
+        totalScore: total,
+        grade,
+        remark,
+      };
+    });
   }
 
   private async assignmentsWithStaff(where: any, take?: number) {

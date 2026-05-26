@@ -1,5 +1,6 @@
 import { Injectable, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
+import { EmailService } from '../common/email.service';
 
 // Haversine distance in metres
 function distanceMetres(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -19,7 +20,7 @@ function todayDate(): Date {
 
 @Injectable()
 export class AttendanceService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private email: EmailService) {}
 
   // ── Staff: clock in ────────────────────────────────────────────────────
   async clockIn(user: any, body: { latitude: number; longitude: number }) {
@@ -522,6 +523,69 @@ export class AttendanceService {
     };
   }
 
+  // ── Staff: get dates where student attendance was recorded ───────────
+  async staffStudentAttendanceDates(user: any, month?: string, year?: string) {
+    const schoolId = user.schoolId ?? user.user?.schoolId;
+    if (!schoolId) throw new ForbiddenException('No school associated');
+
+    // Resolve staff's class
+    const rawId = user.authUserId ?? user.userId ?? user.user?.id ?? user.id;
+    if (!rawId) throw new BadRequestException('Cannot resolve staff user id');
+    const staff = await this.prisma.staff.findFirst({
+      where: { userId: BigInt(rawId) },
+      include: { classRooms: true },
+    });
+    let classRoomId = staff?.classRooms?.[0]?.id;
+    if (!classRoomId && staff?.id) {
+      const latest = await this.prisma.assignment.findFirst({
+        where: { staffId: staff.id, classRoomId: { not: null } },
+        orderBy: { createdAt: 'desc' },
+        select: { classRoomId: true },
+      });
+      classRoomId = latest?.classRoomId ?? undefined;
+    }
+    if (!classRoomId) return { success: true, data: [] };
+
+    // Get student IDs in this class
+    const students = await this.prisma.user.findMany({
+      where: { schoolId: BigInt(schoolId), role: 'STUDENT', student: { classRoomId } },
+      select: { student: { select: { id: true } } },
+    });
+    const studentIds = students.map(s => s.student!.id).filter(Boolean);
+    if (!studentIds.length) return { success: true, data: [] };
+
+    const where: any = { studentId: { in: studentIds } };
+    if (month && year) {
+      where.date = {
+        gte: new Date(Number(year), Number(month) - 1, 1),
+        lt: new Date(Number(year), Number(month), 1),
+      };
+    }
+
+    const records = await this.prisma.studentAttendance.findMany({
+      where,
+      select: { date: true, status: true },
+      orderBy: { date: 'desc' },
+    });
+
+    // Group by date: count present/absent/late
+    const dateMap = new Map<string, { present: number; absent: number; late: number; total: number }>();
+    for (const r of records) {
+      const key = r.date.toISOString().split('T')[0];
+      if (!dateMap.has(key)) dateMap.set(key, { present: 0, absent: 0, late: 0, total: 0 });
+      const entry = dateMap.get(key)!;
+      entry.total++;
+      if (r.status === 'PRESENT') entry.present++;
+      else if (r.status === 'ABSENT') entry.absent++;
+      else if (r.status === 'LATE') entry.late++;
+    }
+
+    return {
+      success: true,
+      data: Array.from(dateMap.entries()).map(([date, counts]) => ({ date, ...counts })),
+    };
+  }
+
   // ── Staff: mark student attendance for their class ────────────────────
   async staffMarkStudentAttendance(user: any, body: { date?: string; students: { uniqueId: string; status: 'PRESENT' | 'ABSENT' | 'LATE' }[] }) {
     const schoolId = user.schoolId ?? user.user?.schoolId;
@@ -532,18 +596,43 @@ export class AttendanceService {
 
     const users = await this.prisma.user.findMany({
       where: { uniqueId: { in: uniqueIds }, schoolId: BigInt(schoolId), role: 'STUDENT' },
-      select: { uniqueId: true, student: { select: { id: true } } },
+      select: {
+        uniqueId: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        student: { select: { id: true, classRoom: { select: { name: true } } } },
+      },
     });
-    const userMap = new Map(users.map(u => [u.uniqueId, u.student?.id]));
+    const userMap = new Map(users.map(u => [u.uniqueId, u]));
 
     for (const s of body.students) {
-      const studentId = userMap.get(s.uniqueId);
+      const u = userMap.get(s.uniqueId);
+      const studentId = u?.student?.id;
       if (!studentId) continue;
       await this.prisma.studentAttendance.upsert({
         where: { studentId_date: { studentId, date } },
         create: { studentId, date, status: s.status, lateMinutes: 0 },
         update: { status: s.status },
       });
+    }
+
+    // Send absence emails to parents (fire-and-forget)
+    const absentStudents = body.students.filter(s => s.status === 'ABSENT');
+    if (absentStudents.length > 0) {
+      const school = await this.prisma.school.findUnique({ where: { id: BigInt(schoolId) }, select: { name: true } });
+      const dateStr = date.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      for (const s of absentStudents) {
+        const u = userMap.get(s.uniqueId);
+        if (!u?.email) continue;
+        this.email.sendAbsentStudentParent({
+          parentEmail: u.email,
+          studentName: `${u.firstName} ${u.lastName}`,
+          className: u.student?.classRoom?.name ?? 'N/A',
+          date: dateStr,
+          schoolName: school?.name ?? 'School',
+        }).catch(() => {});
+      }
     }
 
     return { success: true, message: `Attendance marked for ${body.students.length} student(s)` };

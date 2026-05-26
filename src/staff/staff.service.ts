@@ -2,6 +2,27 @@ import { BadRequestException, ForbiddenException, Injectable, NotFoundException 
 import { PrismaService } from '../database/prisma.service';
 import { uploadToCloudinary } from '../common/cloudinary';
 
+function computeGrade(total: number): string {
+  if (total >= 75) return 'A1';
+  if (total >= 70) return 'B2';
+  if (total >= 65) return 'B3';
+  if (total >= 60) return 'C4';
+  if (total >= 55) return 'C5';
+  if (total >= 50) return 'C6';
+  if (total >= 45) return 'D7';
+  if (total >= 40) return 'E8';
+  return 'F9';
+}
+
+function computeRemark(grade: string): string {
+  const map: Record<string, string> = {
+    A1: 'Excellent', B2: 'Very Good', B3: 'Good',
+    C4: 'Credit', C5: 'Credit', C6: 'Credit',
+    D7: 'Pass', E8: 'Pass', F9: 'Fail',
+  };
+  return map[grade] ?? 'Fail';
+}
+
 @Injectable()
 export class StaffService {
   constructor(private prisma: PrismaService) {}
@@ -300,6 +321,12 @@ export class StaffService {
         const student = await this.prisma.student.findFirst({ where: { user: { uniqueId: r.student_id, ...(schoolId ? { schoolId } : {}) } } });
         if (!student) continue;
 
+        const testScore = parseFloat(r.test_score) || 0;
+        const examScore = parseFloat(r.exam_score) || 0;
+        const totalScore = testScore + examScore;
+        const grade = computeGrade(totalScore);
+        const remark = computeRemark(grade);
+
         await this.prisma.result.upsert({
           where: {
             studentId_subjectId_sessionId_termId: {
@@ -310,8 +337,11 @@ export class StaffService {
             }
           },
           update: {
-            testScore: parseFloat(r.test_score) || 0,
-            examScore: parseFloat(r.exam_score) || 0,
+            testScore,
+            examScore,
+            totalScore,
+            grade,
+            remark,
             teacherId: staff.id,
           },
           create: {
@@ -319,8 +349,11 @@ export class StaffService {
             subjectId: subject.id,
             sessionId: sessionEntity.id,
             termId: termEntity.id,
-            testScore: parseFloat(r.test_score) || 0,
-            examScore: parseFloat(r.exam_score) || 0,
+            testScore,
+            examScore,
+            totalScore,
+            grade,
+            remark,
             teacherId: staff.id,
           }
         });
@@ -750,14 +783,24 @@ export class StaffService {
 
   private async resultsWithTotals(where: any) {
     const rows = await this.prisma.result.findMany({ where, include: { subject: true } });
-    return rows.map(row => ({
-      ...row,
-      course: row.subject.name,
-      testScore: Number(row.testScore),
-      examScore: Number(row.examScore),
-      totalScore: Number(row.testScore) + Number(row.examScore),
-      total_score: Number(row.testScore) + Number(row.examScore),
-    }));
+    return rows.map(row => {
+      const total = Number(row.testScore) + Number(row.examScore);
+      const grade = row.grade || computeGrade(total);
+      const remark = row.remark || computeRemark(grade);
+      return {
+        ...row,
+        id: row.id.toString(),
+        course: row.subject.name,
+        test_score: row.testScore.toString(),
+        exam_score: row.examScore.toString(),
+        total_score: total.toString(),
+        testScore: Number(row.testScore),
+        examScore: Number(row.examScore),
+        totalScore: total,
+        grade,
+        remark,
+      };
+    });
   }
 
   // ── Curriculum ────────────────────────────────────────────────────────────

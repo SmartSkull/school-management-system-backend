@@ -95,6 +95,12 @@ export class AttendanceController {
   }
 
   // ── Staff: mark student attendance ────────────────────────────────────
+  @Get('staff/students/history-dates')
+  @UseGuards(StaffGuard)
+  staffStudentAttendanceDates(@CurrentUser() user: any, @Query('month') month?: string, @Query('year') year?: string) {
+    return this.svc.staffStudentAttendanceDates(user, month, year);
+  }
+
   @Get('staff/students')
   @UseGuards(StaffGuard)
   staffGetStudentAttendance(@CurrentUser() user: any, @Query('class') className?: string, @Query('date') date?: string) {
