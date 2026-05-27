@@ -4,10 +4,11 @@ import { AttendanceService } from './attendance.service';
 import { AuthModule } from '../auth/auth.module';
 import { JwtAuthGuard, StaffGuard, AdminGuard, StudentGuard } from '../common/guards/auth.guard';
 import { EmailService } from '../common/email.service';
+import { SmsService } from '../common/sms.service';
 
 @Module({
   imports: [AuthModule],
   controllers: [AttendanceController],
-  providers: [AttendanceService, JwtAuthGuard, StaffGuard, AdminGuard, StudentGuard, EmailService],
+  providers: [AttendanceService, JwtAuthGuard, StaffGuard, AdminGuard, StudentGuard, EmailService, SmsService],
 })
 export class AttendanceModule {}

@@ -1,6 +1,7 @@
 import { Injectable, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { EmailService } from '../common/email.service';
+import { SmsService } from '../common/sms.service';
 
 // Haversine distance in metres
 function distanceMetres(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -20,7 +21,7 @@ function todayDate(): Date {
 
 @Injectable()
 export class AttendanceService {
-  constructor(private prisma: PrismaService, private email: EmailService) {}
+  constructor(private prisma: PrismaService, private email: EmailService, private sms: SmsService) {}
 
   // ── Staff: clock in ────────────────────────────────────────────────────
   async clockIn(user: any, body: { latitude: number; longitude: number }) {
@@ -601,6 +602,7 @@ export class AttendanceService {
         firstName: true,
         lastName: true,
         email: true,
+        telephone: true,
         student: { select: { id: true, classRoom: { select: { name: true } } } },
       },
     });
@@ -632,6 +634,17 @@ export class AttendanceService {
           date: dateStr,
           schoolName: school?.name ?? 'School',
         }).catch(() => {});
+        
+        // Also send SMS to the parent (user's phone)
+        if (u.telephone) {
+          this.sms.sendAbsentStudentSms(
+            u.telephone,
+            `${u.firstName} ${u.lastName}`,
+            u.student?.classRoom?.name ?? 'N/A',
+            dateStr,
+            school?.name ?? 'School'
+          ).catch(() => {});
+        }
       }
     }
 

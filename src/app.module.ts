@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { EmailService } from './common/email.service';
+import { SmsService } from './common/sms.service';
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './auth/auth.module';
 import { AdminModule } from './admin/admin.module';
@@ -36,7 +37,7 @@ import { FinanceModule } from './finance/finance.module';
     OnlineClassModule,
     FinanceModule,
   ],
-  providers: [EmailService],
-  exports: [EmailService],
+  providers: [EmailService, SmsService],
+  exports: [EmailService, SmsService],
 })
 export class AppModule {}
