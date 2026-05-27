@@ -15,6 +15,7 @@ import { AttendanceModule } from './attendance/attendance.module';
 import { LeaveModule } from './leave/leave.module';
 import { PayrollModule } from './payroll/payroll.module';
 import { OnlineClassModule } from './online-class/online-class.module';
+import { FinanceModule } from './finance/finance.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { OnlineClassModule } from './online-class/online-class.module';
     LeaveModule,
     PayrollModule,
     OnlineClassModule,
+    FinanceModule,
   ],
   providers: [EmailService],
   exports: [EmailService],

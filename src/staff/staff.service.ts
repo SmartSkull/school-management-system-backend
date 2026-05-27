@@ -399,9 +399,14 @@ export class StaffService {
       const principal = await this.prisma.user.findFirst({ where: { role: 'ADMIN', ...(schoolId ? { schoolId } : {}) }, select: { firstName: true, lastName: true, image: true } });
 
       // Get attendance
-      const attendance = await this.prisma.attendance.findFirst({
-        where: { studentId: studentRecord?.id, sessionId: sessionEntity?.id, termId: termEntity?.id }
-      });
+      const [attendance, trait] = await Promise.all([
+        this.prisma.attendance.findFirst({
+          where: { studentId: studentRecord?.id, sessionId: sessionEntity?.id, termId: termEntity?.id }
+        }),
+        studentRecord ? this.prisma.studentTrait.findFirst({
+          where: { studentId: studentRecord.id, sessionId: sessionEntity?.id, termId: termEntity?.id }
+        }) : Promise.resolve(null),
+      ]);
 
       return this.ok({
         results,
@@ -415,6 +420,13 @@ export class StaffService {
         teacher: classTeacher ? { name: `${classTeacher.user.firstName} ${classTeacher.user.lastName}`, image: classTeacher.user.image } : null,
         principal: principal ? { name: `${principal.firstName} ${principal.lastName}`, image: principal.image } : null,
         attendance,
+        trait: trait ? {
+          punctuality: trait.punctuality, perseverance: trait.perseverance, responsibility: trait.responsibility,
+          diligence: trait.diligence, selfControl: trait.selfControl, honesty: trait.honesty,
+          attendance: trait.attendance, attentiveness: trait.attentiveness, creativity: trait.creativity, curiosity: trait.curiosity,
+          drawing: trait.drawing, physicalActivity: trait.physicalActivity, accuracy: trait.accuracy,
+          handlingOfTools: trait.handlingOfTools, mentalSkills: trait.mentalSkills,
+        } : null,
       });
     }
 
@@ -930,5 +942,75 @@ export class StaffService {
     if (!scheme || scheme.staffId !== staff?.id) throw new NotFoundException('Weekly scheme not found');
     await this.prisma.weeklyScheme.delete({ where: { id: BigInt(id) } });
     return this.ok(null, 'Weekly scheme deleted');
+  }
+
+  async getTraits(user: any, q: any) {
+    const session = q.session || await this.getCurrentSession();
+    const term = q.term || await this.getCurrentTerm();
+    const schoolId = this.schoolId(user);
+
+    const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
+    const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term as any, sessionId: sessionEntity?.id } });
+    if (!sessionEntity || !termEntity) throw new BadRequestException('Session or Term not found');
+
+    const students = await this.prisma.student.findMany({
+      where: { classRoom: { name: q.class, ...(schoolId ? { schoolId } : {}) } },
+      include: { user: true, traits: { where: { sessionId: sessionEntity.id, termId: termEntity.id } } },
+    });
+
+    return this.ok(students.map(s => ({
+      student_id: s.user.uniqueId,
+      firstname: s.user.firstName,
+      lastname: s.user.lastName,
+      image: s.user.image,
+      ...(s.traits[0] ? this.serializeTrait(s.traits[0]) : {}),
+    })));
+  }
+
+  async saveTraits(user: any, body: any) {
+    const session = body.session || await this.getCurrentSession();
+    const term = body.term || await this.getCurrentTerm();
+    const schoolId = this.schoolId(user);
+
+    const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
+    const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term as any, sessionId: sessionEntity?.id } });
+    if (!sessionEntity || !termEntity) throw new BadRequestException('Session or Term not found');
+
+    const TRAIT_FIELDS = [
+      'punctuality','perseverance','responsibility','diligence','selfControl',
+      'honesty','attendance','attentiveness','creativity','curiosity',
+      'drawing','physicalActivity','accuracy','handlingOfTools','mentalSkills',
+    ];
+
+    let count = 0;
+    for (const row of (body.traits ?? [])) {
+      const student = await this.prisma.student.findFirst({
+        where: { user: { uniqueId: row.student_id, ...(schoolId ? { schoolId } : {}) } },
+      });
+      if (!student) continue;
+
+      const data: any = {};
+      for (const f of TRAIT_FIELDS) {
+        if (row[f] !== undefined) data[f] = Math.min(5, Math.max(0, Number(row[f]) || 0));
+      }
+
+      await this.prisma.studentTrait.upsert({
+        where: { studentId_sessionId_termId: { studentId: student.id, sessionId: sessionEntity.id, termId: termEntity.id } },
+        update: data,
+        create: { studentId: student.id, sessionId: sessionEntity.id, termId: termEntity.id, ...data },
+      });
+      count++;
+    }
+    return this.ok({ count }, `Traits saved for ${count} student(s)`);
+  }
+
+  private serializeTrait(t: any) {
+    return {
+      punctuality: t.punctuality, perseverance: t.perseverance, responsibility: t.responsibility,
+      diligence: t.diligence, selfControl: t.selfControl, honesty: t.honesty,
+      attendance: t.attendance, attentiveness: t.attentiveness, creativity: t.creativity, curiosity: t.curiosity,
+      drawing: t.drawing, physicalActivity: t.physicalActivity, accuracy: t.accuracy,
+      handlingOfTools: t.handlingOfTools, mentalSkills: t.mentalSkills,
+    };
   }
 }

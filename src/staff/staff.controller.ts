@@ -91,4 +91,7 @@ export class StaffController {
   @Get('curriculum/weekly-schemes') getWeeklySchemes(@CurrentUser() user: any, @Query() q: any) { return this.svc.getWeeklySchemes(user, q); }
   @Post('curriculum/weekly-schemes') saveWeeklyScheme(@CurrentUser() user: any, @Body() body: any) { return this.svc.saveWeeklyScheme(user, body); }
   @Delete('curriculum/weekly-schemes/:id') deleteWeeklyScheme(@CurrentUser() user: any, @Param('id') id: string) { return this.svc.deleteWeeklyScheme(user, id); }
+
+  @Get('traits') getTraits(@CurrentUser() user: any, @Query() q: any) { return this.svc.getTraits(user, q); }
+  @Post('traits') saveTraits(@CurrentUser() user: any, @Body() body: any) { return this.svc.saveTraits(user, body); }
 }

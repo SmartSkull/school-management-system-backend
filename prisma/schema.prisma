@@ -88,6 +88,8 @@ model School {
   attendanceLocations AttendanceLocation[]
   leaveEntitlements   LeaveEntitlement[]
   payrollDeductions   PayrollDeduction[]
+  incomes             Income[]
+  expenses            Expense[]
 }
 
 model User {
@@ -146,6 +148,7 @@ model Student {
   cbtResults      CbtResult[]
   scratchCards    ScratchCard[]
   clockAttendances StudentAttendance[]
+  traits          StudentTrait[]
 }
 
 model Staff {
@@ -196,6 +199,7 @@ model AcademicSession {
   feePayments SchoolFeePayment[]
   scratchCards ScratchCard[]
   cbtTests  CbtTest[]
+  traits    StudentTrait[]
 }
 
 model AcademicTerm {
@@ -216,6 +220,7 @@ model AcademicTerm {
   feePayments SchoolFeePayment[]
   scratchCards ScratchCard[]
   cbtTests  CbtTest[]
+  traits    StudentTrait[]
 
   @@unique([sessionId, name])
 }
@@ -305,6 +310,38 @@ model Attendance {
   student           Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
   session           AcademicSession @relation(fields: [sessionId], references: [id])
   term              AcademicTerm @relation(fields: [termId], references: [id])
+
+  @@unique([studentId, sessionId, termId])
+}
+
+model StudentTrait {
+  id          BigInt   @id @default(autoincrement())
+  studentId   BigInt
+  sessionId   BigInt
+  termId      BigInt
+  // Affective traits (0-5)
+  punctuality    Int @default(0)
+  perseverance   Int @default(0)
+  responsibility Int @default(0)
+  diligence      Int @default(0)
+  selfControl    Int @default(0)
+  honesty        Int @default(0)
+  attendance     Int @default(0)
+  attentiveness  Int @default(0)
+  creativity     Int @default(0)
+  curiosity      Int @default(0)
+  // Psychomotor traits (0-5)
+  drawing        Int @default(0)
+  physicalActivity Int @default(0)
+  accuracy       Int @default(0)
+  handlingOfTools Int @default(0)
+  mentalSkills   Int @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  session     AcademicSession @relation(fields: [sessionId], references: [id])
+  term        AcademicTerm @relation(fields: [termId], references: [id])
 
   @@unique([studentId, sessionId, termId])
 }
@@ -806,4 +843,32 @@ model OnlineClass {
   schoolId        BigInt
   staffId         BigInt
   createdAt       DateTime @default(now())
+}
+
+model Income {
+  id          BigInt   @id @default(autoincrement())
+  schoolId    BigInt
+  amount      Decimal  @db.Decimal(12, 2)
+  category    String   @db.VarChar(100)
+  reference   String?  @db.VarChar(150)
+  description String?  @db.Text
+  date        DateTime @db.Date
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  school      School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+}
+
+model Expense {
+  id          BigInt   @id @default(autoincrement())
+  schoolId    BigInt
+  amount      Decimal  @db.Decimal(12, 2)
+  category    String   @db.VarChar(100)
+  reference   String?  @db.VarChar(150)
+  description String?  @db.Text
+  date        DateTime @db.Date
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  school      School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }

@@ -136,7 +136,7 @@ export class StudentService {
       throw new NotFoundException(`Results for ${term} term, ${session} session have not been approved yet. Please check back later.`);
     }
 
-    const [rawResults, attendance, teacher, principal] = await Promise.all([
+    const [rawResults, attendance, teacher, principal, trait] = await Promise.all([
       this.resultsWithTotals({ studentId: student.id, sessionId: sessionEntity.id, termId: termEntity.id }),
       this.prisma.attendance.findFirst({ where: { studentId: student.id, sessionId: sessionEntity.id, termId: termEntity.id } }),
       this.prisma.staff.findFirst({ 
@@ -147,6 +147,7 @@ export class StudentService {
         where: { role: 'ADMIN', ...(this.schoolId(user) ? { schoolId: this.schoolId(user) } : {}) }, 
         select: { firstName: true, lastName: true, image: true } 
       }),
+      this.prisma.studentTrait.findFirst({ where: { studentId: student.id, sessionId: sessionEntity.id, termId: termEntity.id } }),
     ]);
 
     const results = await this.enrichWithCumulativeScores(rawResults, student.id.toString(), session, term);
@@ -164,6 +165,13 @@ export class StudentService {
     return this.ok({
       results,
       attendance,
+      trait: trait ? {
+        punctuality: trait.punctuality, perseverance: trait.perseverance, responsibility: trait.responsibility,
+        diligence: trait.diligence, selfControl: trait.selfControl, honesty: trait.honesty,
+        attendance: trait.attendance, attentiveness: trait.attentiveness, creativity: trait.creativity, curiosity: trait.curiosity,
+        drawing: trait.drawing, physicalActivity: trait.physicalActivity, accuracy: trait.accuracy,
+        handlingOfTools: trait.handlingOfTools, mentalSkills: trait.mentalSkills,
+      } : null,
       class_size: classSize,
       approved: true,
       session,
