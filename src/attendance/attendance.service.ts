@@ -246,8 +246,13 @@ export class AttendanceService {
   // ── Admin: mark absent for staff who haven't clocked in ───────────────
   async markAbsent(user: any, body: { date?: string }) {
     const schoolId = user.schoolId ?? user.school?.id;
-    const date = body.date ? new Date(body.date) : todayDate();
-    const dayDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    let dayDate: Date;
+    if (body.date) {
+      const [y, m, d] = body.date.split('-');
+      dayDate = new Date(Date.UTC(Number(y), Number(m) - 1, Number(d)));
+    } else {
+      dayDate = todayDate();
+    }
 
     const allStaff = await this.prisma.staff.findMany({
       where: { user: { schoolId: BigInt(schoolId), status: 'ACTIVE' } },
@@ -404,14 +409,16 @@ export class AttendanceService {
     if (!schoolId) throw new ForbiddenException('No school associated with this admin');
     const { date, month, year } = query;
 
-    // studentId in StudentAttendance is User.id directly
-    // Get all user IDs belonging to this school
-    const schoolUsers = await this.prisma.user.findMany({
-      where: { schoolId: BigInt(schoolId), role: 'STUDENT' },
+    const studentWhere: any = { user: { schoolId: BigInt(schoolId), role: 'STUDENT' } };
+    if (query.className) {
+      studentWhere.classRoom = { name: query.className };
+    }
+    const schoolStudents = await this.prisma.student.findMany({
+      where: studentWhere,
       select: { id: true },
     });
-    const userIds = schoolUsers.map(u => u.id);
-    const where: any = { studentId: { in: userIds } };
+    const studentIds = schoolStudents.map(s => s.id);
+    const where: any = { studentId: { in: studentIds } };
 
     if (date) {
       const d = new Date(date);
@@ -432,18 +439,20 @@ export class AttendanceService {
       orderBy: { date: 'desc' },
     });
 
-    // Fetch User info for each record (studentId = User.id)
-    const uniqueUserIds = [...new Set(records.map(r => r.studentId))];
-    const users = await this.prisma.user.findMany({
-      where: { id: { in: uniqueUserIds } },
-      select: { id: true, firstName: true, lastName: true, uniqueId: true, image: true },
+    const uniqueStudentIds = [...new Set(records.map(r => r.studentId))];
+    const students = await this.prisma.student.findMany({
+      where: { id: { in: uniqueStudentIds } },
+      select: {
+        id: true,
+        user: { select: { firstName: true, lastName: true, uniqueId: true, image: true } },
+      },
     });
-    const userMap = new Map(users.map(u => [u.id.toString(), u]));
+    const studentMap = new Map(students.map(s => [s.id.toString(), s.user]));
 
     return {
       success: true,
       data: records.map((r) => {
-        const u = userMap.get(r.studentId.toString());
+        const u = studentMap.get(r.studentId.toString());
         return {
           ...this.serializeStudentRecord(r),
           student: {
@@ -460,8 +469,13 @@ export class AttendanceService {
   // ── Admin: mark absent students who haven't clocked in ────────────────
   async markStudentsAbsent(user: any, body: { date?: string }) {
     const schoolId = user.schoolId ?? user.school?.id;
-    const date = body.date ? new Date(body.date) : todayDate();
-    const dayDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    let dayDate: Date;
+    if (body.date) {
+      const [y, m, d] = body.date.split('-');
+      dayDate = new Date(Date.UTC(Number(y), Number(m) - 1, Number(d)));
+    } else {
+      dayDate = todayDate();
+    }
 
     const allStudents = await this.prisma.student.findMany({
       where: { user: { schoolId: BigInt(schoolId), status: 'ACTIVE' } },

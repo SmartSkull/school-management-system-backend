@@ -50,4 +50,9 @@ export class SmsService {
     const message = `Dear Parent, this is to inform you that ${studentName} (${className}) was marked absent from school today (${date}). Please contact the school management for any clarifications. - ${schoolName}`;
     return this.sendSms(parentPhone, message);
   }
+
+  async sendResultApprovedSms(parentPhone: string, studentName: string, className: string, session: string, term: string, schoolName: string) {
+    const message = `Dear Parent, ${studentName}'s result for ${term} term, ${session} session (${className}) has been approved and is now available on the student portal. - ${schoolName}`;
+    return this.sendSms(parentPhone, message);
+  }
 }

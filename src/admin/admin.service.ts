@@ -2,10 +2,11 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '../database/prisma.service';
 import { EmailService } from '../common/email.service';
+import { SmsService } from '../common/sms.service';
 
 @Injectable()
 export class AdminService {
-  constructor(private prisma: PrismaService, private emailService: EmailService) {}
+  constructor(private prisma: PrismaService, private emailService: EmailService, private smsService: SmsService) {}
 
   private ok(data: any = null, message = 'Success') {
     return { success: true, data, message };
@@ -288,18 +289,21 @@ export class AdminService {
   async updateStaff(staffId: string, data: any) {
     const userUpdate = this.pick(data, ['firstName', 'lastName', 'email', 'telephone']);
     if (Object.keys(userUpdate).length) {
-      await this.prisma.user.update({ where: { uniqueId: staffId }, data: userUpdate });
+      const result = await this.prisma.user.updateMany({ where: { id: BigInt(staffId) }, data: userUpdate });
+      if (result.count === 0) {
+        throw new NotFoundException('Staff not found');
+      }
     }
     return this.ok(null, 'Staff updated successfully');
   }
 
   async verifyStaff(staffId: string) {
-    await this.prisma.user.update({ where: { uniqueId: staffId }, data: { status: 'ACTIVE' } });
+    await this.prisma.user.update({ where: { id: BigInt(staffId) }, data: { status: 'ACTIVE' } });
     return this.ok(null, 'Staff verified successfully');
   }
 
   async deleteStaff(staffId: string) {
-    await this.prisma.user.delete({ where: { uniqueId: staffId } });
+    await this.prisma.user.delete({ where: { id: BigInt(staffId) } });
     return this.ok(null, 'Staff deleted successfully');
   }
 
@@ -586,15 +590,46 @@ export class AdminService {
     
     const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session, ...(schoolId ? { schoolId } : {}) } });
     const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term.toUpperCase() as any, sessionId: sessionEntity?.id } });
-    const user = await this.prisma.user.findUnique({ where: { uniqueId: studentId, ...(schoolId ? { schoolId } : {}) }, include: { student: true } });
+    const user = await this.prisma.user.findUnique({
+      where: { uniqueId: studentId, ...(schoolId ? { schoolId } : {}) },
+      include: { student: { include: { classRoom: true } } },
+    });
 
     if (!user || !user.student || !sessionEntity || !termEntity) throw new NotFoundException('Student or Session/Term not found');
 
-    const [results, attendance] = await Promise.all([
+    const [results, attendance, trait, principal, classWithTeacher] = await Promise.all([
       this.resultsWithTotals({ studentId: user.student.id, sessionId: sessionEntity.id, termId: termEntity.id }),
       this.prisma.attendance.findFirst({ where: { studentId: user.student.id, sessionId: sessionEntity.id, termId: termEntity.id } }),
+      this.prisma.studentTrait.findFirst({ where: { studentId: user.student.id, sessionId: sessionEntity.id, termId: termEntity.id } }),
+      this.prisma.user.findFirst({ where: { role: 'ADMIN', ...(schoolId ? { schoolId } : {}) }, select: { firstName: true, lastName: true, image: true } }),
+      user.student.classRoomId
+        ? this.prisma.classRoom.findUnique({ where: { id: user.student.classRoomId }, include: { classTeacher: { include: { user: true } } } })
+        : Promise.resolve(null),
     ]);
-    return this.ok({ student: user, results, attendance, session, term });
+    const classTeacher = classWithTeacher?.classTeacher ?? null;
+
+    return this.ok({
+      student: {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        image: user.image,
+        uniqueId: user.uniqueId,
+      },
+      results,
+      attendance,
+      session,
+      term,
+      class: user.student.classRoom?.name,
+      teacher: classTeacher ? { name: `${classTeacher.user.firstName} ${classTeacher.user.lastName}`, image: classTeacher.user.image } : null,
+      principal: principal ? { name: `${principal.firstName} ${principal.lastName}`, image: principal.image } : null,
+      trait: trait ? {
+        punctuality: trait.punctuality, perseverance: trait.perseverance, responsibility: trait.responsibility,
+        diligence: trait.diligence, selfControl: trait.selfControl, honesty: trait.honesty,
+        attendance: trait.attendance, attentiveness: trait.attentiveness, creativity: trait.creativity, curiosity: trait.curiosity,
+        drawing: trait.drawing, physicalActivity: trait.physicalActivity, accuracy: trait.accuracy,
+        handlingOfTools: trait.handlingOfTools, mentalSkills: trait.mentalSkills,
+      } : null,
+    });
   }
 
   async approveResults(studentId: string, body: any) {
@@ -603,11 +638,14 @@ export class AdminService {
     
     const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
     const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term.toUpperCase() as any, sessionId: sessionEntity?.id } });
-    const user = await this.prisma.user.findUnique({ where: { uniqueId: studentId }, include: { student: true } });
+    const user = await this.prisma.user.findUnique({
+      where: { uniqueId: studentId },
+      include: { student: { include: { classRoom: true } }, school: { select: { name: true } } },
+    });
 
     if (!user || !user.student || !sessionEntity || !termEntity) return;
 
-    await this.prisma.result.updateMany({ 
+    const updated = await this.prisma.result.updateMany({ 
       where: { studentId: user.student.id, sessionId: sessionEntity.id, termId: termEntity.id }, 
       data: { approvedAt: new Date() } 
     });
@@ -620,6 +658,32 @@ export class AdminService {
         readAt: null 
       } 
     });
+    if (updated.count > 0) {
+      const studentName = `${user.firstName} ${user.lastName}`.trim();
+      const className = user.student.classRoom?.name ?? 'N/A';
+      const schoolName = user.school?.name ?? 'School';
+      const termLabel = `${term}`.toUpperCase();
+
+      this.emailService.sendResultApprovedParent({
+        parentEmail: user.email,
+        studentName,
+        className,
+        session,
+        term: termLabel,
+        schoolName,
+      }).catch(() => {});
+
+      if (user.telephone) {
+        this.smsService.sendResultApprovedSms(
+          user.telephone,
+          studentName,
+          className,
+          session,
+          termLabel,
+          schoolName,
+        ).catch(() => {});
+      }
+    }
     return this.ok(null, 'Results approved successfully');
   }
 

@@ -147,6 +147,34 @@ export class EmailService {
     await this.send(opts.parentEmail, `Absence Alert: ${opts.studentName} was absent on ${opts.date}`, html);
   }
 
+  async sendResultApprovedParent(opts: {
+    parentEmail: string;
+    studentName: string;
+    className: string;
+    session: string;
+    term: string;
+    schoolName: string;
+  }) {
+    if (!opts.parentEmail) return;
+    const color = '#16a34a';
+    const html = layout(color, `
+      <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#111827">Result Approved</h1>
+      <p style="margin:0 0 24px;color:#6b7280;font-size:15px">Dear Parent/Guardian,</p>
+
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:24px;margin-bottom:24px">
+        ${row('Student', opts.studentName)}
+        ${row('Class', opts.className)}
+        ${row('Session', opts.session)}
+        ${row('Term', opts.term)}
+        ${row('School', opts.schoolName)}
+        ${row('Status', '<span style="color:#16a34a;font-weight:700">APPROVED</span>')}
+      </div>
+
+      <p style="margin:0;color:#6b7280;font-size:14px">The result is now available for viewing from the student portal.</p>
+    `);
+    await this.send(opts.parentEmail, `Result Approved: ${opts.studentName} - ${opts.term} Term`, html);
+  }
+
   private async send(to: string, subject: string, html: string) {
     try {
       const recipient = process.env.RESEND_TEST_TO || to;
