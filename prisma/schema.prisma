@@ -119,6 +119,7 @@ model User {
   likes        Like[]
   sentMessages Message[]     @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
+  clockAttendances StudentAttendance[]
 }
 
 model Student {
@@ -147,7 +148,6 @@ model Student {
   cbtAnswers      CbtAnswer[]
   cbtResults      CbtResult[]
   scratchCards    ScratchCard[]
-  clockAttendances StudentAttendance[]
   traits          StudentTrait[]
 }
 
@@ -622,7 +622,7 @@ model StaffAttendance {
 
 model StudentAttendance {
   id           BigInt            @id @default(autoincrement())
-  studentId    BigInt
+  studentId    String            @db.VarChar(100)
   locationId   BigInt?
   date         DateTime          @db.Date
   clockIn      DateTime?
@@ -633,7 +633,7 @@ model StudentAttendance {
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
 
-  student      Student           @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  student      User              @relation(fields: [studentId], references: [uniqueId], onDelete: Cascade)
   location     AttendanceLocation? @relation(fields: [locationId], references: [id])
 
   @@unique([studentId, date])
