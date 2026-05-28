@@ -354,6 +354,7 @@ model Assignment {
   title       String    @db.VarChar(255)
   content     String    @db.Text
   file        String?   @db.VarChar(255)
+  status      String    @default("PUBLISHED") @db.VarChar(20)
   dueAt       DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

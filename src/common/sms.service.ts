@@ -51,8 +51,9 @@ export class SmsService {
     return this.sendSms(parentPhone, message);
   }
 
-  async sendResultApprovedSms(parentPhone: string, studentName: string, className: string, session: string, term: string, schoolName: string) {
-    const message = `Dear Parent, ${studentName}'s result for ${term} term, ${session} session (${className}) has been approved and is now available on the student portal. - ${schoolName}`;
+  async sendResultApprovedSms(parentPhone: string, studentName: string, className: string, session: string, term: string, schoolName: string, resultUrl?: string) {
+    const linkText = resultUrl ? ` Check result: ${resultUrl}` : '';
+    const message = `Dear Parent, ${studentName}'s result for ${term} term, ${session} session (${className}) has been approved and is now available on the student portal.${linkText} - ${schoolName}`;
     return this.sendSms(parentPhone, message);
   }
 }

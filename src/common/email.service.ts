@@ -46,9 +46,10 @@ export class EmailService {
     await this.send(school.email, `School Registration Received – ${school.name}`, html);
   }
 
-  async sendStudentCreated(student: { firstName: string; lastName: string; email: string; uniqueId: string; password: string }) {
+  async sendStudentCreated(student: { firstName: string; lastName: string; email: string; uniqueId: string; password: string; website?: string }) {
     if (!student.email) return;
     const color = '#1a73e8';
+    const websiteLink = student.website ? `<a href="${student.website}" style="color:${color};font-weight:700">${student.website}</a>` : '';
 
     const html = layout(color, `
       <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#111827">Welcome, ${student.firstName}! 👋</h1>
@@ -59,7 +60,14 @@ export class EmailService {
         ${row('Full Name', `${student.firstName} ${student.lastName}`)}
         ${row('Student ID', `<span style="font-family:monospace;font-size:15px;font-weight:700;color:${color}">${student.uniqueId}</span>`)}
         ${row('Password', `<span style="font-family:monospace;font-size:15px;font-weight:700;color:#dc2626">${student.password}</span>`)}
+        ${websiteLink ? row('School Website', websiteLink) : ''}
       </div>
+
+      ${student.website ? `
+        <div style="text-align:center;margin:0 0 24px">
+          <a href="${student.website}" style="display:inline-block;background:${color};color:#ffffff;text-decoration:none;font-weight:700;border-radius:10px;padding:12px 22px">Open School Portal</a>
+        </div>
+      ` : ''}
 
       <div style="background:#fef3c7;border-left:4px solid #f59e0b;border-radius:4px;padding:16px;margin-bottom:24px">
         <p style="margin:0;color:#92400e;font-size:14px">
@@ -73,9 +81,10 @@ export class EmailService {
     await this.send(student.email, 'Your Student Account Has Been Created', html);
   }
 
-  async sendStaffCreated(staff: { firstName: string; lastName: string; email: string; uniqueId: string; password: string }) {
+  async sendStaffCreated(staff: { firstName: string; lastName: string; email: string; uniqueId: string; password: string; website?: string }) {
     if (!staff.email) return;
     const color = '#7c3aed';
+    const websiteLink = staff.website ? `<a href="${staff.website}" style="color:${color};font-weight:700">${staff.website}</a>` : '';
 
     const html = layout(color, `
       <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#111827">Welcome to the Team, ${staff.firstName}! 🚀</h1>
@@ -86,7 +95,14 @@ export class EmailService {
         ${row('Full Name', `${staff.firstName} ${staff.lastName}`)}
         ${row('Staff ID', `<span style="font-family:monospace;font-size:15px;font-weight:700;color:${color}">${staff.uniqueId}</span>`)}
         ${row('Password', `<span style="font-family:monospace;font-size:15px;font-weight:700;color:#dc2626">${staff.password}</span>`)}
+        ${websiteLink ? row('School Website', websiteLink) : ''}
       </div>
+
+      ${staff.website ? `
+        <div style="text-align:center;margin:0 0 24px">
+          <a href="${staff.website}" style="display:inline-block;background:${color};color:#ffffff;text-decoration:none;font-weight:700;border-radius:10px;padding:12px 22px">Open School Portal</a>
+        </div>
+      ` : ''}
 
       <div style="background:#fef3c7;border-left:4px solid #f59e0b;border-radius:4px;padding:16px;margin-bottom:24px">
         <p style="margin:0;color:#92400e;font-size:14px">
@@ -154,9 +170,11 @@ export class EmailService {
     session: string;
     term: string;
     schoolName: string;
+    resultUrl?: string;
   }) {
     if (!opts.parentEmail) return;
     const color = '#16a34a';
+    const resultLink = opts.resultUrl ? `<a href="${opts.resultUrl}" style="color:${color};font-weight:700">${opts.resultUrl}</a>` : '';
     const html = layout(color, `
       <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#111827">Result Approved</h1>
       <p style="margin:0 0 24px;color:#6b7280;font-size:15px">Dear Parent/Guardian,</p>
@@ -168,11 +186,135 @@ export class EmailService {
         ${row('Term', opts.term)}
         ${row('School', opts.schoolName)}
         ${row('Status', '<span style="color:#16a34a;font-weight:700">APPROVED</span>')}
+        ${resultLink ? row('Result Link', resultLink) : ''}
       </div>
 
+      ${opts.resultUrl ? `
+        <div style="text-align:center;margin:0 0 24px">
+          <a href="${opts.resultUrl}" style="display:inline-block;background:${color};color:#ffffff;text-decoration:none;font-weight:700;border-radius:10px;padding:12px 22px">Check Result</a>
+        </div>
+      ` : ''}
       <p style="margin:0;color:#6b7280;font-size:14px">The result is now available for viewing from the student portal.</p>
     `);
     await this.send(opts.parentEmail, `Result Approved: ${opts.studentName} - ${opts.term} Term`, html);
+  }
+
+  async sendLeaveReviewed(opts: {
+    email: string;
+    staffName: string;
+    status: 'APPROVED' | 'REJECTED';
+    type: string;
+    startDate: Date;
+    endDate: Date;
+    days: number;
+    adminNote?: string | null;
+    schoolName: string;
+  }) {
+    if (!opts.email) return;
+    const approved = opts.status === 'APPROVED';
+    const color = approved ? '#16a34a' : '#dc2626';
+    const statusLabel = `<span style="color:${color};font-weight:700">${opts.status}</span>`;
+    const note = opts.adminNote?.trim();
+    const dateRange = `${formatDate(opts.startDate)} - ${formatDate(opts.endDate)}`;
+
+    const html = layout(color, `
+      <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#111827">Leave Request ${approved ? 'Approved' : 'Rejected'}</h1>
+      <p style="margin:0 0 24px;color:#6b7280;font-size:15px">Hello ${opts.staffName}, your leave request has been reviewed.</p>
+
+      <div style="background:${approved ? '#f0fdf4' : '#fef2f2'};border:1px solid ${approved ? '#bbf7d0' : '#fecaca'};border-radius:12px;padding:24px;margin-bottom:24px">
+        ${row('Leave Type', opts.type)}
+        ${row('Period', dateRange)}
+        ${row('Days', String(opts.days))}
+        ${row('School', opts.schoolName)}
+        ${row('Status', statusLabel)}
+        ${note ? row('Admin Note', note) : ''}
+      </div>
+
+      <p style="margin:0;color:#6b7280;font-size:14px">Please contact your school administrator if you need more information.</p>
+    `);
+
+    await this.send(opts.email, `Leave Request ${opts.status}: ${opts.type}`, html);
+  }
+
+  async sendLeaveRequestedAdmin(opts: {
+    adminEmail: string;
+    adminName: string;
+    staffName: string;
+    staffNo: string;
+    type: string;
+    startDate: Date;
+    endDate: Date;
+    days: number;
+    reason: string;
+    schoolName: string;
+    hasProofFile: boolean;
+  }) {
+    if (!opts.adminEmail) return;
+    const color = '#7c3aed';
+    const html = layout(color, `
+      <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#111827">New Leave Request</h1>
+      <p style="margin:0 0 24px;color:#6b7280;font-size:15px">Hello ${opts.adminName || 'Admin'}, a staff member submitted a leave request.</p>
+
+      <div style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:12px;padding:24px;margin-bottom:24px">
+        ${row('Staff', opts.staffName)}
+        ${row('Staff ID', opts.staffNo)}
+        ${row('Leave Type', opts.type)}
+        ${row('Period', `${formatDate(opts.startDate)} - ${formatDate(opts.endDate)}`)}
+        ${row('Days', String(opts.days))}
+        ${row('School', opts.schoolName)}
+        ${row('Supporting File', opts.hasProofFile ? 'Attached' : 'Not attached')}
+        ${row('Reason', opts.reason)}
+      </div>
+
+      <p style="margin:0;color:#6b7280;font-size:14px">Please review this request from the admin leave management page.</p>
+    `);
+
+    await this.send(opts.adminEmail, `New Leave Request: ${opts.staffName} (${opts.type})`, html);
+  }
+
+  async sendAssignmentCreatedStudent(opts: {
+    studentEmail: string;
+    studentName: string;
+    subject: string;
+    className: string;
+    assignment: string;
+    dueAt?: Date | null;
+    teacherName: string;
+    schoolName: string;
+    website?: string;
+    hasAttachment: boolean;
+  }) {
+    if (!opts.studentEmail) return;
+    const color = '#2563eb';
+    const websiteLink = opts.website ? `<a href="${opts.website}" style="color:${color};font-weight:700">${opts.website}</a>` : '';
+    const html = layout(color, `
+      <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#111827">New Assignment</h1>
+      <p style="margin:0 0 24px;color:#6b7280;font-size:15px">Hello ${opts.studentName}, a new assignment has been posted for your class.</p>
+
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:24px;margin-bottom:24px">
+        ${row('Subject', opts.subject)}
+        ${row('Class', opts.className)}
+        ${row('Teacher', opts.teacherName)}
+        ${row('Due Date', opts.dueAt ? formatDate(opts.dueAt) : 'Not specified')}
+        ${row('School', opts.schoolName)}
+        ${row('Attachment', opts.hasAttachment ? 'Attached' : 'None')}
+        ${websiteLink ? row('School Website', websiteLink) : ''}
+      </div>
+
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:18px;margin-bottom:24px">
+        <p style="margin:0 0 8px;color:#374151;font-size:13px;font-weight:700;text-transform:uppercase">Assignment</p>
+        <p style="margin:0;color:#111827;font-size:14px;line-height:1.6">${escapeHtml(opts.assignment)}</p>
+      </div>
+
+      ${opts.website ? `
+        <div style="text-align:center;margin:0 0 24px">
+          <a href="${opts.website}" style="display:inline-block;background:${color};color:#ffffff;text-decoration:none;font-weight:700;border-radius:10px;padding:12px 22px">Open School Portal</a>
+        </div>
+      ` : ''}
+      <p style="margin:0;color:#6b7280;font-size:14px">Please log in to your student portal to review and complete the assignment.</p>
+    `);
+
+    await this.send(opts.studentEmail, `New Assignment: ${opts.subject}`, html);
   }
 
   private async send(to: string, subject: string, html: string) {
@@ -197,6 +339,19 @@ function row(label: string, value: string) {
       <span style="color:#6b7280;font-size:14px;min-width:120px">${label}</span>
       <span style="color:#111827;font-size:14px;font-weight:500;text-align:right;flex:1">${value}</span>
     </div>`;
+}
+
+function formatDate(date: Date) {
+  return new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 function layout(accentColor: string, content: string) {

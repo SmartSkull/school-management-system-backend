@@ -16,6 +16,12 @@ export class AdminService {
     return user?.schoolId ? BigInt(user.schoolId) : undefined;
   }
 
+  private normalizeWebsiteUrl(website?: string | null): string | undefined {
+    const trimmed = website?.trim();
+    if (!trimmed) return undefined;
+    return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+  }
+
   async dashboard(user: any) {
     const schoolId = this.schoolId(user);
     const schoolWhere = schoolId ? { schoolId } : {};
@@ -139,6 +145,7 @@ export class AdminService {
     const schoolId = this.schoolId(user);
     const studentId = await this.generateStudentId(schoolId);
     const classRoom = await this.prisma.classRoom.findFirst({ where: { name: data.class, ...(schoolId ? { schoolId } : {}) } });
+    const school = schoolId ? await this.prisma.school.findUnique({ where: { id: schoolId }, select: { website: true } }) : null;
     const firstName = data.firstName || data.firstname || '';
     const lastName = data.lastName || data.lastname || '';
     
@@ -162,7 +169,14 @@ export class AdminService {
         }
       }
     });
-    this.emailService.sendStudentCreated({ firstName, lastName, email: data.email || '', uniqueId: studentId, password: data.password || 'greatkings' });
+    this.emailService.sendStudentCreated({
+      firstName,
+      lastName,
+      email: data.email || '',
+      uniqueId: studentId,
+      password: data.password || 'greatkings',
+      website: this.normalizeWebsiteUrl(school?.website),
+    });
     return this.ok({ student_id: studentId }, 'Student created successfully');
   }
 
@@ -263,6 +277,7 @@ export class AdminService {
   async createStaff(user: any, data: any) {
     const schoolId = this.schoolId(user);
     const uniqueId = await this.generateStaffId(schoolId);
+    const school = schoolId ? await this.prisma.school.findUnique({ where: { id: schoolId }, select: { website: true } }) : null;
     await this.prisma.user.create({ 
       data: {
         uniqueId: uniqueId,
@@ -282,7 +297,14 @@ export class AdminService {
         }
       }
     });
-    this.emailService.sendStaffCreated({ firstName: data.firstname || '', lastName: data.lastname || '', email: data.email || '', uniqueId, password: data.password || 'greatkings' });
+    this.emailService.sendStaffCreated({
+      firstName: data.firstname || '',
+      lastName: data.lastname || '',
+      email: data.email || '',
+      uniqueId,
+      password: data.password || 'greatkings',
+      website: this.normalizeWebsiteUrl(school?.website),
+    });
     return this.ok({ unique_id: uniqueId }, 'Staff created successfully');
   }
 
@@ -640,7 +662,7 @@ export class AdminService {
     const termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term.toUpperCase() as any, sessionId: sessionEntity?.id } });
     const user = await this.prisma.user.findUnique({
       where: { uniqueId: studentId },
-      include: { student: { include: { classRoom: true } }, school: { select: { name: true } } },
+      include: { student: { include: { classRoom: true } }, school: { select: { name: true, website: true } } },
     });
 
     if (!user || !user.student || !sessionEntity || !termEntity) return;
@@ -663,6 +685,7 @@ export class AdminService {
       const className = user.student.classRoom?.name ?? 'N/A';
       const schoolName = user.school?.name ?? 'School';
       const termLabel = `${term}`.toUpperCase();
+      const resultUrl = this.normalizeWebsiteUrl(user.school?.website);
 
       this.emailService.sendResultApprovedParent({
         parentEmail: user.email,
@@ -671,6 +694,7 @@ export class AdminService {
         session,
         term: termLabel,
         schoolName,
+        resultUrl,
       }).catch(() => {});
 
       if (user.telephone) {
@@ -681,6 +705,7 @@ export class AdminService {
           session,
           termLabel,
           schoolName,
+          resultUrl,
         ).catch(() => {});
       }
     }

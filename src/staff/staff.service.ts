@@ -1,6 +1,7 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { uploadToCloudinary } from '../common/cloudinary';
+import { EmailService } from '../common/email.service';
 
 function computeGrade(total: number): string {
   if (total >= 75) return 'A1';
@@ -23,9 +24,18 @@ function computeRemark(grade: string): string {
   return map[grade] ?? 'Fail';
 }
 
+function normalizeAssignmentStatus(status?: string): 'PUBLISHED' | 'HIDDEN' {
+  return String(status).toUpperCase() === 'HIDDEN' ? 'HIDDEN' : 'PUBLISHED';
+}
+
+function assignmentFileUrl(file?: string | null): string | null {
+  if (!file) return null;
+  return file.startsWith('http') ? file : `/uploads/assignments/${file}`;
+}
+
 @Injectable()
 export class StaffService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private emailService: EmailService) {}
 
   private safeBigInt(val: any): bigint | null {
     if (!val) return null;
@@ -43,6 +53,22 @@ export class StaffService {
 
   private userId(user: any): bigint {
     return BigInt(user.authUserId ?? user.userId ?? user.user?.id ?? user.id);
+  }
+
+  private async staffForSchool(user: any) {
+    const schoolId = this.schoolId(user);
+    return this.prisma.staff.findFirst({
+      where: {
+        userId: this.userId(user),
+        ...(schoolId ? { user: { schoolId } } : {}),
+      },
+    });
+  }
+
+  private normalizeWebsiteUrl(website?: string | null): string | undefined {
+    const trimmed = website?.trim();
+    if (!trimmed) return undefined;
+    return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
   }
 
   private async getCurrentSession(): Promise<string> {
@@ -605,10 +631,23 @@ export class StaffService {
 
   async createAssignment(user: any, body: any, file?: Express.Multer.File) {
     const schoolId = this.schoolId(user);
-    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
+    const staff = await this.prisma.staff.findFirst({
+      where: {
+        userId: this.userId(user),
+        ...(schoolId ? { user: { schoolId } } : {}),
+      },
+      include: { user: { include: { school: { select: { name: true, website: true } } } } },
+    });
+    if (!staff) throw new NotFoundException('Staff not found');
     const classRoom = await this.prisma.classRoom.findFirst({ where: { name: body.class, ...(schoolId ? { schoolId } : {}) } });
-    const subject = await this.prisma.subject.findFirst({ where: { name: body.subject, ...(schoolId ? { classRoom: { schoolId } } : {}) } });
+    const subject = await this.prisma.subject.findFirst({
+      where: {
+        name: body.subject,
+        ...(classRoom ? { classRoomId: classRoom.id } : schoolId ? { classRoom: { schoolId } } : {}),
+      },
+    });
 
+    const status = normalizeAssignmentStatus(body.status);
     const fileUrl = file ? await uploadToCloudinary(file, 'florieren/assignments') : null;
     const assignment = await this.prisma.assignment.create({ 
       data: { 
@@ -618,16 +657,50 @@ export class StaffService {
         staffId: staff!.id, 
         classRoomId: classRoom?.id,
         subjectId: subject?.id,
-        file: fileUrl
+        file: fileUrl,
+        status,
       } 
     });
+    if (classRoom && status === 'PUBLISHED') {
+      const students = await this.prisma.user.findMany({
+        where: {
+          role: 'STUDENT',
+          ...(schoolId ? { schoolId } : {}),
+          student: { classRoomId: classRoom.id },
+          email: { not: '' },
+        },
+        select: { firstName: true, lastName: true, email: true },
+      });
+      const teacherName = staff?.user ? `${staff.user.firstName} ${staff.user.lastName}`.trim() : 'Class Teacher';
+      const schoolName = staff?.user.school?.name ?? 'School';
+      const website = this.normalizeWebsiteUrl(staff?.user.school?.website);
+
+      for (const student of students) {
+        this.emailService.sendAssignmentCreatedStudent({
+          studentEmail: student.email,
+          studentName: `${student.firstName} ${student.lastName}`.trim(),
+          subject: body.subject || 'Assignment',
+          className: classRoom.name,
+          assignment: body.assignment || '',
+          dueAt: assignment.dueAt,
+          teacherName,
+          schoolName,
+          website,
+          hasAttachment: Boolean(fileUrl),
+        }).catch(() => {});
+      }
+    }
     return this.ok({ id: assignment.id.toString() }, 'Assignment created successfully');
   }
 
   async getAssignments(user: any) {
-    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
+    const schoolId = this.schoolId(user);
+    const staff = await this.staffForSchool(user);
     const assignments = await this.prisma.assignment.findMany({ 
-      where: { staffId: staff?.id }, 
+      where: {
+        staffId: staff?.id,
+        ...(schoolId ? { staff: { user: { schoolId } } } : {}),
+      },
       orderBy: { createdAt: 'desc' },
       include: { classRoom: true }
     });
@@ -641,30 +714,61 @@ export class StaffService {
       deadline: a.dueAt,
       due_date: a.dueAt,
       file: a.file,
-      file_url: a.file ? `/uploads/assignments/${a.file}` : null,
+      file_url: assignmentFileUrl(a.file),
+      status: a.status,
       createdAt: a.createdAt,
     })));
   }
 
   async updateAssignment(user: any, id: number, body: any, file?: Express.Multer.File) {
-    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
-    const assignment = await this.prisma.assignment.findUnique({ where: { id: BigInt(id) } });
-    if (!assignment || assignment.staffId !== staff?.id) throw new NotFoundException('Assignment not found');
+    const schoolId = this.schoolId(user);
+    const staff = await this.staffForSchool(user);
+    const assignment = await this.prisma.assignment.findFirst({
+      where: {
+        id: BigInt(id),
+        staffId: staff?.id,
+        ...(schoolId ? { staff: { user: { schoolId } } } : {}),
+      },
+    });
+    if (!assignment) throw new NotFoundException('Assignment not found');
     
     const data: any = {};
     if (body.assignment) data.content = body.assignment;
     if (body.deadline) data.dueAt = new Date(body.deadline);
     if (body.subject) data.title = body.subject;
+    if (body.status !== undefined) data.status = normalizeAssignmentStatus(body.status);
     if (file) data.file = await uploadToCloudinary(file, 'florieren/assignments');
+    if (body.class) {
+      const classRoom = await this.prisma.classRoom.findFirst({
+        where: { name: body.class, ...(schoolId ? { schoolId } : {}) },
+      });
+      data.classRoomId = classRoom?.id ?? null;
+    }
+    if (body.subject) {
+      const subject = await this.prisma.subject.findFirst({
+        where: {
+          name: body.subject,
+          ...(data.classRoomId ? { classRoomId: data.classRoomId } : schoolId ? { classRoom: { schoolId } } : {}),
+        },
+      });
+      data.subjectId = subject?.id ?? null;
+    }
     
     await this.prisma.assignment.update({ where: { id: BigInt(id) }, data });
     return this.ok(null, 'Assignment updated successfully');
   }
 
   async deleteAssignment(user: any, id: number) {
-    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
-    const assignment = await this.prisma.assignment.findUnique({ where: { id: BigInt(id) } });
-    if (!assignment || assignment.staffId !== staff?.id) throw new NotFoundException('Assignment not found');
+    const schoolId = this.schoolId(user);
+    const staff = await this.staffForSchool(user);
+    const assignment = await this.prisma.assignment.findFirst({
+      where: {
+        id: BigInt(id),
+        staffId: staff?.id,
+        ...(schoolId ? { staff: { user: { schoolId } } } : {}),
+      },
+    });
+    if (!assignment) throw new NotFoundException('Assignment not found');
     await this.prisma.assignment.delete({ where: { id: BigInt(id) } });
     return this.ok(null, 'Assignment deleted successfully');
   }

@@ -35,6 +35,32 @@ export class StudentService {
     return user?.schoolId ? BigInt(user.schoolId) : undefined;
   }
 
+  private userId(user: any): bigint {
+    return BigInt(user.authUserId ?? user.userId ?? user.user?.id ?? user.id);
+  }
+
+  private async studentClassRoomWhere(user: any) {
+    const schoolId = this.schoolId(user);
+    const student = await this.prisma.student.findUnique({
+      where: { userId: this.userId(user) },
+      select: { classRoomId: true },
+    });
+
+    if (student?.classRoomId) {
+      return {
+        classRoomId: student.classRoomId,
+        ...(schoolId ? { classRoom: { schoolId } } : {}),
+      };
+    }
+
+    return {
+      classRoom: {
+        name: user.class,
+        ...(schoolId ? { schoolId } : {}),
+      },
+    };
+  }
+
   private async getCurrentSession(): Promise<string> {
     const r = await this.prisma.academicSession.findFirst({ where: { isCurrent: true } })
       ?? await this.prisma.academicSession.findFirst({ orderBy: { createdAt: 'desc' } });
@@ -48,11 +74,12 @@ export class StudentService {
   }
 
   async dashboard(user: any) {
+    const assignmentWhere = await this.studentClassRoomWhere(user);
     const [session, term, unread, assignments] = await Promise.all([
       this.getCurrentSession(),
       this.getCurrentTerm(),
       this.prisma.notification.count({ where: { userId: BigInt(user.id), readAt: null } }),
-      this.assignmentsWithStaff({ classRoom: { name: user.class, ...(this.schoolId(user) ? { schoolId: this.schoolId(user) } : {}) } }, 5),
+      this.assignmentsWithStaff(assignmentWhere, 5),
     ]);
     return this.ok({
       user: {
@@ -258,7 +285,7 @@ export class StudentService {
   }
 
   async getAssignments(user: any) {
-    return this.ok(await this.assignmentsWithStaff({ classRoom: { name: user.class, ...(this.schoolId(user) ? { schoolId: this.schoolId(user) } : {}) } }));
+    return this.ok(await this.assignmentsWithStaff(await this.studentClassRoomWhere(user)));
   }
 
   async getLibrary(user: any) {
@@ -382,14 +409,23 @@ export class StudentService {
 
   private async assignmentsWithStaff(where: any, take?: number) {
     const assignments = await this.prisma.assignment.findMany({ 
-      where, 
+      where: { ...where, status: 'PUBLISHED' }, 
       orderBy: { createdAt: 'desc' }, 
       ...(take ? { take } : {}),
-      include: { staff: { include: { user: true } } }
+      include: { staff: { include: { user: true } }, subject: true, classRoom: true }
     });
     return assignments.map((a: any) => ({
       ...a,
       id: a.id.toString(),
+      title: a.title,
+      subject: a.title,
+      course: a.subject?.name ?? a.title,
+      description: a.content,
+      assignment: a.content,
+      class: a.classRoom?.name ?? '',
+      due_date: a.dueAt,
+      deadline: a.dueAt,
+      file_url: a.file,
       firstname: a.staff.user.firstName,
       lastname: a.staff.user.lastName,
     }));

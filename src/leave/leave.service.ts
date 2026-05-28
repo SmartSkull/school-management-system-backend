@@ -1,11 +1,12 @@
 import { Injectable, BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
+import { EmailService } from '../common/email.service';
 import * as path from 'path';
 import * as fs from 'fs';
 
 @Injectable()
 export class LeaveService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private emailService: EmailService) {}
 
   // ── Staff: request leave ───────────────────────────────────────────────
   async requestLeave(user: any, body: any, file?: Express.Multer.File) {
@@ -22,6 +23,12 @@ export class LeaveService {
 
     const days = Math.ceil((end.getTime() - start.getTime()) / 86400000) + 1;
 
+    const staff = await this.prisma.staff.findUnique({
+      where: { id: BigInt(staffId) },
+      include: { user: { include: { school: { select: { id: true, name: true } } } } },
+    });
+    if (!staff) throw new NotFoundException('Staff not found');
+
     const leave = await this.prisma.leaveRequest.create({
       data: {
         staffId: BigInt(staffId),
@@ -34,6 +41,27 @@ export class LeaveService {
         status: 'PENDING',
       },
     });
+
+    const admins = await this.prisma.user.findMany({
+      where: { role: 'ADMIN', schoolId: staff.user.schoolId, email: { not: '' } },
+      select: { firstName: true, lastName: true, email: true },
+    });
+    const staffName = `${staff.user.firstName} ${staff.user.lastName}`.trim();
+    for (const admin of admins) {
+      this.emailService.sendLeaveRequestedAdmin({
+        adminEmail: admin.email,
+        adminName: `${admin.firstName} ${admin.lastName}`.trim(),
+        staffName,
+        staffNo: staff.staffNo,
+        type: leave.type,
+        startDate: leave.startDate,
+        endDate: leave.endDate,
+        days: leave.days,
+        reason: leave.reason,
+        schoolName: staff.user.school?.name ?? 'School',
+        hasProofFile: Boolean(leave.proofFile),
+      }).catch(() => {});
+    }
 
     return { success: true, message: 'Leave request submitted', data: this.serialize(leave) };
   }
@@ -117,7 +145,10 @@ export class LeaveService {
       throw new BadRequestException('status must be APPROVED or REJECTED');
     }
 
-    const leave = await this.prisma.leaveRequest.findUnique({ where: { id: BigInt(id) } });
+    const leave = await this.prisma.leaveRequest.findUnique({
+      where: { id: BigInt(id) },
+      include: { staff: { include: { user: { include: { school: { select: { name: true } } } } } } },
+    });
     if (!leave) throw new NotFoundException('Leave request not found');
     if (leave.status !== 'PENDING') throw new BadRequestException('Only pending requests can be reviewed');
 
@@ -125,6 +156,18 @@ export class LeaveService {
       where: { id: BigInt(id) },
       data: { status, adminNote: adminNote ?? null, reviewedAt: new Date(), reviewedBy: BigInt(user.authUserId ?? user.id) },
     });
+
+    this.emailService.sendLeaveReviewed({
+      email: leave.staff.user.email,
+      staffName: `${leave.staff.user.firstName} ${leave.staff.user.lastName}`.trim(),
+      status,
+      type: leave.type,
+      startDate: leave.startDate,
+      endDate: leave.endDate,
+      days: leave.days,
+      adminNote,
+      schoolName: leave.staff.user.school?.name ?? 'School',
+    }).catch(() => {});
 
     return { success: true, message: `Leave ${status.toLowerCase()}`, data: this.serialize(updated) };
   }
