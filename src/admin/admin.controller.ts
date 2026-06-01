@@ -1,9 +1,15 @@
 import {
-  Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, HttpCode,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post, Put,
+  Query, UseGuards
 } from '@nestjs/common';
-import { AdminService } from './admin.service';
-import { AdminGuard } from '../common/guards/auth.guard';
 import { CurrentUser } from '../common/decorators/user.decorator';
+import { AdminGuard } from '../common/guards/auth.guard';
+import { AdminService } from './admin.service';
 
 @Controller('admin')
 @UseGuards(AdminGuard)
@@ -66,7 +72,7 @@ export class AdminController {
 
   @Post('staff/:id/verify') verifyStaff(@Param('id') id: string) { return this.svc.verifyStaff(id); }
 
-  // Sessions & Terms
+  // Sessions
   @Get('sessions') getSessions() { return this.svc.getSessions(); }
   @Post('sessions') createSession(@Body('session') s: string) { return this.svc.createSession(s); }
   @Put('sessions/:session/current') setCurrentSession(@Param('session') s: string) { return this.svc.setCurrentSession(s); }
