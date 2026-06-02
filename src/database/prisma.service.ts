@@ -18,6 +18,8 @@ export class PrismaService
       connectionLimit: 10,
       connectTimeout: 8000,
       acquireTimeout: 12000,
+      ssl: true,
+      supportBigNumbers: true,
     });
 
     super({ adapter });
