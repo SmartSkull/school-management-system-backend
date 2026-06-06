@@ -4,6 +4,8 @@ import { memoryStorage } from 'multer';
 import { StudentService } from './student.service';
 import { StudentGuard } from '../common/guards/auth.guard';
 import { CurrentUser } from '../common/decorators/user.decorator';
+import OpenAI from 'openai';
+import { toFile } from 'openai/uploads';
 
 @Controller('student')
 @UseGuards(StudentGuard)
@@ -34,4 +36,13 @@ export class StudentController {
   @Post('payments/initialize') initializePayment(@CurrentUser() user: any, @Body() body: any) { return this.svc.initializePayment(user, body); }
   @Get('scratch-cards') getScratchCards(@CurrentUser() user: any) { return this.svc.getScratchCards(user); }
   @Post('scratch-cards') submitPayment(@CurrentUser() user: any, @Body() body: any) { return this.svc.submitPayment(user, body); }
+
+  @Post('pronunciation-game/transcribe')
+  @UseInterceptors(FileInterceptor('audio', { storage: memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } }))
+  async transcribeAudio(@UploadedFile() file: Express.Multer.File) {
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const audioFile = await toFile(file.buffer, 'audio.webm', { type: file.mimetype });
+    const result = await openai.audio.transcriptions.create({ model: 'whisper-1', file: audioFile, language: 'en' });
+    return { success: true, transcript: result.text };
+  }
 }
