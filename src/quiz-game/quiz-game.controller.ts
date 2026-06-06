@@ -18,19 +18,28 @@ export class QuizGameController {
       destination: './uploads/quiz-game',
       filename: (_, f, cb) => cb(null, `${Date.now()}${extname(f.originalname)}`),
     }),
-    limits: { fileSize: 15 * 1024 * 1024 },
-    fileFilter: (_, f, cb) => {
-      const allowed = ['.pdf', '.docx', '.txt'];
-      cb(null, allowed.includes(extname(f.originalname).toLowerCase()));
-    },
+    limits: { fileSize: 50 * 1024 * 1024 },
   }))
   async uploadAndGenerate(@UploadedFile() file: Express.Multer.File): Promise<{ success: boolean; questions: Question[]; textLength: number }> {
-    if (!file) throw new BadRequestException('No file uploaded or unsupported format (PDF, DOCX, TXT only)');
+    if (!file) throw new BadRequestException('No file uploaded');
 
-    const text = (await this.gateway.extractText(file.path, file.originalname)).replace(/\s+/g, ' ').trim();
-    fs.unlinkSync(file.path);
+    const ext = extname(file.originalname).toLowerCase();
+    if (!['.pdf', '.docx', '.txt'].includes(ext)) {
+      fs.existsSync(file.path) && fs.unlinkSync(file.path);
+      throw new BadRequestException('Unsupported format. Use PDF, DOCX, or TXT.');
+    }
 
-    if (!text || text.length < 100) throw new BadRequestException('Could not extract enough text from the document');
+    let text = '';
+    try {
+      text = (await this.gateway.extractText(file.path, file.originalname)).replace(/\s+/g, ' ').trim();
+    } catch (e: any) {
+      fs.existsSync(file.path) && fs.unlinkSync(file.path);
+      throw new BadRequestException(`Text extraction failed: ${e.message}`);
+    } finally {
+      fs.existsSync(file.path) && fs.unlinkSync(file.path);
+    }
+
+    if (text.length < 50) throw new BadRequestException(`Extracted only ${text.length} characters — document may be image-based or empty`);
 
     const questions = await this.gateway.generateQuestions(text, 10);
     if (!questions.length) throw new BadRequestException('AI could not generate questions from this document');
