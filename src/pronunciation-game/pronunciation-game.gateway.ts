@@ -22,7 +22,7 @@ interface Room {
   words: string[];
   started: boolean;
   roundActive: boolean;
-  submissions: Map<string, string>; // socketId -> transcript
+  submissions: Map<string, { transcript: string; submittedAt: number }>; // socketId -> {transcript, timestamp}
 }
 
 const WORD_LISTS: Record<string, string[]> = {
@@ -124,7 +124,7 @@ export class PronunciationGameGateway implements OnGatewayDisconnect {
     if (!room || !room.roundActive) return;
 
     const currentWord = room.words[room.wordIndex];
-    room.submissions.set(client.id, data.transcript);
+    room.submissions.set(client.id, { transcript: data.transcript, submittedAt: Date.now() });
 
     // Notify others that this player submitted
     this.server.to(data.roomId).emit('player-submitted', { playerId: client.id });
@@ -140,19 +140,28 @@ export class PronunciationGameGateway implements OnGatewayDisconnect {
     const currentWord = room.words[room.wordIndex];
     room.roundActive = false;
 
-    const results: Array<{ playerId: string; name: string; transcript: string; score: number; accuracy: number }> = [];
-    let bestScore = -1;
+    // Build results sorted by submission time (fastest first)
+    const entries = [...room.submissions.entries()]
+      .sort((a, b) => a[1].submittedAt - b[1].submittedAt);
+
+    const results: Array<{ playerId: string; name: string; transcript: string; score: number; accuracy: number; rank: number }> = [];
+
+    // Find fastest player with accuracy >= 70
+    let winnerFound = false;
     let winner = '';
 
-    room.submissions.forEach((transcript, playerId) => {
+    entries.forEach(([playerId, { transcript }], rank) => {
       const player = room.players.get(playerId)!;
       const accuracy = similarity(transcript, currentWord);
-      player.score += accuracy;
-      results.push({ playerId, name: player.name, transcript, score: player.score, accuracy });
-      if (accuracy > bestScore) {
-        bestScore = accuracy;
+
+      // Only the fastest accurate player gets a point
+      if (!winnerFound && accuracy >= 70) {
+        player.score += 1;
+        winnerFound = true;
         winner = player.name;
       }
+
+      results.push({ playerId, name: player.name, transcript, score: player.score, accuracy, rank: rank + 1 });
     });
 
     room.submissions.clear();
@@ -162,7 +171,6 @@ export class PronunciationGameGateway implements OnGatewayDisconnect {
       word: currentWord,
       results,
       winner,
-      bestScore,
       players: [...room.players.values()],
     });
 
