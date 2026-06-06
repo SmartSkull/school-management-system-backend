@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import { Controller, Post, UseGuards, UseInterceptors, UploadedFile, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -25,7 +25,7 @@ export class QuizGameController {
 
     const ext = extname(file.originalname).toLowerCase();
     if (!['.pdf', '.docx', '.txt'].includes(ext)) {
-      fs.existsSync(file.path) && fs.unlinkSync(file.path);
+      if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
       throw new BadRequestException('Unsupported format. Use PDF, DOCX, or TXT.');
     }
 
@@ -33,15 +33,24 @@ export class QuizGameController {
     try {
       text = (await this.gateway.extractText(file.path, file.originalname)).replace(/\s+/g, ' ').trim();
     } catch (e: any) {
-      fs.existsSync(file.path) && fs.unlinkSync(file.path);
-      throw new BadRequestException(`Text extraction failed: ${e.message}`);
+      console.error('[QuizGame] extractText error:', e);
+      throw new BadRequestException(`Text extraction failed: ${e?.message ?? e}`);
     } finally {
-      fs.existsSync(file.path) && fs.unlinkSync(file.path);
+      if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
     }
 
-    if (text.length < 50) throw new BadRequestException(`Extracted only ${text.length} characters — document may be image-based or empty`);
+    if (text.length < 50) {
+      throw new BadRequestException(`Extracted only ${text.length} characters — document may be image-based or empty`);
+    }
 
-    const questions = await this.gateway.generateQuestions(text, 10);
+    let questions: Question[] = [];
+    try {
+      questions = await this.gateway.generateQuestions(text, 10);
+    } catch (e: any) {
+      console.error('[QuizGame] generateQuestions error:', e);
+      throw new InternalServerErrorException(`AI question generation failed: ${e?.message ?? e}`);
+    }
+
     if (!questions.length) throw new BadRequestException('AI could not generate questions from this document');
 
     return { success: true, questions, textLength: text.length };

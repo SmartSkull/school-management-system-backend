@@ -226,7 +226,10 @@ export class QuizGameGateway implements OnGatewayDisconnect {
         const mammoth = require('mammoth');
         const result = await mammoth.extractRawText({ path: filePath });
         return result.value ?? '';
-      } catch { return ''; }
+      } catch (e) {
+        console.error('mammoth error:', e);
+        return '';
+      }
     }
 
     return '';
