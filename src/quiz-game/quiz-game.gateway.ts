@@ -207,28 +207,25 @@ export class QuizGameGateway implements OnGatewayDisconnect {
     }
   }
 
-  extractText(filePath: string, originalName: string): string {
+  async extractText(filePath: string, originalName: string): Promise<string> {
     const ext = path.extname(originalName).toLowerCase();
     const buffer = fs.readFileSync(filePath);
 
     if (ext === '.txt') return buffer.toString('utf8');
 
     if (ext === '.pdf') {
-      const content = buffer.toString('binary');
-      let text = '';
-      const streams = content.match(/stream\s*([\s\S]*?)\s*endstream/g) || [];
-      for (const s of streams) {
-        const inner = s.replace(/^stream\s*/, '').replace(/\s*endstream$/, '');
-        (inner.match(/\((.*?)\)\s*Tj/gs) || []).forEach(m => { text += m.replace(/\((.*?)\)\s*Tj/s, '$1') + ' '; });
-      }
-      return text;
+      try {
+        const pdfParse = require('pdf-parse');
+        const data = await pdfParse(buffer);
+        return data.text ?? '';
+      } catch { return ''; }
     }
 
     if (ext === '.docx') {
       try {
-        const AdmZip = require('adm-zip');
-        const zip = new AdmZip(filePath);
-        return zip.readAsText('word/document.xml').replace(/<\/w:p>/g, '\n').replace(/<[^>]+>/g, '');
+        const mammoth = require('mammoth');
+        const result = await mammoth.extractRawText({ path: filePath });
+        return result.value ?? '';
       } catch { return ''; }
     }
 

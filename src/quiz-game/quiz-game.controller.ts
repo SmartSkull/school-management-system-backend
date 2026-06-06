@@ -27,7 +27,7 @@ export class QuizGameController {
   async uploadAndGenerate(@UploadedFile() file: Express.Multer.File): Promise<{ success: boolean; questions: Question[]; textLength: number }> {
     if (!file) throw new BadRequestException('No file uploaded or unsupported format (PDF, DOCX, TXT only)');
 
-    const text = this.gateway.extractText(file.path, file.originalname).replace(/\s+/g, ' ').trim();
+    const text = (await this.gateway.extractText(file.path, file.originalname)).replace(/\s+/g, ' ').trim();
     fs.unlinkSync(file.path);
 
     if (!text || text.length < 100) throw new BadRequestException('Could not extract enough text from the document');

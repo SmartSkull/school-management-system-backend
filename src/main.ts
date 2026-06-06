@@ -10,7 +10,7 @@ import * as fs from 'fs';
 
 async function bootstrap() {
   // Ensure upload dirs exist
-  ['uploads', 'uploads/messages', 'uploads/bookgame', 'uploads/assignments', 'uploads/leave'].forEach(dir => {
+  ['uploads', 'uploads/messages', 'uploads/bookgame', 'uploads/assignments', 'uploads/leave', 'uploads/quiz-game'].forEach(dir => {
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   });
 
