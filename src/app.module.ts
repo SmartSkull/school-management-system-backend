@@ -18,6 +18,7 @@ import { PayrollModule } from './payroll/payroll.module';
 import { OnlineClassModule } from './online-class/online-class.module';
 import { FinanceModule } from './finance/finance.module';
 import { PronunciationGameModule } from './pronunciation-game/pronunciation-game.module';
+import { QuizGameModule } from './quiz-game/quiz-game.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { PronunciationGameModule } from './pronunciation-game/pronunciation-game
     OnlineClassModule,
     FinanceModule,
     PronunciationGameModule,
+    QuizGameModule,
   ],
   providers: [EmailService, SmsService],
   exports: [EmailService, SmsService],
