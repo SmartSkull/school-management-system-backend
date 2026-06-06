@@ -17,6 +17,7 @@ import { LeaveModule } from './leave/leave.module';
 import { PayrollModule } from './payroll/payroll.module';
 import { OnlineClassModule } from './online-class/online-class.module';
 import { FinanceModule } from './finance/finance.module';
+import { PronunciationGameModule } from './pronunciation-game/pronunciation-game.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { FinanceModule } from './finance/finance.module';
     PayrollModule,
     OnlineClassModule,
     FinanceModule,
+    PronunciationGameModule,
   ],
   providers: [EmailService, SmsService],
   exports: [EmailService, SmsService],

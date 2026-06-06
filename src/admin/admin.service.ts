@@ -861,11 +861,21 @@ export class AdminService {
   }
 
   async getNotifications(user: any) {
-    return this.ok(await this.prisma.notification.findMany({ where: { userId: BigInt(user.id) }, orderBy: { createdAt: 'desc' } }));
+    const found = await this.prisma.user.findFirst({ where: { uniqueId: user.id?.toString() }, select: { id: true } });
+    if (!found) return this.ok([]);
+    const items = await this.prisma.notification.findMany({
+      where: { userId: found.id },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+    });
+    return this.ok(items.map(n => ({ ...n, id: n.id.toString(), userId: n.userId.toString() })));
   }
 
   async markNotificationsRead(user: any) {
-    await this.prisma.notification.updateMany({ where: { userId: BigInt(user.id), readAt: null }, data: { readAt: new Date() } });
+    const found = await this.prisma.user.findFirst({ where: { uniqueId: user.id?.toString() }, select: { id: true } });
+    if (found) {
+      await this.prisma.notification.updateMany({ where: { userId: found.id, readAt: null }, data: { readAt: new Date() } });
+    }
     return this.ok(null, 'Notifications marked as read');
   }
 
