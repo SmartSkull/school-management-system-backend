@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, UseInterceptors, UploadedFile, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, UseInterceptors, UploadedFile, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -11,6 +11,18 @@ import { StudentGuard } from '../common/guards/auth.guard';
 @UseGuards(StudentGuard)
 export class QuizGameController {
   constructor(private gateway: QuizGameGateway) {}
+
+  @Post('generate')
+  async generateBySubject(@Body() body: { subject: string; count?: number }): Promise<{ success: boolean; questions: Question[] }> {
+    if (!body.subject?.trim()) throw new BadRequestException('Subject is required');
+    try {
+      const questions = await this.gateway.generateQuestionsForSubject(body.subject.trim(), body.count ?? 10);
+      if (!questions.length) throw new BadRequestException('AI could not generate questions');
+      return { success: true, questions };
+    } catch (e: any) {
+      throw new InternalServerErrorException(e?.message ?? 'Failed to generate questions');
+    }
+  }
 
   @Post('upload-and-generate')
   @UseInterceptors(FileInterceptor('document', {

@@ -15,9 +15,10 @@ export class PrismaService
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASS || '',
       database: process.env.DB_NAME || 'florieren',
-      connectionLimit: 10,
-      connectTimeout: 8000,
-      acquireTimeout: 12000,
+      connectionLimit: 5,
+      connectTimeout: 15000,
+      acquireTimeout: 20000,
+      idleTimeout: 60000,
       ssl: { rejectUnauthorized: false },
       supportBigNumbers: true,
     });
@@ -30,7 +31,16 @@ export class PrismaService
   }
 
   async onModuleInit() {
-    await this.$connect();
+    let retries = 5;
+    while (retries--) {
+      try {
+        await this.$connect();
+        return;
+      } catch (e) {
+        if (retries === 0) throw e;
+        await new Promise(r => setTimeout(r, 3000));
+      }
+    }
   }
 
   async onModuleDestroy() {
