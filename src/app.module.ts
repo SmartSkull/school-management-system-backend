@@ -19,6 +19,9 @@ import { OnlineClassModule } from './online-class/online-class.module';
 import { FinanceModule } from './finance/finance.module';
 import { PronunciationGameModule } from './pronunciation-game/pronunciation-game.module';
 import { QuizGameModule } from './quiz-game/quiz-game.module';
+import { HostelModule } from './hostel/hostel.module';
+import { BooksModule } from './books/books.module';
+import { TransportModule } from './transport/transport.module';
 
 @Module({
   imports: [
@@ -40,6 +43,9 @@ import { QuizGameModule } from './quiz-game/quiz-game.module';
     FinanceModule,
     PronunciationGameModule,
     QuizGameModule,
+    HostelModule,
+    BooksModule,
+    TransportModule,
   ],
   providers: [EmailService, SmsService],
   exports: [EmailService, SmsService],

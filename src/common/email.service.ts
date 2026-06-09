@@ -317,6 +317,29 @@ export class EmailService {
     await this.send(opts.studentEmail, `New Assignment: ${opts.subject}`, html);
   }
 
+  async sendBusProximityAlert(opts: {
+    parentEmail: string; studentName: string; plateNumber: string;
+    routeName?: string; distanceMeters: number; schoolName: string;
+  }) {
+    if (!opts.parentEmail) return;
+    const color = '#7c3aed';
+    const html = layout(color, `
+      <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#111827">🚌 Bus is Almost Here!</h1>
+      <p style="margin:0 0 24px;color:#6b7280;font-size:15px">Dear Parent/Guardian, the school bus is approaching your location.</p>
+      <div style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:12px;padding:24px;margin-bottom:24px">
+        ${row('Student', opts.studentName)}
+        ${row('Bus Plate', opts.plateNumber)}
+        ${opts.routeName ? row('Route', opts.routeName) : ''}
+        ${row('Distance', `~${opts.distanceMeters}m away`)}
+        ${row('School', opts.schoolName)}
+      </div>
+      <div style="background:#fef3c7;border-left:4px solid #f59e0b;border-radius:4px;padding:16px">
+        <p style="margin:0;color:#92400e;font-size:14px">⚠️ Please get <strong>${opts.studentName}</strong> ready — the bus will arrive shortly.</p>
+      </div>
+    `);
+    await this.send(opts.parentEmail, `🚌 Bus Alert: ${opts.studentName}'s bus is nearby`, html);
+  }
+
   private async send(to: string, subject: string, html: string) {
     try {
       const recipient = process.env.RESEND_TEST_TO || to;

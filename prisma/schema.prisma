@@ -90,6 +90,11 @@ model School {
   payrollDeductions   PayrollDeduction[]
   incomes             Income[]
   expenses            Expense[]
+  hostels             Hostel[]
+  books               Book[]
+  transportRoutes     TransportRoute[]
+  transportDrivers    TransportDriver[]
+  transportBuses      TransportBus[]
 }
 
 model User {
@@ -131,6 +136,9 @@ model Student {
   dateOfBirth     DateTime?
   stateOfOrigin   String?   @db.VarChar(100)
   homeAddress     String?   @db.Text
+  parentEmail     String?   @db.VarChar(255)
+  parentLat       Decimal?  @db.Decimal(10,7)
+  parentLng       Decimal?  @db.Decimal(10,7)
   fatherName      String?   @db.VarChar(150)
   motherName      String?   @db.VarChar(150)
   parentImage     String?   @db.VarChar(255)
@@ -149,6 +157,10 @@ model Student {
   cbtResults      CbtResult[]
   scratchCards    ScratchCard[]
   traits          StudentTrait[]
+  hostelBed       HostelBed?
+  hostelAttendances HostelAttendance[]
+  bookBorrows     BookBorrow[]
+  transportAssignment TransportAssignment?
 }
 
 model Staff {
@@ -872,4 +884,152 @@ model Expense {
   updatedAt   DateTime @updatedAt
 
   school      School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+}
+
+model Hostel {
+  id          BigInt   @id @default(autoincrement())
+  schoolId    BigInt?
+  name        String   @db.VarChar(150)
+  gender      String   @default("MIXED") @db.VarChar(10)
+  capacity    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  school      School?  @relation(fields: [schoolId], references: [id])
+  rooms       HostelRoom[]
+}
+
+model HostelRoom {
+  id          BigInt   @id @default(autoincrement())
+  hostelId    BigInt
+  name        String   @db.VarChar(100)
+  capacity    Int      @default(4)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  hostel      Hostel   @relation(fields: [hostelId], references: [id], onDelete: Cascade)
+  beds        HostelBed[]
+}
+
+model HostelBed {
+  id          BigInt   @id @default(autoincrement())
+  roomId      BigInt
+  bedNumber   String   @db.VarChar(20)
+  studentId   BigInt?  @unique
+  assignedAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  room        HostelRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  student     Student?   @relation(fields: [studentId], references: [id])
+
+  @@unique([roomId, bedNumber])
+}
+
+model HostelAttendance {
+  id          BigInt   @id @default(autoincrement())
+  studentId   BigInt
+  date        DateTime @db.Date
+  present     Boolean  @default(true)
+  note        String?  @db.VarChar(255)
+  createdAt   DateTime @default(now())
+
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, date])
+}
+
+model Book {
+  id          BigInt   @id @default(autoincrement())
+  schoolId    BigInt?
+  title       String   @db.VarChar(200)
+  author      String   @db.VarChar(150)
+  isbn        String?  @db.VarChar(50)
+  barcode     String?  @unique @db.VarChar(100)
+  category    String?  @db.VarChar(100)
+  copies      Int      @default(1)
+  available   Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  school      School?  @relation(fields: [schoolId], references: [id])
+  borrows     BookBorrow[]
+}
+
+model BookBorrow {
+  id          BigInt    @id @default(autoincrement())
+  bookId      BigInt
+  studentId   BigInt
+  borrowedAt  DateTime  @default(now())
+  dueDate     DateTime
+  returnedAt  DateTime?
+  fine        Decimal   @default(0) @db.Decimal(10, 2)
+  finePaid    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  book        Book      @relation(fields: [bookId], references: [id])
+  student     Student   @relation(fields: [studentId], references: [id])
+}
+
+model TransportRoute {
+  id          BigInt   @id @default(autoincrement())
+  schoolId    BigInt?
+  name        String   @db.VarChar(150)
+  description String?  @db.VarChar(255)
+  fare        Decimal  @default(0) @db.Decimal(10,2)
+  polyline    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  school      School?  @relation(fields: [schoolId], references: [id])
+  buses       TransportBus[]
+}
+
+model TransportDriver {
+  id          BigInt   @id @default(autoincrement())
+  schoolId    BigInt?
+  name        String   @db.VarChar(150)
+  phone       String?  @db.VarChar(30)
+  licenseNo   String?  @db.VarChar(60)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  school      School?  @relation(fields: [schoolId], references: [id])
+  buses       TransportBus[]
+}
+
+model TransportBus {
+  id          BigInt   @id @default(autoincrement())
+  schoolId    BigInt?
+  routeId     BigInt?
+  driverId    BigInt?
+  plateNumber String   @db.VarChar(30)
+  capacity    Int      @default(40)
+  gpsLat      Decimal? @db.Decimal(10,7)
+  gpsLng      Decimal? @db.Decimal(10,7)
+  gpsUpdatedAt DateTime?
+  tripActive  Boolean  @default(false)
+  tripDate    DateTime?
+  driverToken String?  @unique @db.VarChar(64)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  school      School?         @relation(fields: [schoolId], references: [id])
+  route       TransportRoute? @relation(fields: [routeId], references: [id])
+  driver      TransportDriver? @relation(fields: [driverId], references: [id])
+  assignments TransportAssignment[]
+}
+
+model TransportAssignment {
+  id          BigInt    @id @default(autoincrement())
+  busId       BigInt
+  studentId   BigInt    @unique
+  alertedAt   DateTime?
+  absentToday Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  bus       TransportBus @relation(fields: [busId], references: [id], onDelete: Cascade)
+  student   Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
 }
