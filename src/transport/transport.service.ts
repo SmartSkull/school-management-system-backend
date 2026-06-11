@@ -55,21 +55,34 @@ export class TransportService {
     const schoolId = this.sid(user);
     return this.ok(await this.prisma.transportDriver.findMany({
       where: schoolId ? { schoolId } : {},
-      include: { buses: { select: { id: true, plateNumber: true, driverToken: true } } },
+      include: { buses: { select: { id: true, plateNumber: true, driverToken: true } }, user: { select: { uniqueId: true, firstName: true, lastName: true } } },
       orderBy: { name: 'asc' },
     }));
   }
 
-  async createDriver(user: any, body: { name: string; phone?: string; licenseNo?: string }) {
+  async createDriver(user: any, body: { name: string; phone?: string; licenseNo?: string; userId?: string }) {
     const schoolId = this.sid(user);
+    const userRecord = body.userId ? await this.prisma.user.findUnique({ where: { uniqueId: body.userId }, select: { id: true } }) : null;
     return this.ok(await this.prisma.transportDriver.create({
-      data: { name: body.name, phone: body.phone, licenseNo: body.licenseNo, ...(schoolId ? { schoolId } : {}) },
+      data: { name: body.name, phone: body.phone, licenseNo: body.licenseNo, ...(userRecord ? { userId: userRecord.id } : {}), ...(schoolId ? { schoolId } : {}) },
     }), 'Driver added');
   }
 
-  async updateDriver(id: string, body: { name?: string; phone?: string; licenseNo?: string }) {
+  async updateDriver(id: string, body: { name?: string; phone?: string; licenseNo?: string; userId?: string | null }) {
     if (!await this.prisma.transportDriver.findUnique({ where: { id: BigInt(id) } })) throw new NotFoundException('Driver not found');
-    return this.ok(await this.prisma.transportDriver.update({ where: { id: BigInt(id) }, data: body }), 'Driver updated');
+    const data: any = {};
+    if (body.name !== undefined) data.name = body.name;
+    if (body.phone !== undefined) data.phone = body.phone;
+    if (body.licenseNo !== undefined) data.licenseNo = body.licenseNo;
+    if (body.userId !== undefined) {
+      if (body.userId) {
+        const u = await this.prisma.user.findUnique({ where: { uniqueId: body.userId }, select: { id: true } });
+        if (u) data.userId = u.id;
+      } else {
+        data.userId = null;
+      }
+    }
+    return this.ok(await this.prisma.transportDriver.update({ where: { id: BigInt(id) }, data }), 'Driver updated');
   }
 
   async deleteDriver(id: string) {
@@ -257,7 +270,7 @@ export class TransportService {
     const assignment = await this.prisma.transportAssignment.findFirst({
       where: { student: { user: { uniqueId: studentUniqueId } } },
       include: {
-        bus: { include: { route: true, driver: true, school: true } },
+        bus: { include: { route: true, driver: { include: { user: true } }, school: true } },
         student: true,
       },
     });
@@ -282,7 +295,11 @@ export class TransportService {
       busId: String(bus.id),
       plateNumber: bus.plateNumber,
       routeName: bus.route?.name,
+      routeFare: bus.route?.fare ? Number(bus.route.fare) : null,
+      routePolyline: bus.route?.polyline ?? null,
       driverName: bus.driver?.name,
+      driverPhone: bus.driver?.phone ?? null,
+      driverUserId: bus.driver?.user?.uniqueId ?? null,
       tripActive: bus.tripActive,
       schoolName: bus.school?.name,
       lat: bus.gpsLat ? Number(bus.gpsLat) : null,

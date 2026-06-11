@@ -15,34 +15,52 @@ export class MessagesService {
 
   async getConversations(user: any) {
     const userId = BigInt(user.id);
-    const rows = await this.prisma.message.findMany({
-      where: { OR: [{ senderId: userId }, { receiverId: userId }] },
-      orderBy: { createdAt: 'desc' },
-      include: { 
-        sender: { select: { id: true, schoolId: true, firstName: true, lastName: true, image: true, uniqueId: true, lastLoginAt: true } },
-        receiver: { select: { id: true, schoolId: true, firstName: true, lastName: true, image: true, uniqueId: true, lastLoginAt: true } }
-      }
+    const schoolId = this.schoolId(user);
+
+    // Get latest message per conversation partner (MySQL compatible)
+    const rows = await this.prisma.$queryRawUnsafe<any[]>(`
+      SELECT sub.partner_id, sub.body, sub.created_at
+      FROM (
+        SELECT
+          CASE WHEN senderId = ? THEN receiverId ELSE senderId END AS partner_id,
+          body, createdAt AS created_at,
+          ROW_NUMBER() OVER (
+            PARTITION BY CASE WHEN senderId = ? THEN receiverId ELSE senderId END
+            ORDER BY createdAt DESC
+          ) AS rn
+        FROM Message
+        WHERE senderId = ? OR receiverId = ?
+      ) sub
+      WHERE sub.rn = 1
+    `, userId, userId, userId, userId);
+
+    if (!rows.length) return this.ok([]);
+
+    const partnerIds = rows.map(r => BigInt(r.partner_id));
+    const partners = await this.prisma.user.findMany({
+      where: { id: { in: partnerIds }, ...(schoolId ? { schoolId } : {}) },
+      select: { id: true, firstName: true, lastName: true, image: true, uniqueId: true, lastLoginAt: true },
     });
+    const partnerMap = new Map(partners.map(p => [p.id, p]));
 
-    const chatPartners = new Map<bigint, any>();
+    const unreadRows = await this.prisma.message.groupBy({
+      by: ['senderId'],
+      where: { receiverId: userId, readAt: null, senderId: { in: partnerIds } },
+      _count: { id: true },
+    });
+    const unreadMap = new Map(unreadRows.map(r => [r.senderId, r._count.id]));
+
     const conversations = [];
-
-    for (const msg of rows) {
-      const partner = msg.senderId === userId ? msg.receiver : msg.sender;
-      if (this.schoolId(user) && partner.schoolId !== this.schoolId(user)) continue;
-      if (chatPartners.has(partner.id)) continue;
-
-      const thread = rows.filter(m => m.senderId === partner.id || m.receiverId === partner.id);
-      const unreadCount = thread.filter(m => m.receiverId === userId && !m.readAt).length;
-
-      chatPartners.set(partner.id, partner);
-      conversations.push({ 
+    for (const row of rows) {
+      const partner = partnerMap.get(BigInt(row.partner_id));
+      if (!partner) continue;
+      conversations.push({
         user_id: partner.uniqueId,
         name: `${partner.firstName} ${partner.lastName}`,
         image: partner.image,
-        last_message: msg.body, 
-        unread: unreadCount,
-        created_at: msg.createdAt,
+        last_message: row.body,
+        unread: unreadMap.get(partner.id) ?? 0,
+        created_at: row.created_at,
         last_login_at: partner.lastLoginAt,
       });
     }

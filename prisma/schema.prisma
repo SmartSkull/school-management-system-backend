@@ -125,6 +125,7 @@ model User {
   sentMessages Message[]     @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
   clockAttendances StudentAttendance[]
+  transportDriver  TransportDriver?
 }
 
 model Student {
@@ -167,6 +168,7 @@ model Staff {
   id            BigInt    @id @default(autoincrement())
   userId        BigInt    @unique
   staffNo       String    @unique @db.VarChar(100)
+  staffRole     String?   @db.VarChar(50)
   stateOfOrigin String?   @db.VarChar(100)
   dateOfBirth   DateTime?
   homeAddress   String?   @db.Text
@@ -989,6 +991,7 @@ model TransportRoute {
 model TransportDriver {
   id          BigInt   @id @default(autoincrement())
   schoolId    BigInt?
+  userId      BigInt?  @unique
   name        String   @db.VarChar(150)
   phone       String?  @db.VarChar(30)
   licenseNo   String?  @db.VarChar(60)
@@ -996,6 +999,7 @@ model TransportDriver {
   updatedAt   DateTime @updatedAt
 
   school      School?  @relation(fields: [schoolId], references: [id])
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   buses       TransportBus[]
 }
 

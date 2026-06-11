@@ -268,7 +268,7 @@ export class AdminService {
       telephone: s.telephone,
       image: s.image,
       admin_verify: s.status === 'ACTIVE' ? '1' : '0',
-      role: s.role,
+      role: s.staff?.staffRole ?? null,
     }));
 
     return { success: true, data, meta: { total, page, per_page: perPage } };
@@ -293,6 +293,7 @@ export class AdminService {
         staff: {
           create: {
             staffNo: uniqueId,
+            staffRole: data.role && data.role.toUpperCase() !== 'ADMIN' ? data.role.toLowerCase() : null,
           }
         }
       }
@@ -312,9 +313,13 @@ export class AdminService {
     const userUpdate = this.pick(data, ['firstName', 'lastName', 'email', 'telephone']);
     if (Object.keys(userUpdate).length) {
       const result = await this.prisma.user.updateMany({ where: { id: BigInt(staffId) }, data: userUpdate });
-      if (result.count === 0) {
-        throw new NotFoundException('Staff not found');
-      }
+      if (result.count === 0) throw new NotFoundException('Staff not found');
+    }
+    if (data.role !== undefined) {
+      await this.prisma.staff.updateMany({
+        where: { userId: BigInt(staffId) },
+        data: { staffRole: data.role || null },
+      });
     }
     return this.ok(null, 'Staff updated successfully');
   }
