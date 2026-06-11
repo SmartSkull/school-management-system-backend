@@ -340,6 +340,29 @@ export class EmailService {
     await this.send(opts.parentEmail, `🚌 Bus Alert: ${opts.studentName}'s bus is nearby`, html);
   }
 
+  async sendStudentPickedUp(opts: {
+    parentEmail: string; studentName: string; plateNumber: string;
+    routeName?: string; pickedUpAt: Date; schoolName: string;
+  }) {
+    if (!opts.parentEmail) return;
+    const color = '#16a34a';
+    const html = layout(color, `
+      <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#111827">✅ Student Picked Up</h1>
+      <p style="margin:0 0 24px;color:#6b7280;font-size:15px">Dear Parent/Guardian, your child has been picked up by the school bus.</p>
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:24px;margin-bottom:24px">
+        ${row('Student', opts.studentName)}
+        ${row('Bus Plate', opts.plateNumber)}
+        ${opts.routeName ? row('Route', opts.routeName) : ''}
+        ${row('Picked Up At', opts.pickedUpAt.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }))}
+        ${row('School', opts.schoolName)}
+      </div>
+      <div style="background:#dcfce7;border-left:4px solid #16a34a;border-radius:4px;padding:16px">
+        <p style="margin:0;color:#166534;font-size:14px">🎒 <strong>${opts.studentName}</strong> is on the bus and heading to school.</p>
+      </div>
+    `);
+    await this.send(opts.parentEmail, `✅ ${opts.studentName} has been picked up`, html);
+  }
+
   private async send(to: string, subject: string, html: string) {
     try {
       const recipient = process.env.RESEND_TEST_TO || to;

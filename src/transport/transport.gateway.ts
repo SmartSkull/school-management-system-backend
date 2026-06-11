@@ -2,6 +2,7 @@ import {
   WebSocketGateway, WebSocketServer, SubscribeMessage,
   MessageBody, ConnectedSocket, OnGatewayDisconnect,
 } from '@nestjs/websockets';
+import { Inject, forwardRef } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { TransportService } from './transport.service';
 
@@ -12,7 +13,7 @@ export class TransportGateway implements OnGatewayDisconnect {
   // busId → socketId mapping for connected drivers
   private driverSockets = new Map<string, string>();
 
-  constructor(private transport: TransportService) {}
+  constructor(@Inject(forwardRef(() => TransportService)) private transport: TransportService) {}
 
   handleDisconnect(client: Socket) {
     for (const [busId, socketId] of this.driverSockets.entries()) {
@@ -63,5 +64,9 @@ export class TransportGateway implements OnGatewayDisconnect {
   // Broadcast to all watchers (called from service after DB update)
   broadcastLocation(busId: string, payload: any) {
     this.server.to(`watch:${busId}`).emit('bus:location', payload);
+  }
+
+  broadcastPickup(busId: string, studentUniqueId: string, pickedUp: boolean, pickedUpAt: string | null) {
+    this.server.to(`watch:${busId}`).emit('student:pickedup', { busId, studentUniqueId, pickedUp, pickedUpAt });
   }
 }

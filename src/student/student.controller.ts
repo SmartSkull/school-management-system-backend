@@ -45,4 +45,18 @@ export class StudentController {
     const result = await openai.audio.transcriptions.create({ model: 'whisper-1', file: audioFile, language: 'en' });
     return { success: true, transcript: result.text };
   }
+
+  @Post('ai-analysis')
+  async aiAnalysis(@Body() body: { results: { subject: string; score: number; grade: string }[]; session?: string; term?: string }) {
+    if (!body.results?.length) return { success: false, message: 'No results provided' };
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const summary = body.results.map(r => `${r.subject}: ${r.score}/100 (${r.grade})`).join(', ');
+    const prompt = `You are a school academic advisor. A student scored the following in ${body.term ?? ''} ${body.session ?? ''}: ${summary}. Write a concise 3-sentence personalised performance analysis: highlight their strongest subject, weakest subject, and give one specific actionable improvement tip. Be encouraging and direct.`;
+    const chat = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 200,
+    });
+    return { success: true, data: { analysis: chat.choices[0]?.message?.content ?? '' } };
+  }
 }

@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Request } from '@nestjs/common';
 import { TransportService } from './transport.service';
-import { AdminGuard, StudentGuard } from '../common/guards/auth.guard';
+import { AdminGuard, StudentGuard, StaffGuard } from '../common/guards/auth.guard';
 
 @Controller('admin/transport')
 @UseGuards(AdminGuard)
@@ -29,6 +29,8 @@ export class TransportController {
   @Post('buses/:id/assign') assignStudent(@Param('id') id: string, @Body() body: { studentId: string }, @Request() req: any) { return this.service.assignStudent(id, body.studentId, req.user); }
   @Post('unassign') unassignStudent(@Body() body: { studentId: string }, @Request() req: any) { return this.service.unassignStudent(body.studentId, req.user); }
 
+  @Get('analytics') getAnalytics(@Request() req: any) { return this.service.getAnalytics(req.user); }
+
   @Put('students/:uniqueId/parent-location') setParentLocation(@Param('uniqueId') id: string, @Body() body: any) { return this.service.setParentLocation(id, body); }
   @Get('students/:uniqueId/parent-location') getParentLocation(@Param('uniqueId') id: string) { return this.service.getParentLocation(id); }}
 
@@ -41,6 +43,9 @@ export class DriverController {
   @G('trip/:token') getTripInfo(@Pm('token') token: string) { return this.service.getDriverTripInfo(token); }
   @P('trip/:token/start') startTrip(@Pm('token') token: string) { return this.service.startTripByToken(token); }
   @P('trip/:token/end') endTrip(@Pm('token') token: string) { return this.service.endTripByToken(token); }
+  @P('trip/:token/pickup') markPickup(@Pm('token') token: string, @B() body: { studentUniqueId: string; pickedUp: boolean }) {
+    return this.service.markPickedUp(token, body.studentUniqueId, body.pickedUp);
+  }
 }
 
 // Student transport endpoints (JWT student auth)
@@ -57,4 +62,15 @@ export class StudentTransportController {
   @G('history') getTripHistory(@Req() req: any) { return this.service.getStudentTripHistory(req.user.uniqueId); }
   @P('geocode') geocode(@B() body: { address: string }) { return this.service.geocodeStudentAddress(body.address); }
   @P('sos') sos(@Req() req: any, @B() body: { lat: number; lng: number }) { return this.service.sendSosAlert(req.user.uniqueId, body.lat, body.lng); }
+}
+
+// Staff transport view (read-only)
+import { Controller as C2, Get as G2, UseGuards as UG2, Request as Req2 } from '@nestjs/common';
+
+@C2('staff/transport')
+@UG2(StaffGuard)
+export class StaffTransportController {
+  constructor(private service: TransportService) {}
+  @G2('overview') getOverview(@Req2() req: any) { return this.service.getStaffTransportOverview(req.user); }
+  @G2('driver-dashboard') getDriverDashboard(@Req2() req: any) { return this.service.getDriverDashboard(req.user.uniqueId); }
 }

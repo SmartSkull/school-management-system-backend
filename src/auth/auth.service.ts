@@ -83,7 +83,8 @@ export class AuthService {
     if (!user) throw new UnauthorizedException('Invalid credentials');
     const valid = await this.verifyPassword(password, user.password, 'florieren');
     if (!valid) throw new UnauthorizedException('Invalid credentials');
-    return this.buildTokenResponse(user, 'staff', user.uniqueId);
+    const driverRecord = await this.prisma.transportDriver.findFirst({ where: { userId: user.id }, select: { id: true } });
+    return this.buildTokenResponse(user, 'staff', user.uniqueId, !!driverRecord);
   }
 
   async adminLogin(adminId: string, password: string, schoolSlug?: string) {
@@ -148,7 +149,7 @@ export class AuthService {
     return input === fallback || input === hash;
   }
 
-  private buildTokenResponse(user: any, role: string, id: string) {
+  private buildTokenResponse(user: any, role: string, id: string, isDriver = false) {
     this.prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } }).catch(() => {});
     const token = this.jwt.sign({ id, role, email: user.email, schoolId: user.schoolId?.toString() });
     const refresh_token = this.jwt.sign(
@@ -158,7 +159,7 @@ export class AuthService {
     const { password: _, ...safeUser } = user;
     return {
       success: true,
-      data: { user: this.normalizeValue({ ...safeUser, role }), token, refresh_token },
+      data: { user: this.normalizeValue({ ...safeUser, role, ...(isDriver ? { isDriver: true } : {}) }), token, refresh_token },
       message: 'Login successful',
     };
   }

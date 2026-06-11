@@ -127,6 +127,36 @@ export class HostelService {
     })));
   }
 
+  async getStudentHostelInfo(user: any) {
+    const student = await this.prisma.student.findFirst({
+      where: { userId: BigInt(user.id ?? user.userId ?? user.authUserId) },
+      include: {
+        hostelBed: {
+          include: {
+            room: {
+              include: {
+                hostel: true,
+                beds: { include: { student: { include: { user: true } } } },
+              },
+            },
+          },
+        },
+      },
+    });
+    if (!student?.hostelBed) return this.ok(null, 'No hostel assignment');
+    const bed = student.hostelBed;
+    const roommates = bed.room.beds
+      .filter((b) => b.studentId && b.studentId !== student.id)
+      .map((b) => ({ name: `${b.student!.user.firstName} ${b.student!.user.lastName}`, bed: b.bedNumber }));
+    return this.ok({
+      hostel: bed.room.hostel.name,
+      block: bed.room.hostel.gender,
+      room: bed.room.name,
+      bed: bed.bedNumber,
+      roommates,
+    });
+  }
+
   async markAttendance(user: any, body: { date: string; records: { studentUniqueId: string; present: boolean; note?: string }[] }) {
     const schoolId = this.schoolId(user);
     const date = new Date(body.date);

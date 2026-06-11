@@ -1,6 +1,15 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
 import { HostelService } from './hostel.service';
-import { AdminGuard } from '../common/guards/auth.guard';
+import { AdminGuard, StudentGuard } from '../common/guards/auth.guard';
+
+@Controller('student/hostel')
+@UseGuards(StudentGuard)
+export class StudentHostelController {
+  constructor(private service: HostelService) {}
+
+  @Get()
+  getMyHostel(@Request() req: any) { return this.service.getStudentHostelInfo(req.user); }
+}
 
 @Controller('admin/hostel')
 @UseGuards(AdminGuard)

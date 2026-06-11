@@ -1031,6 +1031,8 @@ model TransportAssignment {
   studentId   BigInt    @unique
   alertedAt   DateTime?
   absentToday Boolean   @default(false)
+  pickedUp    Boolean   @default(false)
+  pickedUpAt  DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 

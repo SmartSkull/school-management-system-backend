@@ -978,4 +978,81 @@ export class AdminService {
       total_score: (Number(row.testScore) + Number(row.examScore)).toString()
     }));
   }
+
+  // ── Broadcast ──────────────────────────────────────────────────────────────
+  async broadcast(user: any, body: { target: 'all_students' | 'all_staff' | string; message: string; channel?: 'inapp' | 'email' }) {
+    const schoolId = this.schoolId(user);
+    const where: any = { ...(schoolId ? { schoolId } : {}) };
+    if (body.target === 'all_students') where.role = 'STUDENT';
+    else if (body.target === 'all_staff') where.role = 'STAFF';
+    else where.student = { classRoom: { name: body.target } };
+
+    const targets = await this.prisma.user.findMany({ where, select: { id: true, email: true } });
+    const senderId = BigInt(user.id ?? user.authUserId);
+
+    if (!body.channel || body.channel === 'inapp') {
+      await this.prisma.message.createMany({
+        data: targets.map(t => ({ senderId, receiverId: t.id, body: body.message })),
+        skipDuplicates: true,
+      });
+    }
+    return this.ok({ sent: targets.length }, `Broadcast sent to ${targets.length} users`);
+  }
+
+  // ── Exam Timetable ─────────────────────────────────────────────────────────
+  async getExamTimetables(user: any) {
+    const rows = await this.prisma.examTimetable.findMany({ orderBy: { createdAt: 'desc' } });
+    return this.ok(rows.map(r => ({ ...r, id: r.id.toString(), content: r.content })));
+  }
+
+  async createExamTimetable(user: any, body: { level: string; content: any }) {
+    const row = await this.prisma.examTimetable.create({ data: { level: body.level, content: typeof body.content === 'string' ? body.content : JSON.stringify(body.content) } });
+    return this.ok({ ...row, id: row.id.toString() }, 'Created');
+  }
+
+  async updateExamTimetable(id: string, body: { level?: string; content?: any }) {
+    const data: any = {};
+    if (body.level !== undefined) data.level = body.level;
+    if (body.content !== undefined) data.content = typeof body.content === 'string' ? body.content : JSON.stringify(body.content);
+    const row = await this.prisma.examTimetable.update({ where: { id: BigInt(id) }, data });
+    return this.ok({ ...row, id: row.id.toString() }, 'Updated');
+  }
+
+  async deleteExamTimetable(id: string) {
+    await this.prisma.examTimetable.delete({ where: { id: BigInt(id) } });
+    return this.ok(null, 'Deleted');
+  }
+
+  // ── Staff Performance ──────────────────────────────────────────────────────
+  async getStaffPerformance(user: any) {
+    const schoolId = this.schoolId(user);
+    const staffList = await this.prisma.staff.findMany({
+      where: schoolId ? { user: { schoolId } } : {},
+      include: { user: { select: { firstName: true, lastName: true, uniqueId: true } } },
+    });
+
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const yearStart = new Date(now.getFullYear(), 0, 1);
+
+    const results = await Promise.all(staffList.map(async (s) => {
+      const [attendance, leaves] = await Promise.all([
+        this.prisma.staffAttendance.findMany({ where: { staffId: s.id, date: { gte: monthStart } } }),
+        this.prisma.leaveRequest.count({ where: { staffId: s.id, createdAt: { gte: yearStart }, status: 'APPROVED' } }),
+      ]);
+      const present = attendance.filter(a => a.status === 'PRESENT').length;
+      const total = attendance.length;
+      return {
+        id: s.id.toString(),
+        name: `${s.user.firstName} ${s.user.lastName}`,
+        uniqueId: s.user.uniqueId,
+        role: s.staffRole ?? 'Staff',
+        attendanceRate: total > 0 ? Math.round((present / total) * 100) : null,
+        attendanceDays: total,
+        leaveCount: leaves,
+      };
+    }));
+
+    return this.ok(results);
+  }
 }

@@ -128,4 +128,16 @@ export class AdminController {
 
   @Get('notifications') getNotifications(@CurrentUser() user: any) { return this.svc.getNotifications(user); }
   @Post('notifications/read') markNotificationsRead(@CurrentUser() user: any) { return this.svc.markNotificationsRead(user); }
+
+  // Broadcast
+  @Post('broadcast') broadcast(@CurrentUser() user: any, @Body() body: any) { return this.svc.broadcast(user, body); }
+
+  // Exam timetable
+  @Get('exam-timetable') getExamTimetable(@CurrentUser() user: any) { return this.svc.getExamTimetables(user); }
+  @Post('exam-timetable') createExamTimetable(@CurrentUser() user: any, @Body() body: any) { return this.svc.createExamTimetable(user, body); }
+  @Put('exam-timetable/:id') updateExamTimetable(@Param('id') id: string, @Body() body: any) { return this.svc.updateExamTimetable(id, body); }
+  @Delete('exam-timetable/:id') deleteExamTimetable(@Param('id') id: string) { return this.svc.deleteExamTimetable(id); }
+
+  // Staff performance
+  @Get('staff/performance') getStaffPerformance(@CurrentUser() user: any) { return this.svc.getStaffPerformance(user); }
 }
