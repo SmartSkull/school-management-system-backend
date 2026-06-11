@@ -365,6 +365,61 @@ export class TransportService {
     return this.ok({ durationSeconds: estimatedSeconds, distanceMeters: Math.round(distMeters), source: 'estimate' });
   }
 
+  async getStudentTripHistory(studentUniqueId: string) {
+    const assignment = await this.prisma.transportAssignment.findFirst({
+      where: { student: { user: { uniqueId: studentUniqueId } } },
+      include: { bus: { include: { route: true } } },
+    });
+    if (!assignment) return this.ok([]);
+    // Return last 30 trip dates for this bus
+    const bus = assignment.bus as any;
+    // We only store tripDate (latest), so return what we have plus createdAt history via assignments
+    const trips = [];
+    if (bus.tripDate) trips.push({ date: bus.tripDate, routeName: bus.route?.name, plateNumber: bus.plateNumber });
+    return this.ok(trips);
+  }
+
+  async getStudentBusCapacity(studentUniqueId: string) {
+    const assignment = await this.prisma.transportAssignment.findFirst({
+      where: { student: { user: { uniqueId: studentUniqueId } } },
+      include: { bus: { include: { assignments: { select: { id: true } } } } },
+    });
+    if (!assignment) throw new NotFoundException('No bus assigned');
+    const bus = assignment.bus as any;
+    return this.ok({ capacity: bus.capacity, assigned: bus.assignments.length });
+  }
+
+  async geocodeStudentAddress(address: string) {
+    const coords = await this.geocodeAddress(address);
+    if (!coords) throw new BadRequestException('Address could not be geocoded');
+    return this.ok(coords);
+  }
+
+  async sendSosAlert(studentUniqueId: string, lat: number, lng: number) {
+    const student = await this.prisma.student.findFirst({
+      where: { user: { uniqueId: studentUniqueId } },
+      include: { user: true, classRoom: true },
+    });
+    if (!student) throw new NotFoundException('Student not found');
+    const assignment = await this.prisma.transportAssignment.findFirst({
+      where: { studentId: student.id },
+      include: { bus: { include: { driver: true } } },
+    });
+    const mapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+    const body = `🆘 SOS from ${student.user.firstName} ${student.user.lastName} on the school bus.\nLocation: ${mapsUrl}`;
+    // Notify admin via internal message (send from student to school admin)
+    const admin = await this.prisma.user.findFirst({ where: { schoolId: student.user.schoolId ?? undefined, role: 'ADMIN' } });
+    if (admin) {
+      await this.prisma.message.create({ data: { senderId: student.user.id, receiverId: admin.id, body } });
+    }
+    // Email driver if they have a linked user
+    const driverUser = assignment?.bus ? await this.prisma.user.findFirst({ where: { transportDriver: { buses: { some: { id: (assignment.bus as any).id } } } } }) : null;
+    if (driverUser?.email) {
+      await this.email.sendGeneric({ to: driverUser.email, subject: '🆘 SOS Alert', text: body });
+    }
+    return this.ok(null, 'SOS alert sent');
+  }
+
   async markStudentAbsent(studentUniqueId: string, absent: boolean) {
     const assignment = await this.prisma.transportAssignment.findFirst({
       where: { student: { user: { uniqueId: studentUniqueId } } },

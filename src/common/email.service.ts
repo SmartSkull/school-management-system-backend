@@ -354,6 +354,12 @@ export class EmailService {
       this.logger.error(`Failed to send email to ${to}: ${JSON.stringify(err)}`);
     }
   }
+
+  async sendGeneric(opts: { to: string; subject: string; text: string }) {
+    try {
+      await this.resend.emails.send({ from: this.from, to: opts.to, subject: opts.subject, text: opts.text });
+    } catch (e) { this.logger.error('sendGeneric failed', e); }
+  }
 }
 
 function row(label: string, value: string) {
@@ -409,3 +415,4 @@ function layout(accentColor: string, content: string) {
 </body>
 </html>`;
 }
+

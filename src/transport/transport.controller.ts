@@ -53,4 +53,8 @@ export class StudentTransportController {
   @G('eta') getEta(@Req() req: any) { return this.service.getStudentEta(req.user.uniqueId); }
   @P('absent') markAbsent(@Req() req: any, @B() body: { absent: boolean }) { return this.service.markStudentAbsent(req.user.uniqueId, body.absent); }
   @P('home-location') setHomeLocation(@Req() req: any, @B() body: { lat: number; lng: number }) { return this.service.setStudentHomeCoords(req.user.uniqueId, body.lat, body.lng); }
+  @G('capacity') getCapacity(@Req() req: any) { return this.service.getStudentBusCapacity(req.user.uniqueId); }
+  @G('history') getTripHistory(@Req() req: any) { return this.service.getStudentTripHistory(req.user.uniqueId); }
+  @P('geocode') geocode(@B() body: { address: string }) { return this.service.geocodeStudentAddress(body.address); }
+  @P('sos') sos(@Req() req: any, @B() body: { lat: number; lng: number }) { return this.service.sendSosAlert(req.user.uniqueId, body.lat, body.lng); }
 }
