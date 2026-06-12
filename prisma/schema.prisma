@@ -1023,6 +1023,7 @@ model TransportBus {
   route       TransportRoute? @relation(fields: [routeId], references: [id])
   driver      TransportDriver? @relation(fields: [driverId], references: [id])
   assignments TransportAssignment[]
+  tripLogs    TransportTripLog[]
 }
 
 model TransportAssignment {
@@ -1038,4 +1039,28 @@ model TransportAssignment {
 
   bus       TransportBus @relation(fields: [busId], references: [id], onDelete: Cascade)
   student   Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  farePayments TransportFarePayment[]
+}
+
+model TransportFarePayment {
+  id           BigInt    @id @default(autoincrement())
+  assignmentId BigInt
+  amount       Decimal   @db.Decimal(10,2)
+  paidAt       DateTime  @default(now())
+  note         String?   @db.VarChar(255)
+  recordedBy   BigInt?   // admin userId
+
+  assignment   TransportAssignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+}
+
+model TransportTripLog {
+  id          BigInt    @id @default(autoincrement())
+  busId       BigInt
+  tripDate    DateTime
+  studentsOnboard Int   @default(0)
+  studentsPickedUp Int  @default(0)
+  studentsAbsent   Int  @default(0)
+  createdAt   DateTime  @default(now())
+
+  bus         TransportBus @relation(fields: [busId], references: [id], onDelete: Cascade)
 }

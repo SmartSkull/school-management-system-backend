@@ -173,8 +173,9 @@ export class TransportService {
   }
 
   async endTrip(id: string) {
+    await this.logTrip(id).catch(() => {});
     await this.prisma.transportBus.update({ where: { id: BigInt(id) }, data: { tripActive: false } });
-    dwellTracker.delete(id); // clear dwell state for this bus
+    dwellTracker.delete(id);
     return this.ok(null, 'Trip ended');
   }
 
@@ -656,24 +657,37 @@ export class TransportService {
       include: { user: true },
     });
     if (!student) throw new NotFoundException('Student not found');
-
-    // Geocode home address if not already done
     if (!student.parentLat && student.homeAddress) {
       const coords = await this.geocodeAddress(student.homeAddress);
-      if (coords) {
-        await this.prisma.student.update({
-          where: { id: student.id },
-          data: { parentLat: coords.lat, parentLng: coords.lng },
-        });
-      }
+      if (coords) await this.prisma.student.update({ where: { id: student.id }, data: { parentLat: coords.lat, parentLng: coords.lng } });
     }
-
     await this.prisma.transportAssignment.upsert({
       where: { studentId: student.id },
       update: { busId: BigInt(busId) },
       create: { busId: BigInt(busId), studentId: student.id },
     });
     return this.ok(null, 'Student assigned');
+  }
+
+  async bulkAssignStudents(busId: string, studentUniqueIds: string[], user: any) {
+    const schoolId = this.sid(user);
+    const bus = await this.prisma.transportBus.findUnique({ where: { id: BigInt(busId) }, include: { assignments: true } });
+    if (!bus) throw new NotFoundException('Bus not found');
+    const results = { assigned: 0, skipped: 0, errors: [] as string[] };
+    for (const uid of studentUniqueIds) {
+      try {
+        if (bus.assignments.length + results.assigned >= bus.capacity) { results.skipped++; continue; }
+        const student = await this.prisma.student.findFirst({ where: { user: { uniqueId: uid, ...(schoolId ? { schoolId } : {}) } } });
+        if (!student) { results.errors.push(uid); continue; }
+        await this.prisma.transportAssignment.upsert({
+          where: { studentId: student.id },
+          update: { busId: BigInt(busId) },
+          create: { busId: BigInt(busId), studentId: student.id },
+        });
+        results.assigned++;
+      } catch { results.skipped++; }
+    }
+    return this.ok(results, `${results.assigned} student(s) assigned`);
   }
 
   async unassignStudent(studentUniqueId: string, user: any) {
@@ -684,5 +698,80 @@ export class TransportService {
     if (!student) throw new NotFoundException('Student not found');
     await this.prisma.transportAssignment.deleteMany({ where: { studentId: student.id } });
     return this.ok(null, 'Student unassigned');
+  }
+
+  // ── Fare Payments ─────────────────────────────────────────────────────────
+
+  async getFarePayments(user: any, busId?: string) {
+    const schoolId = this.sid(user);
+    const assignments = await this.prisma.transportAssignment.findMany({
+      where: { bus: { ...(schoolId ? { schoolId } : {}), ...(busId ? { id: BigInt(busId) } : {}) } },
+      include: {
+        student: { include: { user: { select: { uniqueId: true, firstName: true, lastName: true } } } },
+        bus: { select: { plateNumber: true, route: { select: { name: true, fare: true } } } },
+        farePayments: { orderBy: { paidAt: 'desc' } },
+      },
+    });
+    return this.ok(assignments.map(a => {
+      const fare = Number((a.bus as any).route?.fare ?? 0);
+      const paid = (a.farePayments as any[]).reduce((s: number, p: any) => s + Number(p.amount), 0);
+      return {
+        assignmentId: a.id.toString(),
+        student: { uniqueId: (a.student as any).user.uniqueId, name: `${(a.student as any).user.firstName} ${(a.student as any).user.lastName}` },
+        bus: (a.bus as any).plateNumber,
+        route: (a.bus as any).route?.name ?? null,
+        fare, paid, balance: Math.max(0, fare - paid),
+        payments: (a.farePayments as any[]).map(p => ({ id: p.id.toString(), amount: Number(p.amount), paidAt: p.paidAt, note: p.note })),
+      };
+    }));
+  }
+
+  async recordFarePayment(assignmentId: string, amount: number, note: string | undefined, adminUserId?: bigint) {
+    const assignment = await this.prisma.transportAssignment.findUnique({ where: { id: BigInt(assignmentId) } });
+    if (!assignment) throw new NotFoundException('Assignment not found');
+    await (this.prisma as any).transportFarePayment.create({
+      data: { assignmentId: BigInt(assignmentId), amount, note, recordedBy: adminUserId ?? null },
+    });
+    return this.ok(null, 'Payment recorded');
+  }
+
+  // ── Trip Logs ─────────────────────────────────────────────────────────────
+
+  async getTripLogs(user: any) {
+    const schoolId = this.sid(user);
+    const logs = await (this.prisma as any).transportTripLog.findMany({
+      where: { bus: schoolId ? { schoolId } : {} },
+      include: { bus: { select: { plateNumber: true, route: { select: { name: true } }, driver: { select: { name: true } } } } },
+      orderBy: { tripDate: 'desc' },
+      take: 100,
+    });
+    return this.ok(logs.map((l: any) => ({
+      id: l.id.toString(),
+      date: l.tripDate,
+      plateNumber: l.bus.plateNumber,
+      route: l.bus.route?.name ?? null,
+      driver: l.bus.driver?.name ?? null,
+      studentsOnboard: l.studentsOnboard,
+      studentsPickedUp: l.studentsPickedUp,
+      studentsAbsent: l.studentsAbsent,
+    })));
+  }
+
+  // Auto-log trip when ended
+  async logTrip(busId: string) {
+    const bus = await this.prisma.transportBus.findUnique({
+      where: { id: BigInt(busId) },
+      include: { assignments: { select: { absentToday: true, pickedUp: true } } },
+    });
+    if (!bus || !bus.tripDate) return;
+    await (this.prisma as any).transportTripLog.create({
+      data: {
+        busId: BigInt(busId),
+        tripDate: bus.tripDate,
+        studentsOnboard: bus.assignments.length,
+        studentsPickedUp: bus.assignments.filter((a: any) => a.pickedUp).length,
+        studentsAbsent: bus.assignments.filter((a: any) => a.absentToday).length,
+      },
+    });
   }
 }

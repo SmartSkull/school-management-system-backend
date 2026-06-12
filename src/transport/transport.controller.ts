@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
 import { TransportService } from './transport.service';
 import { AdminGuard, StudentGuard, StaffGuard } from '../common/guards/auth.guard';
 
@@ -27,7 +27,13 @@ export class TransportController {
   @Post('buses/:id/gps') updateGps(@Param('id') id: string, @Body() body: { lat: number; lng: number }) { return this.service.updateGps(id, body.lat, body.lng); }
 
   @Post('buses/:id/assign') assignStudent(@Param('id') id: string, @Body() body: { studentId: string }, @Request() req: any) { return this.service.assignStudent(id, body.studentId, req.user); }
+  @Post('buses/:id/bulk-assign') bulkAssign(@Param('id') id: string, @Body() body: { studentIds: string[] }, @Request() req: any) { return this.service.bulkAssignStudents(id, body.studentIds, req.user); }
   @Post('unassign') unassignStudent(@Body() body: { studentId: string }, @Request() req: any) { return this.service.unassignStudent(body.studentId, req.user); }
+
+  @Get('fare-payments') getFarePayments(@Request() req: any, @Query('busId') busId?: string) { return this.service.getFarePayments(req.user, busId); }
+  @Post('fare-payments') recordFarePayment(@Body() body: { assignmentId: string; amount: number; note?: string }, @Request() req: any) { return this.service.recordFarePayment(body.assignmentId, body.amount, body.note, req.user?.id ? BigInt(req.user.id) : undefined); }
+
+  @Get('trip-logs') getTripLogs(@Request() req: any) { return this.service.getTripLogs(req.user); }
 
   @Get('analytics') getAnalytics(@Request() req: any) { return this.service.getAnalytics(req.user); }
 
