@@ -4,6 +4,7 @@ import { memoryStorage } from 'multer';
 import { PrismaService } from '../database/prisma.service';
 import { uploadToCloudinary } from '../common/cloudinary';
 import { EmailService } from '../common/email.service';
+import OpenAI from 'openai';
 
 @Controller()
 export class PublicController {
