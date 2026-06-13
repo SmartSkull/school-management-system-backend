@@ -166,9 +166,8 @@ export class TransportService {
 
   async startTrip(id: string) {
     if (!await this.prisma.transportBus.findUnique({ where: { id: BigInt(id) } })) throw new NotFoundException('Bus not found');
-    const today = new Date(); today.setHours(0, 0, 0, 0);
     await this.prisma.transportAssignment.updateMany({ where: { busId: BigInt(id) }, data: { alertedAt: null, pickedUp: false, pickedUpAt: null } });
-    await this.prisma.transportBus.update({ where: { id: BigInt(id) }, data: { tripActive: true, tripDate: today } });
+    await this.prisma.transportBus.update({ where: { id: BigInt(id) }, data: { tripActive: true, tripDate: new Date() } });
     return this.ok(null, 'Trip started');
   }
 
@@ -387,13 +386,17 @@ export class TransportService {
     const assignment = await this.prisma.transportAssignment.findFirst({
       where: { student: { user: { uniqueId: studentUniqueId } } },
       include: { bus: { include: { school: true } }, student: true },
-    });
-    if (!assignment) throw new NotFoundException('No bus assigned');
+    });    if (!assignment) throw new NotFoundException('No bus assigned');
     const bus = assignment.bus as any;
     const student = assignment.student as any;
 
     if (!bus.tripActive) return this.ok(null, 'Trip not active');
     if (!bus.gpsLat || !bus.gpsLng) return this.ok(null, 'Bus location unavailable');
+
+    // If GPS hasn't been updated since the trip started (or in the last 2 min), don't show stale ETA
+    const gpsAge = bus.gpsUpdatedAt ? Date.now() - new Date(bus.gpsUpdatedAt).getTime() : Infinity;
+    const tripAge = bus.tripDate ? Date.now() - new Date(bus.tripDate).getTime() : 0;
+    if (gpsAge > 2 * 60 * 1000 && tripAge < gpsAge) return this.ok(null, 'Waiting for live GPS signal…');
 
     const busLat = Number(bus.gpsLat), busLng = Number(bus.gpsLng);
 
@@ -702,8 +705,7 @@ export class TransportService {
 
   // ── Fare Payments ─────────────────────────────────────────────────────────
 
-  async getFarePayments(user: any, busId?: string) {
-    const schoolId = this.sid(user);
+  async getFarePayments(user: any, busId?: string) {    const schoolId = this.sid(user);
     const assignments = await this.prisma.transportAssignment.findMany({
       where: { bus: { ...(schoolId ? { schoolId } : {}), ...(busId ? { id: BigInt(busId) } : {}) } },
       include: {
@@ -773,5 +775,155 @@ export class TransportService {
         studentsAbsent: bus.assignments.filter((a: any) => a.absentToday).length,
       },
     });
+  }
+
+  // ── Bus Fee Paystack Payments ──────────────────────────────────────────────
+
+  private get paystackSecret(): string {
+    return process.env.PAYSTACK_SECRET_KEY || '';
+  }
+
+  private paystackRequest(method: 'POST' | 'GET', path: string, body?: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const data = body ? JSON.stringify(body) : undefined;
+      const options = {
+        hostname: 'api.paystack.co',
+        port: 443,
+        path,
+        method,
+        headers: {
+          Authorization: `Bearer ${this.paystackSecret}`,
+          'Content-Type': 'application/json',
+          ...(data ? { 'Content-Length': Buffer.byteLength(data) } : {}),
+        },
+      };
+      const https = require('https');
+      const req = https.request(options, (res: any) => {
+        let raw = '';
+        res.on('data', (c: any) => (raw += c));
+        res.on('end', () => {
+          try {
+            const parsed = JSON.parse(raw);
+            if (!parsed.status) return reject(new Error(parsed.message || 'Paystack error'));
+            resolve(parsed.data);
+          } catch { reject(new Error('Invalid Paystack response')); }
+        });
+      });
+      req.on('error', reject);
+      if (data) req.write(data);
+      req.end();
+    });
+  }
+
+  async initializeBusFeePayment(studentUniqueId: string) {
+    const assignment = await this.prisma.transportAssignment.findFirst({
+      where: { student: { user: { uniqueId: studentUniqueId } } },
+      include: {
+        bus: { include: { route: true, school: true } },
+        student: { include: { user: true } },
+      },
+    });
+    if (!assignment) throw new NotFoundException('No bus assigned');
+    const bus = assignment.bus as any;
+    const student = assignment.student as any;
+    const fare = bus.route?.fare ? Number(bus.route.fare) : 0;
+    if (!fare || fare <= 0) throw new BadRequestException('No bus fee configured for your route');
+    if (!student.user.email) throw new BadRequestException('Student email is required for payment');
+
+    // Check not already paid this term
+    const existing = await (this.prisma as any).transportBusFeePayment.findFirst({
+      where: { assignmentId: assignment.id, status: 'SUCCESS' },
+    });
+    if (existing) throw new BadRequestException('Bus fee already paid');
+
+    const reference = `BUSFEE-${student.user.uniqueId}-${Date.now()}`.replace(/[^a-zA-Z0-9\-]/g, '');
+    const appUrl = process.env.APP_URL || 'http://localhost:3001';
+
+    const paystackData = await this.paystackRequest('POST', '/transaction/initialize', {
+      email: student.user.email,
+      amount: Math.round(fare * 100),
+      reference,
+      callback_url: `${appUrl}/student/transport/bus-fee/callback`,
+      metadata: {
+        student_id: student.user.uniqueId,
+        student_name: `${student.user.firstName} ${student.user.lastName}`,
+        bus_plate: bus.plateNumber,
+        route_name: bus.route?.name,
+      },
+    });
+
+    await (this.prisma as any).transportBusFeePayment.create({
+      data: {
+        assignmentId: assignment.id,
+        studentId: assignment.studentId,
+        amount: fare,
+        reference,
+        paystackAccessCode: paystackData.access_code,
+        status: 'PENDING',
+      },
+    });
+
+    return this.ok({ authorization_url: paystackData.authorization_url, reference, amount: fare });
+  }
+
+  async verifyBusFeePayment(reference: string) {
+    const payment = await (this.prisma as any).transportBusFeePayment.findUnique({ where: { reference } });
+    if (!payment) throw new NotFoundException('Payment not found');
+    if (payment.status === 'SUCCESS') return this.ok({ status: 'SUCCESS', reference, paidAt: payment.paidAt });
+
+    const data = await this.paystackRequest('GET', `/transaction/verify/${reference}`);
+    if (data.status === 'success') {
+      await (this.prisma as any).transportBusFeePayment.update({
+        where: { reference },
+        data: { status: 'SUCCESS', paidAt: new Date() },
+      });
+      return this.ok({ status: 'SUCCESS', reference, paidAt: new Date() });
+    }
+    await (this.prisma as any).transportBusFeePayment.update({ where: { reference }, data: { status: 'FAILED' } });
+    return this.ok({ status: 'FAILED', reference });
+  }
+
+  async getStudentBusFeeStatus(studentUniqueId: string) {
+    const assignment = await this.prisma.transportAssignment.findFirst({
+      where: { student: { user: { uniqueId: studentUniqueId } } },
+      include: { bus: { include: { route: true } } },
+    });
+    if (!assignment) return this.ok(null, 'No bus assigned');
+    const fare = (assignment.bus as any).route?.fare ? Number((assignment.bus as any).route.fare) : 0;
+    const payments = await (this.prisma as any).transportBusFeePayment.findMany({
+      where: { assignmentId: assignment.id },
+      orderBy: { createdAt: 'desc' },
+    });
+    const paid = payments.find((p: any) => p.status === 'SUCCESS');
+    return this.ok({
+      fare,
+      feeConfigured: fare > 0,
+      status: paid ? 'SUCCESS' : (payments[0]?.status ?? 'not_paid'),
+      paidAt: paid?.paidAt ?? null,
+      reference: paid?.reference ?? null,
+      history: payments.map((p: any) => ({ id: String(p.id), reference: p.reference, amount: Number(p.amount), status: p.status, paidAt: p.paidAt, createdAt: p.createdAt })),
+    });
+  }
+
+  async getAdminBusFeePayments(user: any) {
+    const schoolId = this.sid(user);
+    const payments = await (this.prisma as any).transportBusFeePayment.findMany({
+      where: { assignment: { bus: schoolId ? { schoolId } : {} } },
+      include: {
+        student: { include: { user: { select: { uniqueId: true, firstName: true, lastName: true } } } },
+        assignment: { include: { bus: { select: { plateNumber: true, route: { select: { name: true, fare: true } } } } } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    return this.ok(payments.map((p: any) => ({
+      id: String(p.id),
+      reference: p.reference,
+      amount: Number(p.amount),
+      status: p.status,
+      paidAt: p.paidAt,
+      student: { uniqueId: p.student.user.uniqueId, name: `${p.student.user.firstName} ${p.student.user.lastName}` },
+      bus: p.assignment.bus.plateNumber,
+      route: p.assignment.bus.route?.name ?? null,
+    })));
   }
 }

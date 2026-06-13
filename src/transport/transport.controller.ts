@@ -33,6 +33,8 @@ export class TransportController {
   @Get('fare-payments') getFarePayments(@Request() req: any, @Query('busId') busId?: string) { return this.service.getFarePayments(req.user, busId); }
   @Post('fare-payments') recordFarePayment(@Body() body: { assignmentId: string; amount: number; note?: string }, @Request() req: any) { return this.service.recordFarePayment(body.assignmentId, body.amount, body.note, req.user?.id ? BigInt(req.user.id) : undefined); }
 
+  @Get('bus-fee-payments') getAdminBusFeePayments(@Request() req: any) { return this.service.getAdminBusFeePayments(req.user); }
+
   @Get('trip-logs') getTripLogs(@Request() req: any) { return this.service.getTripLogs(req.user); }
 
   @Get('analytics') getAnalytics(@Request() req: any) { return this.service.getAnalytics(req.user); }
@@ -68,6 +70,9 @@ export class StudentTransportController {
   @G('history') getTripHistory(@Req() req: any) { return this.service.getStudentTripHistory(req.user.uniqueId); }
   @P('geocode') geocode(@B() body: { address: string }) { return this.service.geocodeStudentAddress(body.address); }
   @P('sos') sos(@Req() req: any, @B() body: { lat: number; lng: number }) { return this.service.sendSosAlert(req.user.uniqueId, body.lat, body.lng); }
+  @G('bus-fee') getBusFeeStatus(@Req() req: any) { return this.service.getStudentBusFeeStatus(req.user.uniqueId); }
+  @P('bus-fee/initialize') initBusFee(@Req() req: any) { return this.service.initializeBusFeePayment(req.user.uniqueId); }
+  @P('bus-fee/verify/:reference') verifyBusFee(@Pm('reference') ref: string) { return this.service.verifyBusFeePayment(ref); }
 }
 
 // Staff transport view (read-only)
@@ -79,4 +84,15 @@ export class StaffTransportController {
   constructor(private service: TransportService) {}
   @G2('overview') getOverview(@Req2() req: any) { return this.service.getStaffTransportOverview(req.user); }
   @G2('driver-dashboard') getDriverDashboard(@Req2() req: any) { return this.service.getDriverDashboard(req.user.uniqueId); }
+}
+
+// Public bus fee callback (Paystack GET redirect — no auth)
+import { Controller as C3, Get as G3, Query as Q3 } from '@nestjs/common';
+
+@C3('student/transport')
+export class BusFeeCallbackController {
+  constructor(private service: TransportService) {}
+  @G3('bus-fee/callback') callback(@Q3('reference') reference: string, @Q3('trxref') trxref: string) {
+    return this.service.verifyBusFeePayment(reference || trxref);
+  }
 }

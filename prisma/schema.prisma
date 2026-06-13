@@ -162,6 +162,7 @@ model Student {
   hostelAttendances HostelAttendance[]
   bookBorrows     BookBorrow[]
   transportAssignment TransportAssignment?
+  busFeePayments      TransportBusFeePayment[]
 }
 
 model Staff {
@@ -1040,6 +1041,7 @@ model TransportAssignment {
   bus       TransportBus @relation(fields: [busId], references: [id], onDelete: Cascade)
   student   Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
   farePayments TransportFarePayment[]
+  busFeePayments TransportBusFeePayment[]
 }
 
 model TransportFarePayment {
@@ -1063,4 +1065,22 @@ model TransportTripLog {
   createdAt   DateTime  @default(now())
 
   bus         TransportBus @relation(fields: [busId], references: [id], onDelete: Cascade)
+}
+
+model TransportBusFeePayment {
+  id           BigInt    @id @default(autoincrement())
+  assignmentId BigInt
+  studentId    BigInt
+  amount       Decimal   @db.Decimal(10,2)
+  reference    String    @unique @db.VarChar(120)
+  status       String    @default("PENDING") @db.VarChar(20) // PENDING | SUCCESS | FAILED
+  paystackAccessCode String? @db.VarChar(120)
+  paidAt       DateTime?
+  session      String?   @db.VarChar(50)
+  term         String?   @db.VarChar(20)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  assignment   TransportAssignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  student      Student             @relation(fields: [studentId], references: [id], onDelete: Cascade)
 }
