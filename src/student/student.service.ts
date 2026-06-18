@@ -285,7 +285,33 @@ export class StudentService {
   }
 
   async getAssignments(user: any) {
-    return this.ok(await this.assignmentsWithStaff(await this.studentClassRoomWhere(user)));
+    const where = await this.studentClassRoomWhere(user);
+    const assignments = await this.assignmentsWithStaff(where);
+    // attach submission status for this student
+    const student = await this.prisma.student.findUnique({ where: { userId: BigInt(user.id) }, select: { id: true } });
+    if (!student) return this.ok(assignments);
+    const ids = assignments.map((a: any) => BigInt(a.id));
+    const submissions = await this.prisma.assignmentSubmission.findMany({
+      where: { assignmentId: { in: ids }, studentId: student.id },
+      select: { assignmentId: true, submittedAt: true, note: true, fileUrl: true },
+    });
+    const subMap = new Map(submissions.map((s: any) => [s.assignmentId.toString(), s]));
+    return this.ok(assignments.map((a: any) => ({ ...a, submission: subMap.get(String(a.id)) ?? null })));
+  }
+
+  async submitAssignment(user: any, assignmentId: string, body: { note?: string }, file?: Express.Multer.File) {
+    const student = await this.prisma.student.findUnique({ where: { userId: BigInt(user.id) }, select: { id: true } });
+    if (!student) throw new BadRequestException('Student not found');
+
+    let fileUrl: string | undefined;
+    if (file) fileUrl = await uploadToCloudinary(file, 'florieren/submissions');
+
+    const submission = await this.prisma.assignmentSubmission.upsert({
+      where: { assignmentId_studentId: { assignmentId: BigInt(assignmentId), studentId: student.id } },
+      create: { assignmentId: BigInt(assignmentId), studentId: student.id, note: body.note, fileUrl },
+      update: { note: body.note, ...(fileUrl ? { fileUrl } : {}), submittedAt: new Date() },
+    });
+    return this.ok({ ...submission, id: submission.id.toString(), assignmentId: submission.assignmentId.toString(), studentId: submission.studentId.toString() }, 'Assignment submitted');
   }
 
   async getLibrary(user: any) {

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Body, Query, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, Param, Query, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { StudentService } from './student.service';
@@ -25,6 +25,12 @@ export class StudentController {
 
   @Get('results') getResults(@CurrentUser() user: any, @Query() q: any) { return this.svc.getResults(user, q); }
   @Get('assignments') getAssignments(@CurrentUser() user: any) { return this.svc.getAssignments(user); }
+
+  @Post('assignments/:id/submit')
+  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } }))
+  submitAssignment(@CurrentUser() user: any, @Param('id') id: string, @Body() body: any, @UploadedFile() file?: Express.Multer.File) {
+    return this.svc.submitAssignment(user, id, body, file);
+  }
   @Get('library') getLibrary(@CurrentUser() user: any) { return this.svc.getLibrary(user); }
   @Get('timetable/class') getClassTimetable(@CurrentUser() user: any) { return this.svc.getClassTimetable(user); }
   @Get('timetable/exam') getExamTimetable(@CurrentUser() user: any) { return this.svc.getExamTimetable(user); }

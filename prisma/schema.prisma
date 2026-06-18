@@ -163,6 +163,7 @@ model Student {
   bookBorrows     BookBorrow[]
   transportAssignment TransportAssignment?
   busFeePayments      TransportBusFeePayment[]
+  assignmentSubmissions AssignmentSubmission[]
 }
 
 model Staff {
@@ -377,6 +378,21 @@ model Assignment {
   staff       Staff     @relation(fields: [staffId], references: [id])
   classRoom   ClassRoom? @relation(fields: [classRoomId], references: [id])
   subject     Subject?  @relation(fields: [subjectId], references: [id])
+  submissions AssignmentSubmission[]
+}
+
+model AssignmentSubmission {
+  id           BigInt    @id @default(autoincrement())
+  assignmentId BigInt
+  studentId    BigInt
+  note         String?   @db.Text
+  fileUrl      String?   @db.VarChar(500)
+  submittedAt  DateTime  @default(now())
+
+  assignment   Assignment @relation(fields: [assignmentId], references: [id])
+  student      Student    @relation(fields: [studentId], references: [id])
+
+  @@unique([assignmentId, studentId])
 }
 
 model LibraryResource {
