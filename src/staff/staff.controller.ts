@@ -47,6 +47,8 @@ export class StaffController {
 
   @Get('assignments') getAssignments(@CurrentUser() user: any) { return this.svc.getAssignments(user); }
 
+  @Get('assignments/:id/submissions') getAssignmentSubmissions(@CurrentUser() user: any, @Param('id') id: string) { return this.svc.getAssignmentSubmissions(user, +id); }
+
   @Put('assignments/:id')
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   updateAssignment(@CurrentUser() user: any, @Param('id') id: string, @Body() body: any, @UploadedFile() file: Express.Multer.File) {

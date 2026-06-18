@@ -720,6 +720,26 @@ export class StaffService {
     })));
   }
 
+  async getAssignmentSubmissions(user: any, id: number) {
+    const staff = await this.staffForSchool(user);
+    const assignment = await this.prisma.assignment.findFirst({
+      where: { id: BigInt(id), staffId: staff?.id },
+    });
+    if (!assignment) throw new NotFoundException('Assignment not found');
+    const submissions = await this.prisma.assignmentSubmission.findMany({
+      where: { assignmentId: BigInt(id) },
+      include: { student: { include: { user: { select: { firstName: true, lastName: true } } } } },
+      orderBy: { submittedAt: 'desc' },
+    });
+    return this.ok(submissions.map(s => ({
+      id: s.id.toString(),
+      studentName: `${s.student.user.firstName} ${s.student.user.lastName}`,
+      note: s.note,
+      fileUrl: s.fileUrl,
+      submittedAt: s.submittedAt,
+    })));
+  }
+
   async updateAssignment(user: any, id: number, body: any, file?: Express.Multer.File) {
     const schoolId = this.schoolId(user);
     const staff = await this.staffForSchool(user);
