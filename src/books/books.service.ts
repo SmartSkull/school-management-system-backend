@@ -133,4 +133,21 @@ export class BooksService {
     await this.prisma.bookBorrow.update({ where: { id: BigInt(borrowId) }, data: { finePaid: true } });
     return this.ok(null, 'Fine marked as paid');
   }
+
+  async getMyBorrows(user: any) {
+    const userId = BigInt(user.authUserId ?? user.userId ?? user.user?.id ?? user.id);
+    const student = await this.prisma.student.findFirst({ where: { userId } });
+    if (!student) throw new NotFoundException('Student not found');
+    const now = new Date();
+    const borrows = await this.prisma.bookBorrow.findMany({
+      where: { studentId: student.id },
+      include: { book: true },
+      orderBy: { borrowedAt: 'desc' },
+    });
+    return this.ok(borrows.map(b => {
+      const overdueDays = !b.returnedAt && b.dueDate < now ? Math.floor((now.getTime() - b.dueDate.getTime()) / 86400000) : 0;
+      const fine = b.finePaid ? Number(b.fine) : overdueDays * FINE_PER_DAY;
+      return { ...b, fine, overdueDays };
+    }));
+  }
 }

@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
 import { BooksService } from './books.service';
-import { AdminGuard } from '../common/guards/auth.guard';
+import { AdminGuard, StaffGuard, StudentGuard } from '../common/guards/auth.guard';
 
 @Controller('admin/books')
 @UseGuards(AdminGuard)
@@ -17,4 +17,23 @@ export class BooksController {
   @Post('borrows') borrowBook(@Request() req: any, @Body() body: any) { return this.service.borrowBook(req.user, body); }
   @Post('borrows/:id/return') returnBook(@Param('id') id: string) { return this.service.returnBook(id); }
   @Post('borrows/:id/fine-paid') markFinePaid(@Param('id') id: string) { return this.service.markFinePaid(id); }
+}
+
+@Controller('staff/books')
+@UseGuards(StaffGuard)
+export class StaffBooksController {
+  constructor(private service: BooksService) {}
+  @Get() getBooks(@Request() req: any, @Query() q: any) { return this.service.getBooks(req.user, q); }
+  @Get('borrows') getBorrows(@Request() req: any, @Query() q: any) { return this.service.getBorrows(req.user, q); }
+  @Post('borrows') borrowBook(@Request() req: any, @Body() body: any) { return this.service.borrowBook(req.user, body); }
+  @Post('borrows/:id/return') returnBook(@Param('id') id: string) { return this.service.returnBook(id); }
+  @Post('borrows/:id/fine-paid') markFinePaid(@Param('id') id: string) { return this.service.markFinePaid(id); }
+}
+
+@Controller('student/books')
+@UseGuards(StudentGuard)
+export class StudentBooksController {
+  constructor(private service: BooksService) {}
+  @Get() getBooks(@Request() req: any, @Query() q: any) { return this.service.getBooks(req.user, q); }
+  @Get('my-borrows') getMyBorrows(@Request() req: any) { return this.service.getMyBorrows(req.user); }
 }

@@ -4,12 +4,18 @@ import {
   Delete,
   Get,
   Param,
-  Post, Put,
-  Query, UseGuards
+  Post,
+  Put,
+  Query,
+  UseGuards,
+  UseInterceptors,
+  UploadedFile
 } from '@nestjs/common';
 import { CurrentUser } from '../common/decorators/user.decorator';
 import { AdminGuard } from '../common/guards/auth.guard';
 import { AdminService } from './admin.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
 
 @Controller('admin')
 @UseGuards(AdminGuard)
@@ -23,6 +29,10 @@ export class AdminController {
 
   @Put('school')
   updateSchool(@CurrentUser() user: any, @Body() body: any) { return this.svc.updateSchool(user, body); }
+
+  @Post('school/upload-logo')
+  @UseInterceptors(FileInterceptor('logo', { storage: memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } }))
+  uploadLogo(@CurrentUser() user: any, @UploadedFile() logo: Express.Multer.File) { return this.svc.uploadLogo(user, logo); }
 
   // Students
   @Get('students')

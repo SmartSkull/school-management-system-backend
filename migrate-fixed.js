@@ -12,10 +12,8 @@ function tryParseDate(s) {
   if (!s) return null;
   s = s.trim();
   if (!s) return null;
-  for (const fmt of ['%Y-%m-%d', '%d/%m/%Y', '%m/%d/%Y', '%Y-%m-%d %H:%M:%S']) {
-    const d = new Date(s);
-    if (!isNaN(d.getTime())) return d.toISOString().slice(0, 10);
-  }
+  const d = new Date(s);
+  if (!isNaN(d.getTime())) return d.toISOString().slice(0, 10);
   return null;
 }
 
@@ -70,6 +68,19 @@ async function run() {
   try {
     const [urows] = await conn.execute('SELECT id, uniqueId FROM User');
     const um = {}; for (const u of urows) um[u.uniqueId] = u.id;
+    
+    const [staffRows] = await conn.execute('SELECT id, userId, staffNo FROM Staff');
+    const staffMap = {}; 
+    const studentMap = {};
+    for (const s of staffRows) {
+      if (s.staffNo && um[s.staffNo]) staffMap[s.staffNo] = s.id;
+    }
+    
+    const [stuRows] = await conn.execute('SELECT id, userId, studentNo FROM Student');
+    for (const s of stuRows) {
+      if (s.studentNo) studentMap[s.studentNo] = s.id;
+    }
+    
     const [crows] = await conn.execute('SELECT id, name FROM ClassRoom');
     const cm = {}; for (const c of crows) cm[c.name] = c.id;
     const [srows] = await conn.execute('SELECT id, name FROM Subject');
@@ -84,50 +95,54 @@ async function run() {
       }
     }
 
-    // Assignment
+    // Assignment - staffId -> Staff.id
     console.log('Migrating assignment...');
     const { cols: ac, rows: ar } = parseTable('assignment');
     const am = {}; for (let i = 0; i < ac.length; i++) am[ac[i]] = i;
     let cnt = 0;
     for (const row of ar) {
       const uid = (row[am['staff_id']] || '').trim();
-      if (!um[uid]) continue;
+      const staffId = staffMap[uid];
+      if (!staffId) continue;
       const subj = (row[am['subject']] || '').trim();
       const cls = (row[am['class']] || '').trim();
       const content = (row[am['assignment']] || '').trim();
       const deadline = tryParseDate(row[am['deadline']]);
+      if (!subj) continue;
       await conn.execute(
         'INSERT INTO Assignment (staffId, classRoomId, subjectId, title, content, dueAt, status, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())',
-        [um[uid], cm[cls] || null, sm[subj.toLowerCase()] || null, subj, content, deadline, 'PUBLISHED']
+        [staffId, cm[cls] || null, sm[subj.toLowerCase()] || null, subj, content, deadline, 'PUBLISHED']
       );
       cnt++;
     }
     await conn.commit();
     console.log(`  Assignment: ${cnt}`);
 
-    // Attendance
+    // Attendance - studentId -> Student.id
     console.log('Migrating attendance...');
     const { cols: attc, rows: attr } = parseTable('attendance');
     const attm = {}; for (let i = 0; i < attc.length; i++) attm[attc[i]] = i;
     cnt = 0;
     for (const row of attr) {
       const sid = (row[attm['student_id']] || '').trim();
-      if (!um[sid]) continue;
+      const studentId = studentMap[sid];
+      if (!studentId) continue;
       const present = parseInt(row[attm['present']]) || 0;
       const absent = parseInt(row[attm['absent']]) || 0;
       const session = (row[attm['session']] || '').trim();
       const term = (row[attm['term']] || '').trim();
+      if (!session || !term) continue;
       const tkey = session + '_' + term.toLowerCase();
       await conn.execute(
-        'INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())',
-        [um[sid], snm[session] || null, tm[tkey] || null, present, absent, row[attm['comment']] || null, row[attm['principal_comment']] || null]
+        'INSERT IGNORE INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())',
+        [studentId, snm[session] || null, tm[tkey] || null, present, absent, row[attm['comment']] || null, row[attm['principal_comment']] || null]
       );
       cnt++;
     }
     await conn.commit();
     console.log(`  Attendance: ${cnt}`);
 
-    // Result
+    // Result - studentId -> Student.id, teacherId -> Staff.id
     console.log('Migrating result...');
     const { cols: rc, rows: rr } = parseTable('result');
     const rm = {}; for (let i = 0; i < rc.length; i++) rm[rc[i]] = i;
@@ -135,119 +150,38 @@ async function run() {
     for (const row of rr) {
       const tid = (row[rm['teacher_id']] || '').trim();
       const sid = (row[rm['student_id']] || '').trim();
-      if (!um[tid] || !um[sid]) continue;
+      const teacherId = staffMap[tid];
+      const studentId = studentMap[sid];
+      if (!teacherId || !studentId) continue;
       const subj = (row[rm['course']] || '').trim();
       const session = (row[rm['session']] || '').trim();
       const term = (row[rm['term']] || '').trim();
-      const sid_subj = sm[subj.toLowerCase()];
-      const sid_session = snm[session];
-      const sid_term = tm[session + '_' + term.toLowerCase()];
-      if (!sid_subj || !sid_session || !sid_term) continue;
       const t = parseFloat(row[rm['test_score']]) || 0;
       const e = parseFloat(row[rm['exam_score']]) || 0;
       const tot = parseFloat(row[rm['total_score']]) || Math.round((t + e) * 100) / 100;
       const grade = row[rm['grade']] || null;
+      const sid_subj = sm[subj.toLowerCase()];
+      const sid_session = snm[session];
+      const sid_term = tm[session + '_' + term.toLowerCase()];
+      if (!sid_subj || !sid_session || !sid_term) continue;
       await conn.execute(
         'INSERT INTO Result (studentId, subjectId, teacherId, sessionId, termId, testScore, examScore, totalScore, grade, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())',
-        [um[sid], sid_subj, um[tid], sid_session, sid_term, t, e, tot, grade]
+        [studentId, sid_subj, teacherId, sid_session, sid_term, t, e, tot, grade]
       );
       cnt++;
     }
     await conn.commit();
     console.log(`  Result: ${cnt}`);
 
-    // Post
-    console.log('Migrating post...');
-    const { cols: pc, rows: pr } = parseTable('post');
-    const pm = {}; for (let i = 0; i < pc.length; i++) pm[pc[i]] = i;
-    cnt = 0;
-    for (const row of pr) {
-      const aid = (row[pm['admin_id']] || '').trim();
-      if (!um[aid]) continue;
-      const text = (row[pm['text']] || '').trim();
-      const image = row[pm['image']] ? (row[pm['image']].trim() || null) : null;
-      await conn.execute(
-        'INSERT INTO Post (authorId, text, image, audience, createdAt, updatedAt) VALUES (?, ?, ?, ?, NOW(), NOW())',
-        [um[aid], text, image, 'all']
-      );
-      cnt++;
-    }
-    await conn.commit();
-    console.log(`  Post: ${cnt}`);
-
-    // Comment
-    console.log('Migrating comment...');
-    const { cols: cc, rows: cr } = parseTable('comment');
-    const cmm = {}; for (let i = 0; i < cc.length; i++) cmm[cc[i]] = i;
-    cnt = 0;
-    for (const row of cr) {
-      const pid = parseInt(row[cmm['post_id']]);
-      const uid = (row[cmm['unique_id']] || '').trim();
-      if (!pid || !um[uid]) continue;
-      await conn.execute('INSERT INTO Comment (postId, authorId, text, createdAt) VALUES (?, ?, ?, NOW())',
-        [pid, um[uid], row[cmm['comment']] || '']);
-      cnt++;
-    }
-    await conn.commit();
-    console.log(`  Comment: ${cnt}`);
-
-    // Likes
-    console.log('Migrating likes...');
-    const { cols: lc, rows: lr } = parseTable('likes');
-    const lm = {}; for (let i = 0; i < lc.length; i++) lm[lc[i]] = i;
-    cnt = 0;
-    for (const row of lr) {
-      const pid = parseInt(row[lm['post_id']]);
-      const uid = (row[lm['unique_id']] || '').trim();
-      if (!pid || !um[uid]) continue;
-      try {
-        await conn.execute('INSERT IGNORE INTO Like (postId, userId, createdAt) VALUES (?, ?, NOW())', [pid, um[uid]]);
-        cnt++;
-      } catch (e) { /* skip duplicates */ }
-    }
-    await conn.commit();
-    console.log(`  Likes: ${cnt}`);
-
-    // Messages
-    console.log('Migrating messages...');
-    const { cols: mc, rows: mr } = parseTable('messages');
-    const mm = {}; for (let i = 0; i < mc.length; i++) mm[mc[i]] = i;
-    cnt = 0;
-    for (const row of mr) {
-      const inc = (row[mm['incoming_id']] || '').trim();
-      const out = (row[mm['outgoing_id']] || '').trim();
-      if (!um[inc] || !um[out]) continue;
-      await conn.execute('INSERT INTO Message (senderId, receiverId, body, createdAt) VALUES (?, ?, ?, NOW())',
-        [um[out], um[inc], row[mm['message']] || '']);
-      cnt++;
-    }
-    await conn.commit();
-    console.log(`  Messages: ${cnt}`);
-
-    // Notification
-    console.log('Migrating notification...');
-    const { cols: nc, rows: nr } = parseTable('notification');
-    const nm = {}; for (let i = 0; i < nc.length; i++) nm[nc[i]] = i;
-    cnt = 0;
-    for (const row of nr) {
-      const uid = (row[nm['unique_id']] || '').trim();
-      if (!um[uid]) continue;
-      const message = (row[nm['message']] || '').trim();
-      await conn.execute('INSERT INTO Notification (userId, type, title, message, createdAt) VALUES (?, ?, ?, ?, NOW())',
-        [um[uid], 'INFO', message.slice(0, 100), message]);
-      cnt++;
-    }
-    await conn.commit();
-    console.log(`  Notification: ${cnt}`);
-
-    // ScratchCard
+    // ScratchCard - studentId -> Student.id
     console.log('Migrating scratch_card...');
     const { cols: scc, rows: scr } = parseTable('scratch_card');
     const scm = {}; for (let i = 0; i < scc.length; i++) scm[scc[i]] = i;
     cnt = 0;
     for (const row of scr) {
       const sid = (row[scm['student_id']] || '').trim();
-      if (!um[sid]) continue;
+      const studentId = studentMap[sid];
+      if (!studentId) continue;
       const amount = parseFloat(row[scm['transfer_amount']]) || 0;
       const session = (row[scm['session']] || '').trim();
       const term = (row[scm['term']] || '').trim();
@@ -256,7 +190,7 @@ async function run() {
       const tkey = session + '_' + term.toLowerCase();
       await conn.execute(
         'INSERT INTO ScratchCard (studentId, amount, status, sessionId, termId, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, NOW(), NOW())',
-        [um[sid], amount, status, snm[session] || null, tm[tkey] || null]
+        [studentId, amount, status, snm[session] || null, tm[tkey] || null]
       );
       cnt++;
     }
@@ -272,7 +206,9 @@ async function run() {
       const session = (row[dm['session']] || '').trim();
       const term = (row[dm['term']] || '').trim();
       const days = parseInt(row[dm['total_days']]) || 0;
-      if (snm[session] && tm[session + '_' + term.toLowerCase()]) {
+      const sid_session = snm[session];
+      const sid_term = tm[session + '_' + term.toLowerCase()];
+      if (sid_session && sid_term) {
         await conn.execute('INSERT INTO SchoolDays (session, term, totalDays, createdAt, updatedAt) VALUES (?, ?, ?, NOW(), NOW())',
           [session, term, days]);
         cnt++;

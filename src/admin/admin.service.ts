@@ -3,6 +3,7 @@ import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '../database/prisma.service';
 import { EmailService } from '../common/email.service';
 import { SmsService } from '../common/sms.service';
+import { uploadToCloudinary } from '../common/cloudinary';
 
 @Injectable()
 export class AdminService {
@@ -92,6 +93,21 @@ export class AdminService {
     });
 
     return this.ok(this.serializeSchool(updated), 'School information updated successfully');
+  }
+
+  async uploadLogo(user: any, logo: Express.Multer.File) {
+    if (!logo) throw new BadRequestException('No file uploaded');
+    if (!logo.mimetype?.startsWith('image/')) throw new BadRequestException('Logo must be an image');
+
+    const school = await this.findManagedSchool(user);
+    const logoUrl = await uploadToCloudinary(logo, 'florieren/schools');
+
+    const updated = await this.prisma.school.update({
+      where: { id: school.id },
+      data: { logo: logoUrl },
+    });
+
+    return this.ok(this.serializeSchool(updated), 'Logo uploaded successfully');
   }
 
   async getStudents(user: any, q: any) {
@@ -935,7 +951,7 @@ export class AdminService {
   private pick(data: any, keys: string[]) {
     const update: any = {};
     keys.forEach(key => {
-      if (data[key] !== undefined) update[key] = data[key];
+      if (data[key] !== undefined && data[key] !== null && data[key] !== '') update[key] = data[key];
     });
     return update;
   }
