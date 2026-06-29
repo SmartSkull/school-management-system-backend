@@ -1,0 +1,4182 @@
+-- FULL ATTENDANCE MIGRATION (2090 records)
+-- Run AFTER users are migrated
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 65, 4, 'This is the teachers comment', 'This boy is a very good student', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d2f4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 0, 0, '', 'This is the principal comment', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9005';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 2, 'Well mannered girl.', 'Excellent result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/728d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/011f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 114, 4, 'She is very smart and always ready to learn', 'Very good result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/62f2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 118, 0, 'Very brilliant girl', 'Good results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1e56';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 2, 'She is active in class and communicates well with her mates', 'Poor academic performance. Sit up, Ayedu.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/c9de';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 114, 12, 'Solomon is too playful. He needs to concentrate more in his studies for better performance', 'Poor academic performance. Get more serious next term.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2a4a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 118, 0, 'She is a very smart and always ready to learn', 'A very good academic performance. Abigail is very hardworking. Please, do not relent.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/c12e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 102, 16, 'He friendly and relates well with his peers', 'Below average academic performance. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3bf6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 118, 8, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/c520';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 112, 14, 'Martins is playful and easily distracted in class.', 'Poor result. Sit up, Chibueze.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/fb63';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 120, 0, 'Shun distractions, give your time to acquiring as much knowledge as possible at this stage for improvement.', 'Fairly good result. Try harder', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3735';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 114, 6, 'Minimise your play and concentrate more on academics for better performance', 'Fair attempt. Try harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/6180';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 124, 2, 'Shun distractions, give your time to acquiring as much knowledge as possible at this stage for improvement.', 'Good result. Try harder, still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/51c3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 4, 'Give more time to academics and avoid distractions for better performance.', 'Below average academic performance. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2f91';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 122, 4, 'Avoid playfulness, get more serious with your academics for better performance.', 'Fair attempt. Try harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/21c5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 118, 8, 'Avoid bad influence for continuous improvement and performance', 'Good result. keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/6568';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 118, 8, 'Playful and unserious attitude towards learning', 'Not-so-good a report. Sit up, Alfred.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/475d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 118, 0, 'She is a well out spoken student.', 'Average result try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/6784';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 120, 6, 'He is very stubborn and indolent', 'Poor academic report. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1dd3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 114, 4, 'Well reserved boy', 'Good results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3ff5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 118, 0, 'Well behaved', 'Very good result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5e7c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 2, 'Well behaved girl', 'Good result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4eb1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 108, 10, 'Well behaved', 'Good results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4f4e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 118, 0, 'Good boy', 'Fair result try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5d81';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 112, 6, 'Always smiling', 'Average performance you can do better than this', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a796';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 104, 22, 'Bukola needs to focus more on her studies for a better result.', 'Average academic performance. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/32e0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 112, 14, 'Opeyemi is hardworking and diligent.', 'Brilliant academic performance. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/760c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 114, 12, 'Put in more effort for a better result next term.', 'Brilliant result. Keep it up, Mustapha.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/e822';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 10, 'Work harder for  a better result next term.', 'Fairly good result. Sit up, Deborah.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1314';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 110, 16, 'Daniel needs to concentrate more on his studies next term.', 'Poor academic performance. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/c1f3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 110, 16, 'A good performance keep it up', 'Brilliant academic performance. Keep it up, Favour.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/336c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 110, 16, 'A fair performance there is room for improvement next term.', 'Fair attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/daf7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 114, 12, 'Michael is hardworking and respectful.', 'Brilliant academic performance. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8117';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 114, 12, 'Work harder for a better result next term', 'Fairly good attempt. Work harder, please.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/cf87';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 112, 14, 'An impressive performance keep it up.', 'Excellent! This is evidence of hardworking and diligence in academic duties. Please, keep it up, Oyin.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a469';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 10, 'Put in more effort for a better result next term', 'Fairly good result. Try harder next term.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/cd14';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 112, 14, 'Fareedah needs to concentrate more on her studies', 'Fair attempt. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/049a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 114, 12, 'An impressive performance keep it up.', 'Very good academic result. Please do not relent, Aisha.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/24c0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 78, 48, 'Adetayo needs to be regular in school, work harder for a better result next term.', 'Poor academic attempt. You can do better, Tayo.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/00eb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 54, 72, 'Always pay attention to teaching.', 'Not so good a result. However, we acknowledge the fact you are new and resumed very late. See you next term.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3ed0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 120, 6, 'She is an easy-going person and possesses a mantle of leadership', 'Very good result. Keep it up, Victory.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/939f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 118, 8, 'She is an easy-going person but very deceitful', 'Below average performance. Try harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8b06';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 124, 2, 'She is very associative but not very organised', 'Poor result. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8c23';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 2, 'Very brilliant girl', 'Excellent result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a592';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 112, 6, 'Well behaved boy', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/48b2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 120, 6, 'Lack of concentration in class', 'Good results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d8d3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 2, 'Well behaved', 'Good results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1467';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 108, 10, 'Positive minded', 'Good results keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/36dc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 114, 4, 'Impressive', 'Good performance but you can still do better than this', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/e3f9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 114, 12, 'Very brilliant girl', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0de8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 108, 10, 'Good boy', 'Average result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1ff4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 2, 'She is always on her own in class', 'Average performance please sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/30a3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 100, 18, 'Too quite', 'Poor result sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/82ea';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 102, 16, 'Well mannered boy', 'Good results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0e6f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 124, 2, 'He is very humble but very indolent', 'Poor academic performance. Nsofor should get more serious with his studies and play less.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7d2c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 112, 6, 'Well behaved girl', 'Average performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8d5f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 118, 0, 'Well behaved', 'Good results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/960f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 90, 28, 'Good instructor', 'Excellent result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/68b3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 106, 20, 'He is very gentle, cool and calm but very lazy', 'Poor result. Work harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/fecb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 114, 4, 'Too playful', 'Fair results try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0d20';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 2, 'Very good girl', 'Excellent result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3865';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 2, 'Too playful', 'Fair result try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/c7e2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 10, 'She is an easy- going person and possesses leadership traits', 'Poor academic performance. You can do better than this, Justina.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/de77';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 124, 2, 'She is very humble and discipline.', 'Good academic report. Keep it up, Amanda.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/95b9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 102, 24, 'She is very humble but very sluggish', 'Poor result. You can do better than this, Rachel.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/73e0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 114, 12, 'She is an eassy-going person but very evasive', 'Very good result. Keep it up, Fatima.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d86a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 10, 'He wants to learn but very lazy', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/be9b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 112, 14, 'He is very calm but very indolent', 'Poor result. Work harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/589f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 120, 6, 'He is very lazy and indifferent', 'A very poor performance. Sit up, Sylvester.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5efa';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 120, 6, 'She is an easy- going person but very understimate', 'Excellent academic performance. Olayinka is very brilliant and diligent. Please, do not relent.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ecfc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 120, 6, 'He is an easy-going person but very deceitful', 'Not your usual performance, Pius. Please, sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/04d3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 90, 36, 'He is very lazy and indifferent', 'Very poor result. Sit up, Ifeanyi', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3e0c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 114, 4, 'Obita is very serious with her studies', 'Brilliant academic report. Keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0a7d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 114, 12, 'He is very stubborn and fond of speaking vernacular', 'Discouraging academic report.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/84de';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 2, 'Victor should be more serious with his studies', 'Good result. Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/699f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 118, 0, 'David should get serious with his studies', 'Poor result. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/70d1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 2, 'He gets easily distracted in class', 'Fairly good result. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7a1e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 102, 24, 'He is very skilfull but not very discipline', 'Poor academic report. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/6333';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 2, 'She is always happy and active in class', 'Excellent result but you can do better than this', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f058';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 118, 58, 'Blessing missed all the exams for second term', 'Fairly good result. Work harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/73d4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 112, 14, 'He is friendly and ready to learn', 'Average performance be serious with your academic', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1098';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 118, 8, 'She is very serious and respectful.', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/fee0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 110, 16, 'She is always cheerful', 'Good results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/68d5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 118, 8, 'She is a gentle giirl but many a time appears weak', 'Good results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0230';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 122, 4, 'She is a gentle girl and not troublesome', 'Average result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/181c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 110, 16, 'He is very okay in character display.', 'Poor result put more effort next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0cbc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 124, 2, 'He is a good boy.', 'Very good result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/775c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 124, 2, 'She is a gentle girl', 'Very weak result be serious with your academics', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/806e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 124, 2, 'He is always participating well in class', 'Excellent result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1efb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 96, 30, 'Micheal is jovial and inquisitive in class', 'Fair result try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/e447';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 108, 18, 'She is very good', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9dd7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 114, 12, 'He is respectful but losses concentration in class', 'Weak performance be serious with your academic', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/702a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 112, 14, 'She is not hard working', 'Very weak result you can do better than this', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7c2c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 122, 4, 'Halimat is a friend to everybody in the class but not organized in keeping her properties safe', 'Good result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/20f9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 118, 8, 'She is very lazy.', 'Weak result try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3f3e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 10, 'She is very okay in character', 'Good results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ec53';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 114, 12, 'He is a good boy', 'Average result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/28c4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 114, 12, 'Iremide is respectful and consentrate in class', 'Excellent result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d40b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 124, 2, 'Hassan is a quiet boy', 'Weak performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/70a2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 120, 6, 'She is loving and ready to learn', 'Average performance put more effort next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/b936';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 120, 6, 'She is loving and ready to learn', 'Average performance put more effort next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/b936';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 124, 2, 'She needs to be careful.', 'Weak performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/97ba';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 122, 4, 'She needs to be more active', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/df4c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 122, 4, 'He argues a lot', 'Good results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/42e7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 122, 4, 'He is a very simple boy', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7983';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 122, 4, 'She behaves mature.', 'Very good result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5ef8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 124, 2, 'She behaves matured', 'Very good result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ef59';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 124, 2, 'He is always active in class', 'Excellent result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ad17';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 122, 4, 'He is a gentle boy', 'Good results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/acd6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 122, 4, 'He is a very calm student.', 'Brilliant result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/64e1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 122, 4, 'He is always serious', 'Brilliant result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0327';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 122, 4, 'She is a well behaved student', 'Average result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d0b4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 122, 4, 'Irenitemi is not always serious', 'Weak performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9095';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 120, 6, 'He is always talking in class', 'Good result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d569';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 122, 4, 'He is always full of ideas', 'Excellent result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/c6cf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 122, 4, 'She is inquisitive and willing to learn', 'Weak passes put more endeavor into your academic', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4c52';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 122, 4, 'She plays alot', 'Good result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/6851';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 114, 12, 'He is active in class activity and focus in class', 'Very good result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4404';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 112, 14, 'He does whatever he want', 'FaiÃ…â€¢ result try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f12f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 122, 2, 'He is an easy going student', 'Average result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/cbda';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 106, 20, 'He makes friends a lot but lacks full concentration in class', 'Fair performance be serious with your academics', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ccd7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 99, 19, 'Hunaidatu plays too much in class', 'Fair attempt. Try harder next term.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3f85';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 118, 0, 'James can be easily distracted in class', 'Poor result. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2d5d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 2, 'Havilah is very devoted to his academics', 'Very good academic performance. Keep it up, Havilah.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/72ee';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 74, 52, 'She makes friends and inquisitive in class', 'This is not result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/06cc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 2, 'Testimony is serious with his studies', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1bfa';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 2, 'Ademola is well behaved in class', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2ecf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 2, 'Rachael is quiet in class but should be more serious with her studies', 'Fairly good result. Try harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d41b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 114, 4, 'Uwem needs to be more serious with his academics', 'Fair attempt. Sit up, Uwem.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/70be';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 118, 0, 'Isaac is very active in class activities', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/28e1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 106, 12, 'Joseph plays alot in class', 'Below average academic performance. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/70a0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 110, 8, 'Enoch is very devoted to his studies', 'Very good academic performance. Keep it up, Enoch.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5f82';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 10, 'Richard is eager to learn and active in class', 'Good result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4d97';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 118, 0, 'Emmanuel is well behaved in class', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/95ef';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 120, 6, 'Esther is inquisitive in class and friendly', 'Good', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/dfe8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 10, 'David is active in his class work and respectful', 'Average performance you can do better than this dear', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f4d8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 112, 6, 'Nwanze is well behaved in class', 'Good result. Kept it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3037';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 126, 0, 'She makes friends easily and willing to learn', 'Fair result try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9781';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 2, 'Morenikeji behaves well in class', 'Good result. Keep it up, Keji', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/bfa1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 122, 4, 'He is inquisitive obedient and ready to learn', 'Fair result try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/783e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 108, 10, 'Victor participates actively in class activities', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/37c6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 126, 0, 'She is friendly and always willing to learn', 'Fair result try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7266';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 114, 4, 'Lekan is always restless and can hardly stay at a place', 'Poor result. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/64ed';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 122, 4, 'She is obedient, respectful and jovial', 'Very good result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4478';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 112, 14, 'She is friendly and obedient', 'Weak pass try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8c69';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 88, 38, 'She is friendly and ready to learn', 'Average performance you can do better than this', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0afb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 118, 0, 'Mercy is a well behaved student', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/163d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 118, 0, 'Esther is well behaved student', 'Good result. But you can do better, Esther.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a517';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 118, 0, 'Anjola is a well behaved student', 'Good result. Keep it up, Anjola.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/b85a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 2, 'Samuel is very playful in class', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8723';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 62, 56, 'Shola is always causing trouble in class', 'Poor result. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/582f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 118, 0, 'Ramadan is a well behaved student', 'Fair attempt. Try harder next term.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/e010';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 2, 'Amira is very serious with her studies', 'Brilliant academic performance. Keep it up, Amirat.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/63c8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 124, 2, 'Firduasi needs to put more efforts in her studies', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/265f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 124, 2, 'Ademola is quiet in class', 'Fair attempt. Sit up, Raji.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/23b1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 124, 2, 'Abdulahi is very quite in class', 'Poor result. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8f50';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 108, 18, 'Abideen is not serious at all with his studies', 'Poor result. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/58e6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 118, 8, 'Muhammed is not serious with his studies', 'Poor result. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/67f0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 98, 28, 'Success is never serious with his studies', 'Very poor attempt. Be serious.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/890d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 112, 14, 'He is attentive in class and active in his class activity', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/be89';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 124, 2, 'Very calm and inquisitive in her class activities', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4426';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 22, 116, 2, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f058';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'Well behaved girl', 'Excellent performance keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/728d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 112, 6, 'Firdausi is a well behaved student', 'Fair attempt. Try harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/265f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 108, 2, 'She is obedient and active in class work', 'Good results keep it up although there is room for improvement', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f058';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 104, 14, 'Raji is very quiet in class', 'Fair results kindly sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/23b1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'Abdulahi is very quite in class', 'Poor performance. You can do better than this.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8f50';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 112, 6, 'Abideen is not serious with his studies and doesnt  want to improve', 'Poor attempt. Sit up, Abideen.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/58e6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 114, 4, 'Abdulaziz should become serious with his studies', 'Poor result. Try harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/67f0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 80, 38, 'Success is never serious with his academics', 'Very poor performance. Try harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/890d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 80, 38, 'Favour is a well behaved student', 'You can do better than this, Favour. Try harder next term.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/833e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 4, 'Desola has zealous attitude towards learning, keep on the strive.', 'Fair attempt. Try harder next term.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2f91';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 120, 0, 'Yetunde is having steady improvement in most subjects, get serious with others for complete improvements.', 'Good result. Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3735';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 114, 4, 'She needs to more serious.', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/6784';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 120, 0, 'Rachael has zealous attitude towards learning', 'Good result. Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7106';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 4, 'Sofiano is interested in learning but easily distracted', 'Fairly good result.  Try harder next term.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/21c5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 114, 4, 'Divine actively participates in class activities', 'Fair attempt. Please pay attention to areas you have shown weakness, especially in science subjects.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/b864';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 114, 6, 'An attentive and well behaved student', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/6568';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'She is so simple and gentle', 'Average performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/fee0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 108, 10, 'She needs to be more attentive and forcus in class', 'Average performance put more effort next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ac5a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'She is always cheerful', 'Good results but there is room to improve', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/68d5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 112, 6, 'She needs to shun laziness and always awake.', 'Good performance but try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0230';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 112, 6, 'His character not too impressive', 'Average performance be serious with  your academics', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0cbc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'This student is strong willed', 'Good performance keep it up and improve', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/775c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'She should learn to keep quiet in class', 'Average performance be serious with your academics activities', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/806e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'Your love for learning is impressive', 'Good results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1efb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'She is calm and inquisitive in class', 'Average performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/b936';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 114, 4, 'She is a simple hearted student', 'Average performance be serious with your academics', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9dd7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'Her attitude towards learning is poor', 'Fair results be serious with your academics', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7c2c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 120, 0, 'A very quiet and well behaved student', 'Fair academic attempt. You have the potential to do better. Sit up and unleash the genius in you.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/475d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 114, 4, 'She needs to be more serious', 'Fair results put more effort to your academics', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3f3e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'This is a determined student', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ec53';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'He should put more effort in learning', 'Average performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/70a2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'You should try not to be lazy', 'Fair results be serious with your academics please', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/97ba';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 112, 8, 'Her performance not impressive', 'Fair results try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/df4c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'Your best is not enough try more', 'Good results but there is room for improvement', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/42e7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'She is intelligent and up and doing towards her class activities', 'Excellent result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4727';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 95, 23, 'Try to behave like a boy', 'Fail results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7983';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 86, 32, 'He is friendly but get carried away easily in class', 'Poor result sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ccd7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 0, 0, 'Out of school', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5ef8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 114, 6, 'A hardworking, intelligent and well behaved student', 'Brilliant academic performance. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/21a3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'She is a self motivated student', 'Good performance keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ef59';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 114, 4, 'She is respectful and cool headed in class', 'Very good performance keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ba73';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'This school is so proud to have a student like you', 'Excellent performance although there is still room for more', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ad17';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'Learn to be fast in learning', 'Good results but you can do better than this next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/acd6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'Try to improve on yourself', 'Very good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/64e1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 72, 48, 'An intelligent and well behaved student', 'Excellent academic report. Please, do not relent.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/de48';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'Desire more to improve on yourself', 'Average performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d0b4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 108, 10, 'She is a free hearted student', 'Fair results be serious with your academics', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9095';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'You have a positive attitude', 'Average performance put more effort', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d569';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'She is friendly and inquisitive in class', 'Average performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/be4a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'She is active in her class activities and ready to learn', 'Average performance kindly  sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/06cc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'Your progress is consistent', 'Excellent performance keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1dee';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'Try hard to be interested in learning', 'Below average performance be serious with your academics', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f12f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'Try to have a sense of competing in class', 'Average performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/cbda';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'Add zeal to your learning', 'Average performance you can do better than this', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/ddcc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'Concentrate more on your studies', 'Very  poor result please sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/b000';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 92, 26, 'You are so friendly', 'Very poor result kindly sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/5f7a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 108, 10, 'You need to mix with other students and also work on your communication skills.', 'Very poor result sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/9379';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 114, 4, 'Obita is very serious with her studies', 'Very good academic performance. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0a7d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'Victor is well behaved in class', 'Good result. However, work on the areas you have shown weakness.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/699f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'David is a well behaved student', 'Poor attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/70d1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 60, 58, 'Blessing is quite in class', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/73d4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'Roland is very playful in class', 'Not- so-good an academic report. Sit up, Roland.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7a1e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'Victoria participates actively in class activities', 'Good result. Work harder, still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d66b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'James can be easily distracted in class', 'poor attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2d5d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'Havilah is very devoted to his academics', 'Brilliant academic performance. Keep it up, Labija.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/72ee';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'Testimony is a well behaved student', 'Good academic report. Keep it up, Nduche.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1bfa';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'Rachel is well behaved in the class', 'Fairly good result. You can do better than this, Racheal.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d41b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 114, 4, 'Uwem is very playful in the class', 'Sit up, Uwem.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/70be';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 106, 12, 'Joseph plays alot in the class', 'Poor attempt. Sit up, Joseph.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/70a0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 110, 8, 'Enoch is very devoted and dedicate to his studies', 'Brilliant academic performance. Keep it up, Agboola.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5f82';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'Emmanuel is well behaved in the class', 'Brilliant academic report. Keep it up, Abebe.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/95ef';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 108, 10, 'Victor is well behaved in the class', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/37c6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 112, 6, 'David is well behaved in the class', 'This is not a reflection of your academic prowess, David. What went wrong?', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3037';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'Morenikeji behaves well in class', 'Pay attention to your areas of weakness, Keji. Good result, still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/bfa1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 114, 4, 'Lekan is always restless and can hardly stay at a place', 'Poor attempt. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/64ed';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'Mercy is a well behaved student', 'Good result. Keep it up, Mercy.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/163d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, '', 'Good result. Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a517';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'Anjola is a well behaved student', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/b85a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'Samuel is very playful in class', 'Sit up, Samuel.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8723';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 62, 56, 'Shola is too playful in the class', 'Poor result. Sit up, Shola.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/582f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'Ramadan is a well behaved student', 'Fair attempt. Try harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/e010';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'Amira is very serious with her studies', 'Very good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/63c8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 114, 4, 'She is very smart and always ready to learn', 'Good result. Keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/62f2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'Ope is easily distracted and this affects her concentration.', 'Poor attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/c9de';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 106, 12, 'Destiny is friendly and relates well with his peers,but needs to study more', 'Poor attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/af45';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 112, 6, 'Always ready to learn.', 'Average results please sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8d5f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'Always put in her best.', 'Good performance try harder', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4eb1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 102, 16, 'Her learning attitude is poor.', 'Very poor result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9e48';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 112, 6, 'Improving day by day.', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a796';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 100, 18, 'Not regular in school.', 'Fair results be serious with your academics', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/82ea';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'Well mannered girl.', 'Good performance you can do better than this', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/960f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'Best in all subjects,but you need to work on your temperament.', 'Excellent performance the sky is your limit keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a592';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'His attitude towards learning is poor', 'Poor result sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5d81';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 108, 10, 'Victory with a wonderful smile .', 'Good performance but there is for improvement', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/36dc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 108, 10, 'Odion Miracle loose concentration in class.', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1ff4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 108, 10, 'Too playful but easily corrected .', 'Fair results try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4f4e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 114, 4, 'Lack of concentration in class.', 'Fair results be serious with your academics', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0d20';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'Positive minded', 'Good performance keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5e7c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'Positive minded', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1467';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 114, 4, 'Always ready to learn.', 'Good performance although there is room for improvement', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3ff5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 114, 4, 'Well behaved girl', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/e3f9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 102, 16, 'Well mannered boy', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0e6f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'Well behaved', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/c7e2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'She is active in class and always ready to learn.', 'Brilliant result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/c12e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 102, 16, 'Opeyemi is calm, but he needs to read and study more for better results.', 'Fair attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3bf6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 104, 14, 'He is calm and respectful', 'Good performance but there is room for improvement', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4d97';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 112, 6, 'Esther is jovial,friendly and inquisitive in class', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/dfe8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'She is well behaved and respond to class activities quickly', 'Good results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4478';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 108, 10, 'She is a lover of all and inquisitive in class', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7266';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'He is well behaved but lost concentration most times', 'Fair results be serious with your academics', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/783e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'She is always eager to learn and loves to be corrected', 'Average performance kindly sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9781';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'He plays a lot but focused and determined', 'Very good results keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/be89';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'He is well behaved and inquisitive in class', 'Average performance  sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f4d8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 114, 4, 'He is willing to learn and friendly', 'Average performance there is room for improvement', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2bd8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'She lacks concentration in class activities', 'Fair results be serious with your academics', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8c69';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 106, 12, 'She is well behaved and ready to learn', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f726';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'She is active in her class activities and inquisitive', 'Good results but you can do better than this', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0afb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'He is active in class and also inquisitive', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/42dd';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 114, 4, 'He is well behaved and ready to learn', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1098';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'He is willing to learn but lacks concentration in class', 'Very poor result kindly sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/702a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 118, 0, 'She is ready to learn but lacks concentration in her class activities', 'Average performance you can do better than this', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/20f9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 116, 2, 'He is intelligent and always willing to learn', 'Very good performance keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d40b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 114, 4, 'She is well behaved and ready to learn', 'Fair results you better sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4c52';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 112, 6, 'Khalid is humble and very friendly in class. He needs to avoid distractions in his studies', 'Fairly good result. You have the potential to do better. So brace up and unleash the genius in you.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5fa7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 86, 32, 'Kelvin is friendly but not regular in school.', 'Poor result. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f1fc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 76, 42, 'Martins is playful and not regular in school.', 'This is not encouraging, Martins. Get serious with your studies.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/fb63';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 65, 4, 'Good result', 'Keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/78ce';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 90, 28, '', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/68b3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 106, 12, 'She is eager and ready to learn', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/ac78';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 112, 6, '', 'Good performance you can still do better than this', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/48b2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 108, 10, 'Lack of concentration in class.', 'Very poor result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/86bc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 23, 108, 10, 'Easy going girl', 'Average performance you can do better than this', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/50bf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 12, 35, 65, 4, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/ed04';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 12, 36, 65, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/ed04';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/ed04';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 106, 2, 'She is committed to doing her best', 'Excellent academic performance. Keep it up, Yesira.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/728d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 106, 2, 'He is quite active in class', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3ff5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 108, 0, 'He is committed to doing his best', 'Very good result. Keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5e7c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 90, 18, 'He needs to be more serious with his studies', 'Fair result. Try harder!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4f4e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 98, 10, 'She should be more open and interactive to teachers and students.', 'Poor attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9e48';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 102, 6, 'He needs to build reading vocabulary', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5d81';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 104, 4, 'He needs to be more diligent', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/c7e2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 96, 12, 'Improving day by day.', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/30a3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 96, 12, 'Putting more effort in your studies is required', 'Average academic performance. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a796';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 108, 0, 'She is more serious than before', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/960f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 104, 4, 'Her progress is consistent', 'Excellent academic performance. Victory is very hard-working. Please, do not relent.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a592';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 104, 4, 'He should be more organised', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/48b2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 104, 4, 'He shows respect to teachers and students', 'Good result. Keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1467';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 102, 6, 'Needs to pay more attention to studies', 'Good result. Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/36dc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 102, 6, 'She is very respectful', 'Good result. Keep it', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/e3f9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 100, 8, 'He needs to work on being more diligent', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0d20';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 104, 4, 'She takes an active role in class discussion', 'Excellent academic performance. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3865';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 102, 6, 'He is a very smart student but needs to be serious', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1ff4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 88, 20, 'More attention should be devoted to reading and writing', 'Fair attempt. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/82ea';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 16, 92, 'Positive attitude towards learning is needed', 'Average result. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0e6f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 90, 18, 'He has a good listening skills and participate very well in class', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/86bc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 98, 10, 'She is a gentle student', 'Poor attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/50bf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 104, 4, 'Divine is  a well behaved student', 'Good performance promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/b864';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 106, 2, 'Obita is a very serious student', 'Excellent result keep it up promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0a7d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 106, 2, 'Victor is well behaved in class', 'Good performance promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/699f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 108, 0, 'David is well-behaved in class', 'Fair results sit up promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/70d1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 108, 0, 'Roland plays alot in class', 'Fair results sit up promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7a1e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 95, 13, 'Blessing is very quiet in class', 'Fair results sit up promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/73d4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 108, 0, 'Victoria is a well behaved student', 'Good performance promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d66b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 98, 10, 'Mercy is intelligent and has good relationship with people around her', 'Evidence of hardworking. Mercy is very diligent. Keep it up, girl!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ba73';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 90, 18, 'Hunaidatu plays alot in class', 'Average performance sit up promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3f85';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 108, 0, 'James is too playful in class', 'Fair performance try harder next term promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2d5d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 92, 16, 'Havilah is  a well behaved student and also very seroyud with his studies', 'Excellent performance keep it up promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/72ee';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 106, 2, 'Testimony is well behaved, although he can become too playful sometimes', 'Good performance but you can do better than this promoted ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1bfa';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 108, 0, 'Rafiat is a well behaved and diligent student. Keep it up girl.', 'Good performance promoted to ss3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/62f2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 108, 0, 'Ademola is a well behaved student', 'Good performance promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2ecf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 108, 0, 'Ope is easily distracted and this affects her concentration. She needs to avoid distractions for better improvement.', 'Weak performance promoted to ss3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/c9de';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 106, 2, 'She is friendly and inquisitive in class', 'Average academic performance.Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/be4a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 106, 2, 'Abigael is diligent and hardworking. Keep it Up dear.', 'Very good performance keep it up promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/c12e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 100, 8, 'Favour is ready to learn and very attentive in class', 'Average performance. Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/06cc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 98, 10, 'Solomon is not serious with his studies, he needs to be monitored academically for better results.', 'Weak result you better sit up . Promoted to ss3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2a4a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 96, 12, 'David is quit playful, he can perform better if he concentrates more in his studies.', 'Poor result promoted on trial to ss3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ef48';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 98, 10, 'He is quiet and friendly', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4d97';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 88, 20, 'Destiny is friendly and relates well with his peers, but he needs to be more focused in his studies and avoid distractions for better results.', 'Poor result promoted on trial to ss3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/af45';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 106, 2, 'She learns faster and very attentive in class', 'Very good academic performance. Mercy is very industrious. Keep it up girl!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f058';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 92, 16, 'Opeyemi is a smart boy who needs to dedicate more time in his studies for better results.', 'Fair results promoted to ss3 c5', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3bf6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 98, 10, 'Khalid is humble and very friendly in class. He needs to concentrate more in his studies and avoid distractions.', 'Good results promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5fa7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 106, 2, 'She is calm and inquisitive', 'Fairly good result. Try harder!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/b936';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 54, 54, 'Martins is not serious with his studies and always absent from  school.', 'Very poor result not promoted', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/fb63';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 102, 6, 'He is a well behaved student', 'Fair attempt. Try harder next term.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/0eb7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 102, 6, 'She needs to be more active in class', 'Fair attempt. Try harder next term.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/02ef';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 105, 3, 'Rachel is a well behaved student', 'Good results promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d41b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 106, 2, 'Uwem is too playful in class', 'Average performance promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/70be';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 108, 0, 'Victory is too playful in class, although he is very serious with his studies', 'Good results promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/28e1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 106, 2, 'She is intelligent and very active with her class activities', 'Excellent academic performance. Sofiyat is very hardworking. Please do not relent.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4727';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 108, 0, 'He gets carried away easily towards class activities', 'Not so good a result. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ccd7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 106, 2, 'Joseph is a well behaved student', 'Average performance promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/70a0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 106, 2, 'She takes her class activities serious and very friendly', 'Very good academic performance. Keep it up, Amirat.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4426';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 104, 4, 'She is very inquisitive in class and makes friends a lot', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f726';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 108, 0, 'He is inquisitive, intelligent and very outspoken in class', 'Good academic performance. Keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/42dd';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 104, 4, 'He is ready to learn and takes to correction quickly', 'Average academic performance. Try harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1098';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 102, 6, 'Gets distracted easily and plays a lots', 'Poor academic performance. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/702a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 96, 12, 'She is attentive in class and grabs quickly', 'Average academic performance. Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/20f9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 104, 4, 'Enoch is a well behaved student', 'Excellent result keep it up promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5f82';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 108, 0, 'Emmanuel is a well behaved student', 'Very good performance keep it up promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/95ef';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 104, 4, 'She is inquisitive and makes lots of friends', 'Tumba needs more activities and focus.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/dfe8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 87, 21, 'David is well behaved in the class', 'Average performance sit up promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3037';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 108, 0, 'Morenikeji is well behaved in the class', 'Good performance promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/bfa1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 106, 2, 'Victor is well behaved in the class', 'Very good performance promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/37c6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 104, 4, 'Lekan is becoming a well behaved student', 'Poor result promoted on trial to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/64ed';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 104, 4, 'Mercy is a very attentive in class', 'Poor result promoted on trial ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/163d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 108, 0, 'Esther a well behaved student', 'Good results promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a517';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 104, 4, 'She is friendly and attentive in class', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4478';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 100, 8, 'Anjola is very serious with her studies', 'Good performance promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/b85a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 108, 0, 'He lacks concentration in class but ready to learn', 'Poor result. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/783e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 96, 12, 'Shola is too playful in the class', 'Poor result promoted on trial to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/582f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 106, 2, 'She is active with her class work and also attentive', 'Average performance. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7266';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 106, 2, 'Ramadan is a well behaved student', 'Average performance sit up promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/e010';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 100, 8, 'Amira is a well behaved student', 'Very good performance promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/63c8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 104, 4, 'She is friendly and ready to learn', 'Average performance. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9781';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 96, 12, 'Firdausi is a well behaved student', 'Good performance promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/265f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 100, 8, 'Ademola is quiet in class', 'Fair results sit up promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/23b1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 106, 2, 'Yusuf is very quiet in the class', 'Fair results sit up promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8f50';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 102, 6, 'Abideen is too playful in the class', 'Poor result promoted on trial to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/58e6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 104, 4, 'Well behaved student', 'Good performance promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/5a35';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 96, 12, 'Mohammad should get serious with his studies', 'Poor result sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/67f0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 62, 46, 'Success is never serious with his academics', 'Fail', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/890d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 108, 0, 'Well behaved student', 'Good results promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3735';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 102, 6, 'Well behaved student', 'Average performance promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/6180';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 104, 4, 'Well behaved student', 'Good results promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/51c3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 100, 8, 'Well behaved student', 'Average performance promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2f91';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 104, 4, 'Well behaved student', 'Good performance keep it up promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7106';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 104, 4, 'Well behaved student', 'Average performance promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/21c5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 106, 2, 'Well behaved student', 'Fair results sit up promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f2a9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 104, 4, 'Well behaved student', 'Excellent result keep it up promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/21a3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 104, 4, 'Well behaved student', 'Excellent result keep it up promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/de48';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 104, 4, 'Favour is a well behaved student', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/833e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 84, 24, 'Fredrick is now very playful in the class', 'Fail', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/735f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 0, 0, '', 'Good results promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/475d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 0, 0, '', 'Fair attempt. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/e447';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 108, 0, 'He is focused and always ready to learn', 'A very good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/be89';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 100, 8, 'He is ready to learn and inquisitive in class', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2bd8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 108, 0, 'She is friendly but has a lazy attitude towards her class activities', 'Fair attempt. Try harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4c52';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 8, 39, 0, 0, '', 'Very good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d40b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 116, 10, 'Favour is calm and respectful', 'Fair attempt. Sit up, still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/833e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'She is inquisitive and friendly', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/b343';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'He is attentive in class and always ready to learn', 'Excellent performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/a551';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'He is willing to learn and respectful', 'Fair results be serious with your studies', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/ff90';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 122, 4, 'She is respectful and friendly', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/52a1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 106, 20, 'She makes friends easily but losses concentration most times in class', 'Failed sit up to the school standard', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/d808';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 122, 4, 'She is friendly but losses concentration in class', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4b53';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 122, 4, 'He is very calm in class and always attentive', 'Fair results try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/880b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 104, 22, 'She is friendly and ready to learn', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/c303';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 116, 10, 'She takes to correction and has class management', 'Average performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/a46f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 112, 14, 'She is very calm in class and respectful', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4ecc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 94, 32, 'She is very attentive and always ready to learn', 'Good performance you Do more than this next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/8f9d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 76, 50, 'She is reserved and very attentive in class', 'Average performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/6ca2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 108, 18, 'She is calm in class and very accommodating', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/936e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 108, 18, 'She is friendly but losses concentration at times in class', 'Average performance sit up next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/a54e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 114, 12, 'She is quiet and very friendly', 'Average performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/7b79';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 116, 10, 'She is respectful and friendly in class', 'Fair results please sit up for your academics', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/d59a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'She takes an active role in discussion', 'Waoo this is excellent result keep it', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/728d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 122, 4, 'Yetunde is well behaved and serious with her study', 'Good academic report. Well done!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3735';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 116, 10, 'A good performance work harder', 'Above average performance.  Do not relent.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/51c3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 122, 4, 'An average performance improve more on it', 'Fair attempt.  Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2f91';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 122, 4, 'A good performance keep it up', 'Good academic report.  Do not relent.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7106';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 110, 16, 'Abubakar need to concentrate more on his studies', 'Fair attempt. You have the ability to do better than this. Yes, I believe in you dear.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/21c5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 122, 4, 'Below average performance work harder for a better result', 'Poor attempt.  You can surpass this performance if you put more effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f2a9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 110, 16, 'An impressive performance keep it up.', 'Excellent! Jessica is highly industrious.  Keep it up, girl!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/21a3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 120, 6, 'An impressive performance keep it up.', 'Evidence of hardworking.  Shamsiyya is serious with her studies. Please, do not stop!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/de48';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'Sheâ€™s a good girl and well mannered.', 'Excellent result keep it', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f058';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'Sheâ€™s a good girl and well behaved', 'Good results try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/b936';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'Sheâ€™s so brilliant and well behaved', 'Excellent result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4727';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'Heâ€™s a good boy', 'Poor performance sit up to the school standard', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ccd7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'She is showing impressive growth', 'Very impressed performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/960f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 122, 4, 'So brilliant and well preserved', 'Excellent result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ba73';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'You consistently show respect to your teachers and peers', 'Excellent result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5e7c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'Sheâ€™s a good girl and well behaved', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/be4a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'Sheâ€™s a good girl and well behaved', 'Very good performance keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/06cc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 110, 16, 'You need to improve on your learning.', 'Good performance you can do better than this next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/c7e2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 122, 4, 'Sheâ€™s calm and well behaved', 'Average performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2caa';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'She takes an active role in class', 'Average performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8d5f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 122, 4, 'You need to be more serious in your academics pursuit.', 'Poor performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/02ef';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 114, 12, 'You need to put more effort to your study', 'Fair results be serious with your academics', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/7014';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 122, 4, 'Heâ€™s always active and ready to learn more', 'Good performance keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4d97';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'You are gradually improving.', 'Good performance you can do more than this', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a796';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'You are very friendly', 'Impressive performance keep it', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3865';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'Your commitment to academics is commendable but more humility is required', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a592';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'She is an hard working student', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/e577';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 108, 18, 'She is very gentle and quiet.', 'Very poor result sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9e48';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'Please be more serious', 'Fair results sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/30a3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 120, 6, 'You need to be more serious in your study', 'Average performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0d20';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 118, 8, 'Sheâ€™s a good girl and well behaved', 'Good results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4478';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 114, 12, 'Put  more zeal in whatever you are doing', 'Average performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/50bf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 116, 10, 'Sheâ€™s good and calm', 'Fair results be serious with your academics', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7266';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 110, 16, 'Heâ€™s a good boy', 'Fair results sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/783e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'She takes an active part in the class', 'Good performance keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1e56';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 116, 10, 'Funmilayo is always ready to improve for the better.', 'Average performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9781';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'You are always cheerful but try to always come early to school', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/48b2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 88, 38, 'You need to be ready to learn', 'Poor performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/86bc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 112, 14, 'Heâ€™s a good boy', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/be89';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'Heâ€™s always active and ready to learn more', 'Average performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f4d8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 118, 8, 'If you settle down to study you can still achieve alot', 'Good performance you can do better than this next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3ff5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 108, 18, 'He is always paying attention in class and very neat', 'Good performance keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1467';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'Heâ€™s a good boy', 'Average performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2bd8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 104, 22, 'Try to work harder', 'Fair performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4f4e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 122, 4, 'Very smart and intelligent', 'Excellent performance keep it', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d40b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 122, 4, 'Heâ€™s a good boy ,but he need to buckle up academically', 'Poor result sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/702a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 100, 26, '', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1098';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'Sheâ€™s a good girl and well mannered', 'Good results but you can do better than this next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0afb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 118, 8, 'You have a positive attitude towards learning', 'Good performance you can do better than this next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/3607';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 104, 22, 'Be always ready to learn', 'Average performance sit up with your academics', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1ff4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 88, 38, 'Always try to be a strong student', 'Average performance sit up with your academics', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0e6f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 122, 4, 'Sheâ€™s a good girl and well behaved', 'Good results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f726';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 88, 38, 'Try to always be regular in school', 'Average performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/36dc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 108, 18, 'Julianah is well behaved in the class.', 'Fair attempt. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ac5a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'So brilliant and well preserved', 'Excellent performance keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4426';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 112, 14, 'So brilliant and well preserved', 'Excellent result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/1037';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 112, 14, 'You need to put in your best', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/82ea';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'Emmanuella is well behaved in the class', 'Fairly good attempt. Sit up still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0230';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'Sheâ€™s a good girl and well behaved', 'Excellent performance keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/c974';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 86, 40, 'Very good and calm', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4e74';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 116, 10, 'Work on your vocabulary', 'Fair results be serious with your academics', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5d81';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'Heâ€™s a good boy and well behaved', 'Very good performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/3e7c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 110, 16, 'More agility is required', 'Average performance you can do better than this next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/e3f9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 64, 62, 'Sheâ€™s a good girl ,well behaved and ready to improve', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/d777';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 0, 0, '', 'Very poor result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4c52';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'She has good behavior', 'Good result.  Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/b864';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'Hussenate is a well behaved student', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/181c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 102, 24, 'Ezekiel is very playful in the class', 'Poor result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0cbc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 114, 12, 'Timileyi is a well behaved student', 'Fair attempt. Try harder next term.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/775c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 116, 110, 'Blessing is attentive in class and does her work well', 'Fair attempt.  Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/73d4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'Rachel is calm and attentive in class', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d41b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'Victoria is active in class and always ready to learn', 'Good result.  Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d66b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'James needs to focus more on his studies', 'Fair attempt.  Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2d5d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'Keji is hardworking and very attentive in class', 'Very good result.  Keep it up, Keji!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/bfa1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 126, 'Adeola is a  well behaved in the class', 'Fairly good result. Try harder still', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9dd7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'She is an-easy going person but not courageous', 'Very good result. Keep it up, Aliu.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/62f2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 116, 10, 'She is ready to learn but needs to be encouraged', 'Fair attempt. Try harder!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/c9de';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 102, 24, 'Victor is quiet and respectful', 'Good result.  Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/37c6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 112, 14, 'He is ready to learn but very lazy', 'Fair attempt.  Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2a4a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 94, 32, 'He is ready to learn but not organized', 'Poor academic performance.  Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ef48';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 118, 8, 'An impressive performance keep it up.', 'I am not surprised. This is a marked improvement from your last result. Please, keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/adc9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 120, 6, 'He is an easy-going person  easily annoyed', 'A very good academic report.  Keep it up, girl.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/c12e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 116, 10, 'Oyinkasola is well behaved in the class.', 'Poor result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/806e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 112, 14, 'Nifemi is well behaved in the class.', 'Poor result. Sit up, please.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7c2c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 74, 52, 'He is ready to learn but needs to be encouraged', 'Poor result.  Try harder!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5fa7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 54, 72, 'He is an easy-going person but not organized', 'Very poor attempt.  Work very hard to improve.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f1fc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'Grace is not devoted to his her studies.', 'Poor result. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3f3e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 116, 10, 'Faith is well behaved in class', 'Faith is a hardworking girl. Try to improve on your weak areas.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ec53';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 122, 4, 'Samuel needs to be more serious with his studies', 'Fair attempt.  Try harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8723';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'Hassan is quiet in class.', 'Fair result. Try harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/70a2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'She is an enthusiastic learner', 'An excellent academic performance. Please, do not relent.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0a7d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'Daniella is not very active in class activities.', 'Fair academic attempt. Try harder, still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/97ba';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 116, 10, 'Saratu is a well behaved student', 'Poor result. Sit up, please.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/df4c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 110, 16, 'Uche is a well behaved student.', 'Fair attempt. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7983';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'Abideen is very dedicated and devoted to his academics.', 'Abideen is very industrious. Please, do not relent.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ad17';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 111, 15, 'John participates actively in class activities.', 'Good academic performance. Keep it up, John.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0327';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'Ewajesu is a well behaved student.', 'Fairly good attempt. You can surpass this performance. I know you can. Just put in the required work.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d0b4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'Victor easily gets distracted during class lessons.', 'Poor result. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d569';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'Lilian easily gets distracted in class. She really needs to focus when the teacher is teaching.', 'You can do better than this. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/5f7a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 120, 6, 'Mercy should stop allowing unserious people to distract her during lessons.', 'You can surpass this performance if you put in the work. Yes, you can.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/8bb8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 116, 10, 'Omotola is quiet class and also very dedicated to her studies.', 'Commendable academic effort. Keep it up, girl.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/1f48';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 100, 26, 'Success needs to avoid distractions and pay more attention to his studies', 'Very poor result.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/890d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 116, 10, 'Firdausi is calm,respectful and attentive in class', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/265f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 102, 24, 'Inioluwa is a well behaved student.', 'Poor attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/6851';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 114, 12, 'Mahmud is a well behaved student.', 'Poor result. Work harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/9379';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 116, 10, 'Yusuf is very playful in class.', 'Poor result. You can do better if you put in the work. I believe you can.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/db41';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 114, 12, 'Aaliyah is a well behaved student.', 'Good academic performance. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/cc05';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 112, 14, 'Oyindamola is a well behaved student.', 'Poor result. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/c453';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 122, 4, 'He is a good boy', 'Good result.  Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/699f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'He is a good boy', 'Fair attempt.  Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/70d1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'He exibits a positive attitude in the classroom', 'Fair attempt. Try harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7a1e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'She shows ethusiasm for classroom activities', 'Good result.  Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3f85';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'He is a good boy', 'An excellent academic performance.  Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/72ee';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 0, 'He always pays attention in the class', 'Good result Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2ecf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 120, 0, 'He pays attention in the class', 'Fair attempt.  Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/70a0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'He shows enthusiasm for classroom activities', 'A very good academic report. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5f82';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'He exibits a positive attitude in the classroom', 'Good academic performance.  Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/95ef';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 122, 4, 'He exibits a positive attitude in the class', 'Fair attempt.  Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3037';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'Shows enthusiasm for classroom activities', 'Fair attempt.  Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/64ed';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'Shows enthusiasm for classroom activities', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/b85a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'He is a good boy', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/e010';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'He is a good boy', 'Fair attempt. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/23b1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'He is a good boy', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8f50';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'He is a good boy', 'Fair attempt. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/735f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 112, 14, 'He exibits a positive attitude in the classroom', 'He is new. He will do better', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/6721';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 106, 20, 'He is a good boy', 'He is new. I believe he will do better next time.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/198e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'Testimony is very attentive in class and respectful', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1bfa';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'Victory is well behaved and attentive in class', 'Good academic performance.  Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/28e1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 116, 10, 'Mohammed needs to pay more attention to his studies', 'Poor performance. Sit up, Mohammed.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/67f0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 120, 6, 'Abideen needs to concentrate more in his studies', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/58e6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 126, 0, 'She exibits a positive attitude in the classroom', 'Good result.  Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/163d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 124, 2, 'She is a very nice student.', 'Waoo this excellent result keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/dec8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 25, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/dfe8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 110, 6, 'He is a happy student who loves school', 'Good result. Keep it up, boy.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/699f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 112, 4, 'A happy student', 'Fairly good result.  Sit up please', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/735f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 112, 4, 'He is a good student, who always puts his best foot forward', 'Excellent! Please, do not relent.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5f82';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 108, 8, 'He often gets distracted in class', 'Fair attempt.  Sit  up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8f50';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 112, 4, 'A well behaved student', 'Fair attempt.  Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/23b1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 112, 4, 'He is well behaved', 'Good result.  Keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2ecf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'He comports himself well in class', 'Fairly good result.  Try harder still', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7a1e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 108, 8, 'John is calm n respectful,but needs to concentrate more in his studies.', 'Poor attempt.  Sit up please', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/198e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 108, 8, 'James is calm and well behaved.He needs to focus more on his studies', 'Fair results sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/6721';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'A well behaved student', 'Poor attempt.  Sit up, please.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/67f0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'She is well behaved in class', 'Good result.  Keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/b864';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'She often gets distracted in class', 'Very good result.  Keep it up, girl.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/163d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'She pays attention to details', 'Excellent academic performance.  Keep it up, Obiita.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0a7d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 104, 12, 'She is well behaved', 'Fair attempt.  Try harder', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3f85';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 108, 8, 'She often gets distracted in class', 'Good result.  Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/b85a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'Sheâ€™s a good girl but she need to put more effort when it comes too academics.', 'Fair results sit up please', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2caa';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 112, 4, 'A happy student', 'Very good academic performance.  Keep it up, Emma.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/95ef';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 112, 4, 'A well behaved student', 'Fair attempt.  You can do better than this, Lekan.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/64ed';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 114, 2, 'Well behaved in class', 'Fair attempt.  Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/70d1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 112, 4, 'A well behaved student', 'Good result.  Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/70a0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'A well behaved student', 'Fair attempt. Try harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/e010';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'An enthusiastic learner', 'Good result.  Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a517';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 114, 2, 'A happy student', 'Fair attempt.  You can surpass this, Nwanze.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3037';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 112, 4, 'A happy student', 'Excellent academic report.  Keep it up, boy!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/72ee';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 106, 10, 'Nifemi is not dedicated to her academics. She rarely do her assignments and copy notes in class.', 'Poor attempt.  Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7c2c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 110, 6, 'Grace is quiet in the class but she needs to start making friends with people who are very serious with their academics.', 'Poor result. Wake up, please', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3f3e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 106, 10, 'Faith is good and well-behaved in class.', 'Good result.  Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ec53';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 114, 2, 'Daniella easily gets distracted by the unserious students during lessons.', 'Fair attempt. Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/97ba';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 102, 14, 'Juliana is a well behaved student.', 'Fair attempt.  Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ac5a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 106, 10, 'Uche is quite in class but he should stop allowing his friends to distract him during lectures.', 'Fair attempt.  You can do better.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7983';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'Abideen has been very consistent in maintaining academic excellence but he can be very noisy in class sometimes.', 'Very good academic performance.  Keep it up, boy.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ad17';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 114, 2, 'Victor is always quarreling with the girls in his class.', 'Fair attempt. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d569';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'Inioluwa is well behaved in the class.', 'Fair attempt.  Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/6851';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'Mahmoud is well behaved in the class.', 'Poor result.  Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/9379';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'Yusuf finds it very difficult to write class notes.', 'Poor attempt.  Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/db41';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 112, 4, 'Aliyah is a well behaved student.', 'Good academic performance.  Keep it up, Aliyah.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/cc05';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 110, 6, 'Oyinda is too playful in class. She is always making noise during class lessons.', 'Poor result.  Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/c453';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 112, 4, 'Emmanuella should learn to pay attention during lessons.', 'Fairly good result. Try harder', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0230';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 114, 2, 'Hussenait is very respectful towards her teachers.', 'Fair attempt. Sit up still', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/181c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'Blessing is attentive in class and does her work well', 'Good result.  Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/73d4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 110, 6, 'Ezekiel is very playful in the class. He hardly concentrate when a teacher is teaching.', 'Poor attempt.  Sit up please.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0cbc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 114, 2, 'Timileyi is very dedicated to his academics but the inability of his parents to pay his school fees which will prevent him from writing exams is seriously affecting his academic performance.', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/775c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 110, 6, 'Victoria is active in class and always ready to learn', 'A very good academic report.  Keep it up, Vicky.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d66b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 108, 8, 'Oyinkasola is a well behaved student but she should start making friends with people that can challenge her to do better in her academics.', 'Poor attempt. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/806e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 114, 2, 'Adeola is a well behaved student.', 'Fair attempt.  Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9dd7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 94, 22, 'Favour is calm and well-behaved in class.', 'Good result.  Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/833e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 110, 6, 'Sheâ€™s well behaved and lovely to be with.', 'Excellent performance keep it', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f058';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'Testimony is very attentive in class and respectful', 'Good result.  Keep it up, Testimony.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1bfa';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'Gentle, brilliant and well mannered.', 'Excellent result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4727';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'Gentle and well mannered.', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/b936';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 110, 6, 'Goodluck is a good boy but need to put more seriousness in his academics.', 'Very poor result sit up with focus', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ccd7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'Sheâ€™s a good girl and well behaved', 'Excellent result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ba73';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'Sheâ€™s a good girl and well behaved', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/be4a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 114, 2, 'Beautiful in and out and well mannered.', 'Good results but you do more better than this', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/06cc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 106, 10, 'James is calm and well behaved.He needs to focus more on his studies', 'Fair attempt. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2d5d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 114, 2, 'Rachel is calm and attentive in class', 'Good result.  Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d41b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'Victory is well behaved and attentive in class', 'Good result. Keep it up, Isaac.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/28e1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 110, 6, 'Keji is hardworking and very attentive in class', 'Very good result. Keep it up, girl.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/bfa1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 114, 2, 'He exhibits a positive outlook and attitude in the classroom.', 'Very good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4d97';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 114, 2, 'Samuel is very active in class but needs to pay more attention to his studies', 'Fair attempt. Sit up next term.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8723';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 114, 2, 'Sheâ€™s so smart and well mannered.', 'Average performance sit up please', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/dfe8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 106, 10, 'Firdausi is calm,respectful and attentive in class', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/265f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 112, 4, 'Sheâ€™s serious in her academics but need to work on her temperament.', 'Very good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4478';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 108, 8, 'Abideen is active in class,but he needs to concentrate more in his studies', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/58e6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 112, 4, 'Sheâ€™s a good girl and well behaved', 'Fair results sit up with target', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7266';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'Heâ€™s a good boy and need to put more effort in his work.', 'Poor performance sit up and focus', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/783e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 114, 2, 'Sheâ€™s a good girl and well behaved', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9781';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 114, 2, 'Heâ€™s a good boy and ready to learn.', 'Average performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f4d8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 105, 12, 'Heâ€™s always active and ready to learn more', 'Very good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2bd8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 114, 2, 'Sheâ€™s a good girl and well behaved but need to put more effort in her academics.', 'Fair results sit up with', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4c52';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 114, 2, 'He takes great pride in his work.', 'Excellent performance keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d40b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 108, 8, 'Heâ€™s a good boy but need to put more effort in his academics.', 'Very poor result sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/702a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 112, 4, 'Heâ€™s a good boy and ready to learn.', 'Average performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1098';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'Sheâ€™s a good girl and well behaved', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0afb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 108, 8, 'Sheâ€™s a good girl and well behaved', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f726';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 112, 4, 'She exhibits a positive outlook and attitude in the classroom.', 'Excellent result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4426';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 106, 10, 'She exhibits a positive outlook and attitude in the classroom.', 'Excellent performance keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/1037';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 112, 4, 'She exhibits a positive outlook and attitude in the classroom.', 'Excellent performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/c974';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 110, 6, 'Saratu is too playful in class.', 'Fair attempt.  Sit up please.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/df4c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 114, 2, 'Sheâ€™s a good girl and well behaved', 'Good results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4e74';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'Heâ€™s always active and ready to learn more', 'Good performance but you can do better than this next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/3e7c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'John is a well behaved student.', 'Good academic performance. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0327';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 80, 36, 'Sheâ€™s a good girl and well mannered.', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/d777';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 114, 2, 'Heâ€™s a good boy but need to focus more on academics.', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/509d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 96, 10, 'Mercy should stop following people who are not serious with their academics. They make her not to pay attention during lectures.', 'Fair attempt.  Sit up still', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/8bb8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 106, 10, 'She is committed to doing her best', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/728d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 110, 6, 'She often struggles to focus in class', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4eb1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 114, 2, 'She needs to pay more attention while teaching is going on', 'Very good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1e56';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 102, 14, 'Improvement on her relationship with others is necessary', 'Poor result sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9e48';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 110, 6, 'She needs to be more serious with academics work', 'Fair results sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/30a3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 110, 6, 'She needs to work more harder', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a796';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 114, 2, 'She exhibits a positive attitude in the class', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/82ea';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'She takes an active part in class discussions', 'Excellent performance keep it', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/960f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 112, 4, 'He needs to focus more on reading and writing', 'Fair results sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5d81';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 60, 56, 'She needs to be more zealous', 'Failed', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/36dc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 108, 8, 'More seriousness with positive utterances is required of you', 'Fair results sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1ff4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 104, 2, 'He needs to reduce his play.', 'Fair results sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4f4e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 112, 4, 'He should always be ready for learning', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0d20';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 116, 0, 'He shows maturity when solving problems', 'Excellent result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5e7c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 108, 8, 'He faithfully performs classroom task', 'Good results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1467';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 94, 22, 'He should learn how to show respect to both teachers and students', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0e6f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 106, 10, 'He needs to take things with all seriousness', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/c7e2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 60, 56, 'He should learn how to treat others well', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/86bc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 114, 2, 'She is a gentle student', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/50bf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 110, 6, 'She is not too focused during classroom activities', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/7014';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 110, 6, 'He is  an intelligent student but should avoid trouble', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/3607';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 114, 2, 'She respond appropriately when corrected', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/dec8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 92, 24, 'She needs to be more serious in her studies', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/e2f1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 70, 46, 'Monsurat is very playful in the class. She is always making noise.', 'Poor attempt.  She will do better if she get serious next term.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/b34e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 114, 2, 'Heâ€™s always active and ready to learn more', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/be89';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 96, 20, 'Shola really need to be serious with his studies.', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/582f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 0, 0, 'Good results, try better next term.', 'Excellent performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/b4cd';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 0, 0, 'Good results, try better next term.', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/f33e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 0, 0, 'Good results, try better next term.', 'Excellent result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/abde';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 0, 0, 'Fair, make room for improvement.', 'Fair results sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/ff90';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 0, 0, 'Fair, make room for improvement.', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/52a1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 0, 0, 'Poor results, make room for improvement.', 'Fair results sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/d808';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 0, 0, 'Fair, make room for improvement.', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4b53';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 0, 0, 'Fair, make room for improvement.', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/880b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 0, 0, 'Fair, make room for improvement.', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/c303';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 0, 0, 'Fair, make room for improvement.', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/a46f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 0, 0, 'Poor results, make room for improvement.', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4ecc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 0, 0, 'Poor results, make room for improvement.', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/d59a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 0, 0, 'Poor results, make room for improvement.', 'Failed sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/fb57';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 0, 0, 'Fair, make room for improvement.', 'Good results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/936e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 26, 0, 0, 'Good results, try better next term.', 'Good results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/8f9d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'Very impressive result keep it up mercy.', 'Good results promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f058';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'Sheâ€™s a good girl and well behaved', 'Good results promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/b936';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'Sheâ€™s well disciplined and intelligent.', 'Excellent performance keep it up promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4727';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'Well behaved and and intelligent girl.l', 'Good results promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ba73';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'Sheâ€™s a good girl and well behaved', 'Good results promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/be4a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'Sheâ€™s a good girl and well mannered.', 'Good results keep it up promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/06cc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'Sheâ€™s a good girl and well behaved in class.', 'Average performance sit up promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7266';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'Favourâ€™s a quiet girl in the class but also need to put more effort academically.', 'Average performance sit up promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2caa';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'Sheâ€™s a good girl and well behaved', 'Average performance sit up promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/dfe8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'Heâ€™s always active and ready to learn more', 'Excellent result keep it up promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/3e7c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'Heâ€™s well reserved and well mannered.', 'Good results promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4d97';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 98, 4, 'Sheâ€™s a good girl and well behaved', 'Good results promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4478';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 96, 6, 'Heâ€™s always active but need more seriousness to academics.', 'Fair results sit up promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/783e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 90, 12, 'Sheâ€™s a good girl and ready to learn.', 'Average performance sit up promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9781';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 90, 12, 'Heâ€™s always active and ready to learn more', 'Good results but you can do better than this next term promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/be89';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 98, 12, 'Heâ€™s a good boy and ready to learn more', 'Fair results sit up promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f4d8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 96, 6, 'Heâ€™s always active and ready to learn more', 'Good results promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2bd8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'Sheâ€™s a good girl,well behaved and also improving academically.', 'Average performance sit up promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4c52';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 98, 4, 'Heâ€™s a good boy but needs more attention.', 'Fair results sit up promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/702a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 98, 4, 'Heâ€™s always active and ready to learn more', 'Good results promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1098';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'Sheâ€™s a good girl and well behaved', 'Good results promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0afb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'Sheâ€™s a good girl, gentle and well behaved', 'Good results promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f726';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'Sheâ€™s well mannered and always positive towards work.', 'Good results keep it up promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4426';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 92, 10, '', 'Excellent result keep it up promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/1037';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'Sheâ€™s a good girl and intelligent.', 'Excellent result keep it up promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/c974';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 98, 4, 'Sheâ€™s quiet,well mannered and brilliant.', 'Excellent result keep it up promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4e74';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 94, 8, 'Sheâ€™s a good girl and well behaved', 'Good results promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/d777';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'Heâ€™s a good boy but need to improve academically..', 'Good results promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/509d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 94, 8, 'Sheâ€™s a good girl and well behaved', 'Good results promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/e52e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 86, 16, 'Heâ€™s always active and ready to learn more', 'Fair results sit up promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/e560';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'Obiita is well behaved and always ready to learn.', 'Excellent academic performance.  Keep it up.  Promoted.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0a7d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'She sets an example of excellence in behaviour and cooperation.', 'Good performance keep it up promoted to jss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/cc2e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 52, 50, 'She actively participate in class discussion and asks thoughtful questions.', 'Good results promoted to jss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/936e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 92, 10, 'He shows little effort in classroom activities', 'Poor result repeat jss1', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/fb57';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 98, 4, 'She remains focused on the activity at hand.', 'Average performance sit up promoted to jss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/d59a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 96, 6, 'She follows class rules.', 'Good results promoted to jss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4ecc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 76, 26, 'She needs to work on staying on tasks.', 'Good performance promoted to jss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/c303';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 84, 18, 'He responds appropriately when corrected.', 'Good results promoted to jss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/3883';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 98, 4, 'He conducts himself with maturity.', 'Average performance sit up promoted to jss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/880b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'She frequently forgets home work and materials', 'Good results promoted to jss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4b53';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 98, 4, 'She can be disruptive at times in class', 'Fair results sit up promoted to jss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/d808';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'She needs to work on staying on tasks.', 'Good results promoted to jss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/52a1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'Shows little effort in class.', 'Average performance sit up promoted to jss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/ff90';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'He follows class rules.', 'Good results promoted to jss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/a551';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'She conducts herself well in class.', 'Good results promoted to jss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/b343';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'She conducts herself with maturity.', 'Good results promoted to jss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/7b79';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'Roland is calm and well behaved in class.', 'Good result.  Well done. Promoted to SS 3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7a1e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 96, 6, 'Juliana is well behaved student.', 'Good result. Sit up still.  Promoted to SS2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ac5a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'Rachel is calm and very attentive in class.', 'Good result.  Keep it up. Promoted to SS 3.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d41b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 98, 4, 'David is smart and friendly in class .', 'Good result.  Try harder still.  Promoted to SS 3.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/70d1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 98, 4, 'Blessing is friendly and active in class.', 'Good result.  Try harder still.  Promoted to SS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/73d4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'Victoria is active in class and always ready to learn', 'Very good academic report.  Keep it up, Vicky. Promoted to SS 3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d66b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 96, 6, 'James is calm and well behaved.He needs to focus more on his studies', 'Fair attempt.  Sit up still.  Promoted to SS 3.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2d5d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'Havilah is smart and very active in class.', 'Excellent! Please, do not relent, Havilah. Promoted to SS 3.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/72ee';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'Testimony is very attentive in class and respectful', 'Good result.  However, this is not your best.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1bfa';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'Ademola is calm and well behaved in class.', 'Very good result.  Keep it up.  Promoted to SS 3.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2ecf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'Victory is smart and very active in class', 'Very good result.  Keep it up. Promoted to SS3.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/28e1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'Joseph is very friendly and smart. He needs to pay more attention to his studies.', 'Good result.  Keep it up.  Promoted to SS 3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/70a0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'Enoch is intelligent and well behaved in class.', 'Excellent academic performance.  Please, do not relent.  Promoted to SS 3.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5f82';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'Emmanuel is well behaved and always ready to learn.', 'Very good result.  Keep it up.  Promoted to SS 3.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/95ef';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 98, 4, 'David is calm and well behaved in class.', 'Fair attempt.  Sit up.  Promoted to SS 3.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3037';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'Keji is hardworking and very attentive in class.', 'Very good academic report.  Keep it up, Keji.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/bfa1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'Lekan is very smart and active in class.', 'Fair attempt.  Sit up. Promoted!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/64ed';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'Mercy is well behaved and participates well in class.', 'Very good academic performance.  Keep it up. Promoted.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/163d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'Esther is well behaved and participates well in class.', 'Good result.  Keep it up.  Promoted to SS 3.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a517';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'Anjola is a good girl and she always ready to learn', 'Good result. Keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/b85a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 90, 12, 'Samuel needs to be more serious with his studies', 'Fair attempt.  Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8723';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'Ramadan is well behaved and participates well in class.', 'Good result.  Keep it up. Promoted!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/e010';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'Firdausi is calm,respectful and attentive in class', 'Good result. Keep it up.  Promoted!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/265f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 98, 4, 'Ademola is calm and well behaved in class.', 'Fair attempt.  Sit up. Promoted!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/23b1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 96, 6, 'Abdullahi is calm and well behaved in class.', 'Fair attempt.  Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8f50';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 90, 12, 'Abideen is playful and needs to concentrate more in his studies.', 'Fair attempt.  Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/58e6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 98, 4, 'Favour is calm and well-behaved in class.', 'Good result.  Keep it up!  Promoted to SS 3.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/833e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 96, 6, 'Frederick is active and friendly in class.', 'Fair attempt.  Sit up.  Promoted!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/735f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 96, 6, 'James is calm and well behaved.He needs to focus more on his studies', 'Fair attempt.  Sit up please.  Promoted!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/6721';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 96, 6, 'John is calm n respectful,but needs to concentrate more in his studies.', 'Fair attempt.  Sit up!  Promoted.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/198e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 90, 12, 'Shola really need to be serious with his studies.', 'Poor result.  Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/582f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'Hussenait is a well behaved in the classroom', 'Good result, Keep it up. Promoted!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/181c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 92, 10, 'Oyinkasola is well behaved in the class.', 'Poor result.  Sit up.  Promoted', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/806e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'Abideen is well behaved in the class.', 'Excellent academic performance.  Keep it up, Abideen. Promoted to SS2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ad17';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 95, 7, 'Saratu should learn to be more to be more respectful to her teachers.', 'Fair attempt.  Try harder.  Promoted', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/df4c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 96, 6, 'Ezekiel is too playful in the classroom.', 'Fair attempt. Sit up. Promoted!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0cbc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 86, 16, 'Adeola behaves well in the class.', 'Fair attempt.  Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9dd7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 90, 12, 'Nifemi behaves well in the class.', 'Poor result.  Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7c2c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'Grace is easily distracted by her friends during lessons.', 'Poor result.  Try harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3f3e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'Faith is a well behaved student', 'Good result.  Try harder still.  Promoted to SS2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ec53';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, '', 'Fair attempt.  Promoted', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/70a2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 98, 4, 'Daniella behaves well in the class.', 'Good result.  Try harder still.  Promoted!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/97ba';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'Uche is a well behaved student.', 'Good result.  However, there is room for improvement.  Promoted!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7983';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'John is a well behaved student.', 'Very Good result.  Keep it up, John.  Promoted to SS2.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0327';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 2, 'Victor can be very troublesome in the class.', 'Fair attempt.  Sit up.  Promoted', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d569';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 94, 8, 'Mahmoud is well behaved in the class.', 'Very poor result.  Repeat!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/9379';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 98, 4, 'Mercy is a well behaved student.', 'Good result.  Keep it up.  Promoted!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/8bb8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'Aaliyah is well behaved but can just switch and become quite noisy in the class during lessons.', 'Good result.  Keep it up.  Promoted!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/cc05';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'Blessing should stop allowing her friends to distract her during lesson periods.', 'Fair attempt.  Sit up.  Promoted', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/4085';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 102, 0, 'Monsurat is too playful in the class.', 'Fair attempt.  Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/b34e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 9, 27, 100, 2, 'Jonathan is a good boy but need more attention to school works.', 'Fair results sit up promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ccd7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 124, 2, 'Semilore is well behaved in the class.', 'Poor attempt. Sit up, please.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8d5f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'Esther behaves well in the class.', 'Good result. Try harder, still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1e56';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 92, 34, 'Esther is very quiet in the class.', 'Poor result. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9e48';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 120, 6, 'Esther is active and dedicated to her work', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a517';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 124, 2, 'Divine is ready to learn and diligent in character', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/b864';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'Ramadan needs to focus more on his studies', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/e010';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'He needs to pay more attention in class', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/67f0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 124, 2, 'Roland needs to put in more effort for a better result', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7a1e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 118, 8, 'She is active in class and hardworking', 'Excellent result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0a7d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 124, 2, 'Victor is attentive in class and hardworking', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/699f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 122, 4, 'He needs to put in more effort for a better result next term', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/23b1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 120, 6, 'He has a good communication skills with his colleagues', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2ecf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 112, 14, 'He is always neat and respectful', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/95ef';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 114, 12, 'Enoch is studious and hardworking', 'Excellent result', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5f82';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 108, 18, 'He needs to be regular in school and punctual', 'Failed', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3037';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 118, 8, 'He needs to pay more attention in class and play less', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/64ed';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 112, 14, 'He needs to put in more effort for a better result next term', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/70d1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 110, 16, 'She is active in class and hardworking', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/163d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 122, 4, 'He needs to concentrate more on his studies', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8f50';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 122, 4, 'He shows exemplary conduct and respect for school rules.', 'Excellent performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/16ac';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 122, 4, 'He shows enthusiasm and curiosity in class.', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/492d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 102, 24, 'He needs to be regular in school and punctual', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/6721';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'She needs to work on staying on tasks.', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/0e74';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 92, 34, 'He needs to be regular in school and punctual', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/198e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'She needs to work on staying on tasks.', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/6889';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 124, 2, 'He needs to show more interest in class activities.', 'Fair performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/912d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 116, 10, 'He should work on reducing distractions to maximise learning time.', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/e4cc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 124, 2, 'He should work on reducing distractions to maximise learning time.', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/e227';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'He should work on reducing distractions to maximise learning time.', 'Good results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/5ed2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 98, 28, 'She needs to be regular in class', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/b85a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 124, 2, 'He needs to show more interest in class activities.', 'Failed', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/850f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 106, 20, 'He should work on reducing distractions to maximise learning time.', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/0644';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 116, 10, 'He conducts himself with maturity.', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/7cc1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 114, 12, 'She conducts herself with maturity.', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/f6e4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 108, 18, 'She conducts herself with maturity.', 'Excellent performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/6c9b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 101, 25, 'She needs to participate more in class', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/16fd';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 114, 12, 'Put in more effort for a better result next term.', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/735f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 98, 28, 'She needs to participate more in class', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/cf4a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 106, 20, 'Havilah is studious and hardworking', 'Good results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/72ee';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 58, 68, 'He shows enthusiasm and curiosity in class.', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/b6a8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 58, 68, 'He needs to show more interest in class activities.', 'Failed and very poor', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/f99c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'Ochuko is a well behaved student.', 'You can do better than this, Ochuko. I am rooting for you.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/960f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 120, 6, 'Victory is a very responsible and well behaved student.', 'An Excellent result. Keep it up, Imarhia', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a592';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 108, 18, 'Mubarak is very playful in class. He should learn to stay focused during class lessons.', 'Poor result, sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5d81';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 114, 12, 'Victory behaves well in the class.', 'Poor attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/36dc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 108, 18, 'Mubarak is very playful in the class.', 'Poor attempt. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4f4e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'Very Good. Keep it up.', 'Excellent performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0327';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 124, 2, 'Annabelle is a well behaved student.', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/dec8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 82, 44, 'Goodness is well behaved in class but her frequent absences from school seriously affected her academic performance.', 'Abysmal result. Sit up, please.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/e2f1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 116, 10, 'Peace is very quiet in the class especially during lessons and she is also very respectful and obedient girl', 'Poor attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/1ed8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 106, 20, 'Lifted is well behaved in the class.', 'Good academic performance. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/b29a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 92, 34, 'Firdausi is well behaved in the class.', 'We can work towards a better performance next term, Firdaus.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/cbc9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 118, 8, 'Precious is well behaved in the class.', 'This is not a good result, Precious. I believe we can work towards a better performance next term.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/425c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 110, 16, 'Oseremhen is well behaved in the class.', 'Poor attempt.  Sit up, please.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/ac01';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 124, 2, 'Feranmi is a well behaved student. He is also very obedient and respectful to his teachers.', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5e7c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 124, 2, 'Meshach is well behaved in the class but can be sometimes very playful.', 'Fair attempt. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1467';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'Richard is well behaved in the class.', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3ff5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 112, 14, 'Queen is a well behaved student. She never gives trouble in the class.', 'Fair attempt. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/e3f9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'Lawrence is too playful in the class.', 'Poor attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/48b2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 124, 2, 'Marvelous is well behaved in the class.', 'Good academic performance. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3865';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'Daniel is too playful in the class.', 'Abysmal result. Sit up, please.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/c7e2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 120, 6, 'Rukkaya is well behaved in the class.', 'Not so good a result. Sit up, please.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/50bf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 124, 2, 'Blessing is well behaved during lecture period but she can be very troublesome to her classmates.', 'Poor result. Sit up please.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/02ef';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 120, 6, 'Taiwo is very playful in the class and can be easily distracted by people around him.', 'Poor result. Sit up, please!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/960d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 124, 2, 'Kehinde is well behaved in the class.', 'Good result. Keep up, girl.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/5189';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 106, 20, 'Enoch is very playful.', 'Fair attempt. You can do better than this, Enoch and I am rooting for you.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/ae18';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 116, 10, 'Put more effort please.', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ac5a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'Improve to a stronger performance.', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0230';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'Put more effort.', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/181c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 118, 8, 'Put tremendous effort.', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0cbc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'Put tremendous effort.', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/70a2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'Work hard.', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/97ba';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'Put more effort.', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/df4c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'Very Good. Keep it up.', 'Excellent performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ad17';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'Work harder.', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7983';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'Put more effort.', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d0b4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 124, 2, 'Work hard.', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/c453';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'Work harder.', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/b34e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'Put tremendous effort..', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/db41';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 116, 10, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/806e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 106, 20, 'Work harder next term', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9dd7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 122, 4, 'work harder next term', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3f3e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 124, 2, 'Good', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ec53';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 124, 2, 'Good performance', 'Good results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/cc05';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 98, 28, 'work harder', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7c2c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 124, 2, 'Average', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d569';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 116, 10, 'work harder next term', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/6851';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 122, 4, 'work harder next term', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/9379';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 120, 6, 'put in more effort', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/4085';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'Average,put in more effort', 'Above average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/6395';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 124, 2, 'work harder next term', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/cd24';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 122, 4, 'She is an easy-going person', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/73d4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 122, 4, 'She has a leadership trait', 'Good results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d66b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 124, 2, 'He is very evasive and indifferent', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1bfa';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 114, 12, 'She has a carefree attitude', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d41b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 114, 12, 'He is very industrious', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/28e1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 124, 2, 'He is an easy-going person', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8723';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'Fair, make room for improvement.', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/52a1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 114, 12, 'Fair, make room for improvement.', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/d808';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 122, 4, 'Fair, make room for improvement.', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4b53';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 122, 4, 'Fair, make room for improvement.', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/880b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 120, 6, 'Good results, try better next term.', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/3883';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 120, 6, 'Fair, make room for improvement.', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/c303';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 124, 2, 'Fair, make room for improvement.', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4ecc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 70, 56, 'Fair, make room for improvement.', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/d59a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 110, 16, 'Poor results, make room for improvement.', 'Failed', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/fb57';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 112, 14, 'Fair, make room for improvement.', 'Average performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/936e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 124, 2, 'Good results, try better next term.', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/8f9d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 94, 32, 'Poor results, make room for improvement.', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/ba60';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'Poor results, make room for improvement.', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/64c1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 0, 0, 'Poor results, make room for improvement.', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/229c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 102, 24, 'This is below average , please put in more effort', 'Poor attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9781';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'Good performance, please put in more effort next term', 'Good result, girl! Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/be4a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'This is an average performance, please put in more effort', 'Fair attempt. Try harder!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7266';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'He is too playful and not attentive in class', 'Mbikpo, you are more brilliant than what we see here. We can work harder next term to surpass this.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2caa';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'He is too playful,  rough and not attentive in class', 'Poor result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/783e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 120, 6, 'An average performance, please reduce your playful activities so as to put in more effort in your academic performance', 'Fair attempt. Sit up still!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4d97';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'An excellent performance,, put in more effort and do not relent', 'Great, great result! Please do not Stop, girl!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4727';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 120, 6, 'He is too playful, pls put in more effort next term', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2bd8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'This is below average, please put in more effort and work on your carefree attitude', 'Poor result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/509d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 124, 2, 'He is too playful and not attentive in class', 'Poor attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/0f81';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'This is below average , please put in more effort', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/dfe8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'This is an average performance, please put in more effort', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f4d8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 126, 0, 'Your performance is below average please put in more effort next term', 'Poor attempt. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4c52';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 28, 120, 6, 'This is an average performance, please put in more effort', 'Fair attempt. Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/f0f3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 114, 12, 'She is well behaved', 'Poor result. Work harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7c2c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 122, 4, 'Victory is well behaved in the class.', 'Average academic performance. Try harder', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/36dc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'He is a well behaved student', 'Poor result. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/9379';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 126, 0, 'Sheâ€™s a good and well behaved student', 'Fair attempt. Try harder', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/6851';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 116, 10, 'Semilore is a well behaved student.', 'Average academic performance. Try harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8d5f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 126, 0, 'Zainab is very attentive to learn something whenever a teacher is in the class.', 'Average academic performance. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4eb1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'Esther is very respectful to her teachers.', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1e56';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 88, 38, 'Esther is very quite in the class but she missed so many days of school during the term.', 'Poor attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9e48';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 126, 0, 'Ochuko is a well behaved student', 'Good performance. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/960f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'Victory is well behaved in the class.', 'Outstanding academic report. Please do not relent.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a592';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 120, 6, 'Mubarak plays a lot in the class', 'Fair attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5d81';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'Miracle is too playful in the class.', 'Fair attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1ff4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'Mubarak is too playful in the class.', 'Poor attempt. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4f4e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 126, 0, 'Intelligent and hardworking', 'Good result. Try harder still', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ac5a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'Gentle and hardworking', 'Average performance. There is room for improvement.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0230';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 126, 0, 'Gentle and intelligent', 'Good result, Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/181c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 6, 'Intelligent and calm', 'Fair attempt. Try harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0cbc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 126, 0, 'Gentle and hardworking', 'Fair attempt. Try harder still', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/70a2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 116, 10, 'Calm and hardworking', 'Poor report. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/df4c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 114, 12, 'Gentle and hardworking', 'Poor academic performance. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/97ba';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 126, 0, 'Very hardworking', 'Excellent performance. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0327';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'Outspoken and intelligent', 'Poor attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/c453';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 126, 0, 'Smart and hardworking', 'Outstanding academic report. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ad17';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 120, 6, 'Very good', 'Fair attempt. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7983';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'Outspoken and intelligent', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/b34e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 120, 6, 'Very gentle and intelligent', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d0b4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'Smart and hardworking', 'Fair attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/db41';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 116, 10, 'Oluwaferanmi is a very responsible and well behaved student', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5e7c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 118, 8, 'Sheâ€™s a good and well behaved student', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9dd7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 122, 4, 'She is a well behaved student', 'Sit up, Grace. You can do better than this', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3f3e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 118, 8, 'Sheâ€™s well behaved and attentive in class', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ec53';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 122, 4, 'He is well behaved in class', 'Fair attempt. Try harder', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d569';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'Sheâ€™s well behaved,attentive and helpful', 'Good performance. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/cc05';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'Meschach is a well behaved student.', 'Good result. Try harder still', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1467';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 112, 14, 'He is a well behaved student', 'Good result. Try harder still!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/6395';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 118, 8, 'She is a good student', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/cd24';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 116, 10, 'She is gentle and well behaved in class', 'Good attempt. Though, there is room for improvement!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/0669';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 126, 0, 'Richard is a well behaved student.', 'Good result. Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3ff5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 120, 6, 'Queen is a very good girl and also very respectful to her teachers.', 'Good result. Try to improve in your weak areas.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/e3f9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'She engages in unnecessary discussion in class, which makes her inattentive to her studies', 'Fair results sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7266';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 122, 4, 'He can be very playful in class and also has a carefree attitude', 'Fair results sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f4d8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'Lawrence is too playful in the class.', 'Poor attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/48b2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 122, 4, 'Marvelous is well behaved in the class.', 'Good performance. Keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3865';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 126, 0, 'Daniel is too playful in the class and he also like to dress improperly in school.', 'Fair attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/c7e2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 120, 6, 'Rukkaya is very calm in the class.', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/50bf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 126, 0, 'Blessing is a well behaved student.', 'Fair attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/02ef';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'Annabel is a well behaved student', 'Good result. Try harder still', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/dec8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 126, 0, 'Lifted is a well behaved student.', 'Brilliant result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/b29a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 122, 4, 'Taiwo is well behaved in the class.', 'Poor attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/960d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 120, 6, 'Kehinde is one of the most well behaved student in the class.', 'Great result. Keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/5189';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'Enoch is improving in his ability to concentrate during lectures. He has also minimized playing during lessons.', 'Good result. There is still room for improvement.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/ae18';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 118, 2, 'Calm and smart', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/806e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'Ruth is an hardworking girl, but gets distracted at times. She needs to pay more attention next term.', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/b343';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'Destiny is an intelligent child, but very playful, which causes him to get distracted. He needs to be more focused next term.', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/a551';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'Peace is very calm and comports herself well in the class.', 'Fair attempt. Try harder', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/1ed8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 116, 10, 'Precious needs to be more attentive in class, and she also needs to add more efforts to her studies.', 'Good nut try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/d808';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 122, 4, 'Adeola needs to be more attentive in class, and she also needs to add more efforts to her studies.', 'Good performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4b53';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 114, 12, 'Mohammed is very calm and cool headed, but he needs to pay more attention to his studies.', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/880b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 122, 4, 'Ajibola is an intelligent child, but tends to get distracted a lot and is very playful. He needs to be more attentive, and work on his studies.', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/3883';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 108, 18, 'Praise needs to be more attentive in class, and she also needs to add more efforts to her studies, and work on her temper.', 'Good results try harder next', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/c303';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'Daniella is a respectful child, but needs to pay more attention to her studies.', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/a46f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 122, 4, 'Hadiza is a very calm and cool headed girl, but needs to be more attentive in class.', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4ecc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 108, 18, 'She needs to be more attentive in class, and she also needs to add more efforts to her studies.', 'Fair performance', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/936e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 122, 4, 'Bolu is an hardworking girl, but gets distracted at times. She needs to pay more attention next term.', 'Good performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/8f9d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 122, 4, 'She is an hardworking and intelligent. But also needs to pay more attention next term.', 'Above average', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/6ca2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'Clara is very intelligent, hard working and also respectful, but needs to improve on subjects like mathematics and French.', 'Very good performance keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/cc2e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'He is very calm and cool headed, but he needs to pay more attention to his studies.', 'Average performance try harder', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/ba60';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 122, 4, 'Oseremhen is well behaved in the class', 'Fair attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/ac01';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 126, 0, 'He is calm and cool headed, but he needs to pay more attention to his studies.', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/64c1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'Precious is well behaved in the class.', 'Poor attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/425c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 102, 24, 'Firdausi is well behaved in the class. She should try to improve is in her attendance in school next term.', 'Fair attempt. Sit up. please.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/cbc9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'Victor is a well behaved student but he sleeps a lot in the class.', 'Good result. Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/5cd4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 116, 10, 'Samuel is very playful and also loves to look for trouble in the class.', 'Good result. Try harder still', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/14ef';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 126, 0, 'Sultan is well behaved in the class.', 'Fair attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/2d9a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'Precious is well behaved in the class.', 'Fair attempt. Try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/9d71';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 116, 10, 'He  is respectful and kind to peers and teachers.', 'Good performance but there is room for improvement', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/492d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'She consistently demonstrates a positive attitude toward learning.', 'Good results but there is room for improvement', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/9cc5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 116, 10, 'She follows classroom rules consistently.', 'Good  performance keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/2b9a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 122, 4, 'She  is capable of more with consistent effort.', 'Fair results', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/0e74';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 126, 0, 'She  is capable of more with consistent effort.', 'Fair results sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/6889';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 110, 16, 'He  needs to show more persistence and motivation.', 'Very poor result sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/912d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 114, 12, 'She  is capable of more with consistent effort.', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/2a63';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 120, 6, 'He  is capable of more with consistent effort.', 'Fair results sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/e4cc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 119, 7, 'He  needs regular reminders to stay organized and manage time effectively.', 'Fair performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/e227';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 125, 1, 'She  is capable of more with consistent effort.', 'Average performance sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/a285';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 122, 4, 'He  needs regular reminders to stay organized and manage time effectively.', 'Average performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/5ed2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 126, 0, 'He  is reluctant to participate in class discussions.', 'Very poor result sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/850f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 126, 0, 'He  is a role model in terms of behavior and conduct.', 'Good performance but there is room for improvement', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/16ac';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 122, 4, 'He  needs regular reminders to stay organized and manage time effectively.', 'Fair results sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/0644';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 118, 8, 'He  is capable of more with consistent effort.', 'Good performance but there is room for improvement', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/7cc1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'She  is capable of more with consistent effort.', 'Average performance there is room for improvement', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/f6e4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'She  is a role model in terms of behavior and conduct.', 'Good performance  but there is room for improvement', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/6c9b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 126, 0, 'She is respectful and kind to peers and teachers.', 'Good performance but there is room for improvement', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/16fd';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 124, 2, 'She  is capable of more with consistent effort.', 'Fair results sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/cf4a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 126, 0, 'He often requires extra support to understand key concepts.', 'Poor result sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/f99c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 29, 126, 0, 'He  is progressing well.', 'Average performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/b6a8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 114, 0, 'Esther is behaves well in the class.', 'Good results promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1e56';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 0, 'Calm and hardworking', 'Good results promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d0b4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 104, 8, 'Gentle and intelligent', 'Good results promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0230';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 98, 14, 'Intelligent and calm', 'Good results promoted to jss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ac5a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 0, 'Calm and hardworking', 'Average performance promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/70a2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 0, 'Smart and hardworking', 'Fair results promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0cbc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 102, 10, 'Gentle and hardworking', 'Average performance promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/df4c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 0, 0, 'Smart and hardworking', 'Good performance promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7983';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 110, 2, 'Gentle and hardworking', 'Excellent performance promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0327';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 110, 2, 'Gentle and hardworking', 'Average performance promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/db41';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 104, 8, 'Smart and hardworking', 'Average performance promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/c453';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 102, 10, 'Gentle and hardworking', 'Failed repeat ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/806e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 110, 2, 'Gentle and hardworking', 'Excellent result promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ad17';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 110, 2, 'Gentle and hardworking', 'Good performance promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/181c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 76, 36, 'Gentle and hardworking', 'Failed repeat ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7c2c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 88, 24, 'Calm and hardworking', 'Fair results promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/97ba';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 104, 10, 'Semilore is a well behaved in the class and very respectful to her teachers.', 'Good performance promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8d5f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 114, 0, 'Zainab is a well behaved student.', 'Good performance promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4eb1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 114, 0, 'Ochuko is well behaved and very active in class activities.', 'Good results promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/960f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 2, 'Victory is well behaved in the class.', 'Excellent result promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a592';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 108, 6, 'Mubarak is well behavedin the class.', 'Fair results promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5d81';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 78, 36, 'Victory is a well behaved student.', 'Average performance promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/36dc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 104, 8, 'Smart and hardworking', 'Average performance promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/9379';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 2, 'Miracle is too playful in the class. He should learn how to pay attention in class and avoid every distractions to play during lessons.', 'Fair results promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1ff4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 2, 'Mubarak is too playful in the class and will always want to cause disturbance during lessons.', 'Fair results promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4f4e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 114, 0, 'Feranmi is a very well behaved student.', 'Very good performance promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5e7c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 104, 8, 'Smart and hardworking', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/b34e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 2, 'Richard is a well behaved student.', 'Good performance promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3ff5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 114, 0, 'Queen is very calm and quiet in class.', 'Good results promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/e3f9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 106, 8, 'Lawrence is too playful in the class and he like to follow the unserious students in the class.', 'Fair results promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/48b2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 2, 'Marvelous is a very good and obedient girl.', 'Very good performance promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3865';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 2, 'Rukkayat is a well behaved student.', 'Fair results promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/50bf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 114, 0, 'Blessing is a well behaved student.', 'Fair results promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/02ef';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 104, 10, 'Anabelle is a well behaved student.', 'Good results promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/dec8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 2, 'Lifted is a well behaved student.', 'Very good results promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/b29a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 2, 'Taiwo is a well behaved student although he can be very playful sometimes.', 'Fair results try harder next season  Promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/960d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 101, 11, 'Calm and smart', 'Average performance promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/6851';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 90, 22, 'Well behaved in class', 'Average performance promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9dd7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 102, 10, 'Calm and intelligent', 'Fair results promoted ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3f3e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 106, 6, 'Humble and brilliant', 'Good results promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/cc05';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 0, 'Smart and hardworking', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/cd24';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 0, 'Intelligent and hardworking', 'Good results promoted to ss2 but you missed 3 exam', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/6395';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 0, 'Gentle and hardworking', 'Good results promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ec53';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 0, 'Calm and hardworking', 'Good results promoted to ss3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d569';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 110, 2, 'Calm and hardworking', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/0669';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 98, 14, 'Shows a positive attitude towards learning and follows school rules diligently.', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/492d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 0, 'She  is capable of more with consistent effort.', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/9cc5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 0, 'She consistently demonstrates a positive attitude toward learning.', 'Good result. Keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/2b9a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 114, 0, 'Precious is a well behaved student.', 'Fair results promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/9d71';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 110, 2, 'She  is capable of more with consistent effort.', 'Fair attempt. Try harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/0e74';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 0, '', 'Poor attempt. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/6889';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 106, 6, 'He  needs regular reminders to stay organized and manage time effectively.', 'Poor attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/912d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 92, 20, 'He  needs regular reminders to stay organized and manage time effectively', 'Poor attempt. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/e4cc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 110, 2, 'He  is capable of more with consistent effort.', 'Fair attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/e227';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 108, 4, '', 'Fair attempt. Try harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/a285';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 0, 'He  needs to show more persistence and motivation.', 'Fair attempt. Try harder', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/5ed2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 110, 2, 'He  needs to show more persistence and motivation.', 'Poor result. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/850f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 0, 'He  is a role model in terms of behavior and conduct.', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/16ac';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 110, 2, 'He  needs regular reminders to stay organized and manage time effectively.', 'Fair attempt. Try harder', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/0644';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 0, 'He  is respectful and kind to peers and teachers.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/7cc1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 74, 38, 'She  is capable of more with consistent effort.', 'Fair attempt. Try harder. Promoted to J.S.S 2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/a514';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 0, 'He  needs to show more persistence and motivation.', 'Poor result. Sit up. Promoted on trial.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/f99c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 0, 'He  is respectful and kind to peers and teachers.', 'Good result. Keep it up. Promoted!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/b6a8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 0, 'She is respectful and kind to peers and teachers.', 'Poor attempt. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/cf4a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 104, 8, 'She follows classroom rules consistently.', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/16fd';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 104, 8, 'She  is a role model in terms of behavior and conduct.', 'Very good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/6c9b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 82, 32, 'Firdaus is a quiet in class.', 'Fair results promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/cbc9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 108, 6, 'Enoch is a well behaved student.', 'Average performance try harder next season  Promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/ae18';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 108, 6, 'Peace is well behaved in the class.', 'Fair results promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/1ed8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 108, 6, 'Oseremhen is a well behaved student.', 'Fair results try harder next session promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/ac01';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 80, 34, 'Precious is a well behaved student.', 'Failed repeat ss1', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/425c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 104, 6, 'Victor is very calm and well behaved in the class.', 'Average performance promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/5cd4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 110, 4, 'Samuel is very playful in class and will always want to look for trouble.', 'Average performance promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/14ef';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 2, 'Sultan is well behaved in the class.', 'Average performance promoted to ss2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/2d9a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 0, 'Ruth is an hardworking girl, but gets distracted at times. She needs to pay more attention next term.', 'Good result. Promoted to J.S.S 3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/b343';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 0, 'Destiny is an intelligent child, but very playful, which causes him to get distracted. He needs to be more focused next term.', 'Good result. Promoted to J.S.S 3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/a551';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 0, 'Adeola needs to be more attentive in class, and she also needs to add more efforts to her studies.', 'Good result. Promoted!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4b53';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 90, 22, 'Mohammed is very calm and cool headed, but he needs to pay more attention to his studies.', 'Fair attempt. Promoted!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/880b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 108, 4, 'Ajibola is an intelligent child, but tends to get distracted a lot and is very playful. He needs to be more attentive, and work on his studies.', 'Good result. Keep it up. Promoted!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/3883';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 92, 20, 'Praise needs to be more attentive in class, and she also needs to add more efforts to her studies.', 'Fair attempt. Promoted!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/c303';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 0, 'Daniella is a respectful child, but needs to pay more attention to her studies.', 'Fair attempt! Promoted', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/a46f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 110, 2, 'Hadiza is a very calm and cool headed girl, but needs to be more attentive in class.', 'Fairly good result. Try harder next term. Promoted.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4ecc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 108, 4, 'Elizabeth is a very calm and cool headed girl, but needs to be more attentive in class.', 'Fairly good result. Promoted.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/d59a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 80, 32, 'Favour is a respectful child, but needs to pay more attention to her studies.', 'Promoted!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/7b79';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 96, 16, 'Sulaimon needs to be more attentive and add more efforts to his studies.', 'Poor result, sit up. Not promoted.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/fb57';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 92, 20, 'Roseline needs to be more attentive and add more efforts to her studies.', 'Fair attempt. Promoted.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/936e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 110, 2, 'Bolu is an hardworking girl, but gets distracted at times. She needs to pay more attention next term.', 'Good result. Keep it up. Promoted', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/8f9d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 110, 2, 'She is an hardworking and intelligent. But also needs to pay more attention next term.', 'Good result. Keep it up. Promoted', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/6ca2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 0, 'He is very calm and cool headed, but he needs to pay more attention to his studies.', 'Fair attempt. Sit up. Promoted', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/64c1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 0, 'Christabel is very intelligent, hard working and also respectful. She is also very attentive in class, Keep it up!', 'Excellent academic performance. Keep it up. Promoted', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/b4cd';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 100, 12, 'Clara is very intelligent, hard working and also respectful, but needs to put more efforts next term.', 'Excellent academic performance. Keep it up. Promoted', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/cc2e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 10, 30, 112, 0, 'He is calm and cool headed, but he needs to pay more attention to his studies.', 'Fair attempt. Sit up. Promoted to the next class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/ba60';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 116, 12, 'Participates actively but can improve consistency in attention.', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/0a9f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 122, 6, 'Needs to show greater discipline and responsibility in class activities.', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/e0c9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 116, 12, 'Demonstrates maturity, responsibility, and leadership in class activities.', 'Outstanding academic performance. Keep it up, girl', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/16fe';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 126, 2, 'Should focus more in class and avoid unnecessary distractions.', 'Fair attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/e081';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Demonstrates good behavior most of the time; minor lapses in conduct.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/5187';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Shows a positive attitude toward learning and classroom activities.\n', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/0310';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 114, 14, 'Should focus more in class and avoid unnecessary distractions.', 'Poor result. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/7d20';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 92, 36, 'Can achieve better outcomes if classroom behavior improves.\n', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/ace9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 118, 10, 'Displays positive behavior most of the time; consistency will help further.', 'Fair attempt. Try harder!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/949f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Consistently displays outstanding conduct and respect for authority.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/6396';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 126, 2, 'Behavior is fair but needs greater consistency and discipline.', 'Fairly good result. Try harder still', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/cfc2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 68, 60, 'Needs to work on maintaining better self-discipline in class.', 'I know he would do better next term.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/bab7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 120, 8, 'Generally well-composed and responds positively to corrections.', 'Very good result. Keep it up, Dave.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/d612';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Works well with peers and contributes positively to group tasks.', 'Fair attempt. Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/3eb6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Generally well-composed and responds positively to corrections.', 'Good result. Keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/25d3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Displays a positive attitude toward learning and teachers.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/beb0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 124, 4, 'Always calm, gentle, and mindful of others.', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/c58a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 121, 7, 'Works well with peers and contributes positively to group tasks.', 'A very good result. Keep it up, girl.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/7702';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Sofiat is a well behaved and very responsible student.', 'Evidence of hard work. Sofiyat is very industrious. Please, do not relent', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4727';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Haleeyah is well behaved in the class', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/be4a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 126, 2, 'Favour is well behaved in the class.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/06cc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 126, 2, 'Ayodeji is a well behaved student', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/be89';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 124, 4, 'Shilony plays alot in the class', 'Fairly good result. Try harder', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2bd8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Divine is a well behaved student.', 'Good result, Divine. But I believe you can do better than this.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0afb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 118, 10, 'Fiyin is well behaved in the class. She always pays attention during lectures.', 'Outstanding academic performance. Keep it up, girl!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/1037';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 12, 34, 50, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/0a9f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 122, 6, 'Funmi is a well behaved student', 'Excellent academic performance. Do not relent, Fumi', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f058';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/20f9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/e447';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/42dd';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8c69';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/ac78';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 118, 10, 'A fair result. Keep the ball rolling.', 'Fair attempt. Try harder', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/2586';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 120, 8, 'A good result. Read harder next time.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/ef63';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 127, 1, 'You have tried but put more effort on the Subjects you have weakness on.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/f1a0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Nice performance but put more effort on the subjects you have weakness on.', 'Fairly good result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/7d96';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'A good result. Keep the ball rolling. Continue with this energy.', 'Great result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/7ab5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/81ca';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'A fair result. Study more.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/6201';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'You done well but put more effort please.', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/d325';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/a2d9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/ecdb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/38c6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/119a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/fad5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/fe62';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'A better result,the best result is needed so study more.', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/dd3f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/b08c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'A good result but study harder.', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/78ad';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'You have tried but there is room for change and development.  Do better by studying.', 'Fair attempt. Try harder!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/f17f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/cfdd';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/b343';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/a551';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/ff90';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/d808';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'You have tried. Study more for greatness.', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4b53';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/880b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'You have tried,continue to study to the path of greatness.', 'Fairly good result. Try harder', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/3883';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'Nice result but study harder.', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/c303';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/a46f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4ecc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/d59a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/7b79';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/fb57';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/a54e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/936e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/8f9d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/6ca2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/abde';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/f33e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'Almost a perfect result,continue with this energy to greatness always.', 'Outstanding performance. Keep it up, girl!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/b4cd';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'Almost a perfect result, you can become the best if you study more.', 'Very good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/cc2e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/f0f3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'A good result but you need to work harder next time by studying.', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/ee4e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/ba60';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'You have tried,please study harder next time.', 'Fair attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/64c1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', 'Fair attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/229c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 115, 13, 'He is too playful.', 'Poor result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ccd7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ba73';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 92, 36, 'She is well behaved.', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2caa';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/68b3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5e7c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 106, 22, 'Richard is a well behaved student.', 'Fairly good result. Sit up, please!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4d97';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 122, 6, 'She is well behaved.', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/dfe8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 122, 6, 'She is well behaved.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4478';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'She is well behaved.', 'Fair attempt. Try harder next term.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7266';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 108, 20, 'He is too playful.', 'Very poor result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/783e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'She is well behaved.', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9781';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f4d8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 124, 4, 'Joy is too playful.', 'Poor result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4c52';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d40b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 40, 88, 'Ramadan is too playful.', 'Very poor result. Sit up, please!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/702a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1098';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 126, 2, 'She is well behaved.', 'Fairly good result. Try harder still!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f726';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4426';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/c974';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4e74';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 126, 2, 'Joshua is well behaved in the class. He actively participates during class activities', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/3e7c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/d777';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 114, 14, 'Ola is very playful in the class', 'Fair attempt. Try harder!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/509d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/e52e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 122, 6, 'Quadri is very playful in class. He easily gets distracted during lectures.', 'Poor result. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/e560';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 126, 2, 'Elizabeth is a well behaved and very respectful student.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/e854';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 122, 6, 'Prospect is very playful in the class.', 'Fairly good result. Try harder still', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/ef24';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Stanley rarely pays attention in class. He is often absent minded during lectures.', 'Poor attempt. Please, sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/0f81';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Khalid is mostly well behaved in class and sometimes he might get very playful in the class.', 'Fair attempt. Try harder', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/b311';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/14ef';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/9d71';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 126, 2, 'Awwal is well-behaved in the class.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/f2e9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 122, 6, 'Fareedah is too quiet in the class. She rarely ask or answer questions in the class.', 'Fairly good result. Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/822e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 60, 68, 'He is too playful.\n\n', 'Poor attempt. Sit up, please', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/dc58';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 104, 24, 'She is well behaved.', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/4148';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 126, 2, 'Elijah is well behaved in the class.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/9b1a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 126, 2, 'Goodluck is behaves well in the class.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/ce09';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 124, 4, 'She is well behaved.', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/a339';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 100, 28, 'Ayoritse is a well behaved student.', 'Poor attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/277f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'She is well behaved.', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/1c37';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 124, 4, 'She is well behaved.', 'Fair attempt. Try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/b936';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Nifemi is very attentive and well behaved in class, she also needs to work harder on her studies.', 'Great result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/2b9a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/728d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 116, 12, 'Hardworking and intelligent', 'Fairly good result. Try harder still!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8d5f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Calm and intelligent', 'Poor result. Sit up, Zainab!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4eb1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 116, 12, 'Gentle and intelligent', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1e56';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9e48';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/30a3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a796';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/82ea';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Hardworking and intelligent', 'Fairly good result. Try harder!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/960f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 126, 2, 'Gentle and hardworking', 'Brilliant academic performance. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a592';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'Smart and hardworking', 'Poor result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5d81';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'Intelligent and smart', 'Poor attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/36dc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'Smart and hardworking', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1ff4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'Gentle and smart', 'Poor result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4f4e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Smart and hardworking', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1467';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3ff5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'Hardworking and smart', 'Brilliant academic performance. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/e3f9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0e6f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/6784';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/fee0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/68d5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1efb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/42e7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5ef8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ef59';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/acd6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/64e1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9095';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1dee';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 124, 4, 'Smart and hardworking', 'Poor result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/48b2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 126, 2, 'Intelligent and smart', 'Outstanding performance! Marvellous is very industrious. Please, do not relent.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3865';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f12f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/cbda';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'Smart and hardworking', 'Fairly good result. Try harder!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/c7e2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/ddcc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/b000';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/86bc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/ed04';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/0eb7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 122, 6, 'Gentle and hardworking', 'Good result. Keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/02ef';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/7014';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/3607';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 126, 2, 'Intelligent and smart', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/dec8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'Gentle and smart', 'Poor attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/e2f1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 118, 10, 'Intelligent and smart', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/b29a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 120, 8, 'Smart and intelligent', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/960d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 122, 6, 'Smart and hardworking', 'Outstanding performance. Do not relent, Kehinde.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/5189';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 124, 4, 'Gentle and smart', 'Fair attempt. Try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/ae18';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'Smart and hardworking', 'Fairly good result. Try harder', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/1ed8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'Intelligent and smart', 'Fairly good result. Try harder, please!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/ac01';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'Gentle and intelligent', 'Poor result. Sit up, please!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/425c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'Smart and hardworking', 'Poor result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/9b71';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 106, 22, 'Smart and hardworking', 'Poor attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/cbc9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Gently and hardworking', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/5cd4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/2d9a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/0669';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, 'Gentle and hardworking', 'Poor attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/ebe4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Intelligent and calm', 'Fairly good result. Try harder!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/50bf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/52a1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 124, 4, 'Goodness is an intelligent boy, but he needs to be mindful of his attentiveness in class.', 'Good academic performance. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/16ac';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 126, 2, 'Elizabeth is an intelligent girl, but she needs to put more effort in her studies and attentiveness in class.', 'Good result. Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/2a63';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 126, 2, 'David needs to put more effort in his studies, and pay more attention in class.', 'Fair attempt. Sit up, please.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/e227';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Victory is very respectful and attentive, but she needs to work harder on her studies.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/9cc5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 124, 4, 'Gideon is an intelligent boy, but he needs to work harder on his attentiveness in class.', 'Good result. Well done!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/492d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 118, 10, 'Success is very playful, and needs to work on his attentiveness in the class.', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/0644';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 120, 8, 'Divine is very attentive in class, but she needs to work on her appearance and put more effort in her studies.', 'Brilliant result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/6c9b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 104, 24, 'Destiny needs to work harder in his studies, and pay more attention in the class.', 'Poor attempt. Work harder, please.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/912d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 110, 18, 'Gift is attentive in class but she needs to work harder on her studies, and be mindful of her temper.', 'Fair attempt. Try harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/0e74';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/e4cc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 122, 6, 'Divine favour has a very nice temperament and is respectful, but she needs to work harder on her studies.', 'Good result. Well done!\n', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/a285';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Emmanuella is very attentive and well behaved in the class.', 'Outstanding result. Keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/16fd';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Richard needs to work harder on his studies, and pay more attention in class.', 'Poor result. Sit up, please.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/850f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Godspower needs to work on his attentiveness in class, and pay more attention to his studies.', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/5ed2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Gold needs to put more effort in his studies and be more attentive in class.', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/7cc1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Nifemi has a nice temperament, but needs to work harder on her studies.', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/6889';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/cf4a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/f6e4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/b6a8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/f99c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/721d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 108, 20, 'Immaculate is an intelligent and well behaved girl, she also has a good temperament and is very attentive in class.', 'Outstanding! Please, do not relent.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/b8f5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 126, 2, 'Maryam needs to work harder on her studies, and pay more attention in class.', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/0538';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Peace needs to work harder on her studies, and put more effort in her participation and attention in class.', 'Poor result. Try harder!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/5382';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 126, 2, 'Gentle and intelligent', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/cbdb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 126, 2, 'Gentle and calm', 'Poor result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/e63b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Hardworking and smart', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/8ec8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 114, 14, 'Smart and intelligent', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/6752';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'Smart and calm', 'Poor result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/1c47';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 124, 4, 'Intelligent and smart', 'Very poor result. Sit up, please', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/6732';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/9ec1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 106, 22, 'She is agreeable and polite when working with others', 'Fair attempt. Try harder!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ac5a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 118, 10, 'She is an easy-going person but very deceptive.', 'Fair attempt. Try harder!\n', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0230';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'She is honest and trustworthy in dealing with others', 'Good result.  Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/181c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 122, 6, 'He is confident, positive    and a great  role model for his classmates.', 'Fair attempt. Try harder!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0cbc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/775c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 106, 22, '', 'Very poor result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/806e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 120, 8, 'She is very neat and submissive \n\n\n', 'Poor attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9dd7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7c2c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 124, 4, 'She is very sluggish and deceptive.', 'Poor attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3f3e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 126, 2, 'She is very humble person but very evasive', 'Poor attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ec53';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'He has the habit of learning in the classroom but gives up easily', 'Fair attempt. Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/70a2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/97ba';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'She has cultivated slow habit in d classroom and over carried away.', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/df4c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 116, 12, 'He is very lazy and troublesome', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7983';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 116, 12, 'He has incredible self-discipline and always gets work done in a timely manner', 'Very good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ad17';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 126, 2, 'He is considerate when  interacting with his teacher andhas a leadership trait.', 'Outstanding academic performance. Keep it up, John.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0327';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'She is an easy-going person in d classroom and responsible.', 'Fair attempt. Try harder!\n', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d0b4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 120, 8, 'He has cultivated habit of sleeping in the classroom and not be attentive as well.', 'Fairly good result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d569';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 126, 2, 'She has childish habit and mimicking her peers.', 'Poor result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/6851';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/5f7a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'He has the habit of learning in classroom but no commensuration', 'Poor attempt! Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/9379';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/8bb8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 128, 0, 'He has  the habit of disrespecting others and avoid responsibility.', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/db41';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 120, 8, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/cc05';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 110, 18, 'She has countless habits and believes all is normal.', 'Poor result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/c453';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/4085';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/b34e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 126, 2, 'He is very humble in d classroom and loves team work', 'Fair attempt. Sit up still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/6395';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 120, 8, 'She is an easy- going person in the classroom  and does association', 'Poor result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/cd24';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 102, 26, 'She has the habit of eating in the classroom and gives up easily.', 'Fair attempt. Try harder still!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/f166';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 104, 24, 'She does not give up when facing a task that is difficult and always does her best', 'Fair attempt. Try harder, Jessica', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/6d99';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 122, 6, 'She has the habit of association and teamwork.', 'Fair attempt. Try harder still', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/ff09';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 0, 'A very unpleasant result,please study harder,you can do better.', 'Poor attempt. Try harder', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/ed86';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 0, 'A fair result,please keep this energy on by studying continuously.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/1522';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 31, 0, 0, 'Smart and calm', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2026/e6a9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Smart and intelligent', 'Fairly good result. Sit up still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4eb1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 110, 12, 'Smart and intelligent', 'Fairly good result. Try harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/50bf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Smart and hardworking', 'Poor attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/960d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Gentle and smart', 'Very good result. Keep it up, Kehinde.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/5189';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Smart and hardworking', 'Excellent academic performance. Please, do not relent, Akinola', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3865';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 0, 'Smart and hardworking', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3865';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Gentle and hardworking', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/5cd4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Smart and hardworking', 'Fairly good result. Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8d5f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Gentle and smart', 'Good result. Keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/dec8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Gentle and smart', 'Good result. Keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/cbdb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Intelligent and smart', 'Good result. Try harder still', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/960f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Calm and intelligent', 'Poor attempt. Try harder next term.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/9ec1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Hardworking and smart', 'Excellent academic report. Keep it up, girl.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a592';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Smart and hardworking', 'Good result. Keep it up, Lifted.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/b29a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 112, 10, 'Hardworking and Smart', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/cbc9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Gentle and hardworking', 'Good result. Keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/8ec8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Gentle and hardworking', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1467';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Gentle and smart', 'Poor attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/ae18';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Smart and hardworking', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/6752';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Gentle and smart', 'Poor attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/1c47';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Smart and intelligent', 'Good performance. Keep it up, Esther.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1e56';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Barakat needs focus and concentration on her studies.', 'Very poor result. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/6732';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Intelligent and hardworking', 'Poor result. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/48b2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Smart and intelligent', 'Fairly good result. Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/02ef';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Goodness is an intelligent child, but he needs work on his attentiveness in class.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/16ac';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 120, 2, 'Elizabeth is an intelligent child, but there is still room for improvement.', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/2a63';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 110, 12, 'David needs to work harder on his studies and attentiveness in the class.', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/e227';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 120, 2, 'Victory is a very well behaved and respectful girl, but there is still room for improvement in her studies.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/9cc5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 118, 4, 'Gideon is well behaved and respectful, but he needs to focus and work harder on his studies and attentiveness in the class.', 'Good result. Keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/492d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Nifemi is calm, well behaved and respectful, but she needs to be more attentive to her studies.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/2b9a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 118, 4, 'Success needs to be more attentive in class and his studies.', 'Fair attempt. Try harder', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/0644';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 120, 2, 'Divine is an intelligent and well behaved girl, but needs to be more attentive to her studies.', 'Very good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/6c9b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Destiny needs to work harder on his studies and focus attentively in the class.', 'Fair attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/912d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Gift needs to work harder on her studies and attentiveness in the class.', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/0e74';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 120, 2, 'Divine Favour is calm and well behaved, but needs to pay more attention to her studies.', 'Fairly good result. Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/a285';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 120, 2, 'Emmanuella is an intelligent, calm respectful girl.', 'Very good result. Please, do not relent', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/16fd';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 118, 4, 'Richard needs to pay more attention to his studies and attentiveness in the class.', 'Poor result. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/850f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 118, 4, 'Godspower needs to work harder on his studies and attentiveness in the class.', 'Fairly good result. Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/5ed2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Gold needs work harder on his studies and attentiveness in the class.', 'Good result. Keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/7cc1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 120, 2, 'Nifemi needs to work harder on her studies and attentiveness in the class.', 'Fair attempt. You can improve on this if you work harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/6889';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 112, 10, 'Mariam needs to work harder on her studies and attentiveness in the class.', 'Poor result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/0538';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 110, 12, 'He has good potential but can be easily distracted at times. Would benefit from being more attentive during lessons.', 'Fair attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/0a9f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 120, 2, 'He enjoys interacting with others but needs to be more mindful of when to talk and when to listen.', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/5187';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'He is calm and respectful but needs to build confidence in expressing himselves.', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/949f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 104, 18, 'He behaves well but sometimes needs reminders to stay focused and follow instructions promptly.', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/d612';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 100, 22, 'He has a good attitude but needs to show more self-control, especially during class activities.', 'Fairly good result. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/e0c9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 120, 2, 'She shows kindness and consideration towards classmates, making the classroom environment more welcoming.', 'Very good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/0310';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 121, 1, 'She handles responsibilities with care and can always be trusted to do the right thing.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/6396';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 118, 4, 'Maintains good conduct but should be more confident in sharing thoughts and ideas.', 'Good result. Keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/3eb6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 118, 4, 'She consistently displays excellent behaviour and treats everyone with respect. A very dependable presence in the class.', 'Excellent academic performance. Keep it up, Annabel.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/16fe';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 119, 3, 'She enjoys interacting with peers but should learn to balance this with attentiveness in class.', 'Poor attempt. Work harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/7d20';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 118, 4, 'She shows respect but needs to put in more effort to remain attentive and actively participate in class.', 'Fairly good result. Try harder', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/cfc2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 111, 11, '\"Very Poor performance. Needs serious improvement and extra coaching in failed subjects.\"', 'Poor attempt. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/30a3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 111, 11, 'Average performance.Student shows potential but needs consistency across all subjects. Encourage more study time and less distraction.', 'Poor attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/36dc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, '\n\"Poor performance. Failed key subjects including English/Mathematics. Must attend extra lessons.\n Student should concentrate more in studies and needs consistency across all subjects. Encourage more study time and less distraction.\"', 'Poor attempt. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4f4e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Average performance you can do better.Student shows potential but needs consistency across all subjects. Encourage more study time and less distraction.\"', 'Fairly good performance. Try harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/c7e2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'A good result keep it up,Student shows potential but needs consistency across (mathematics and economics). Encourage more study time and less distraction.\"', 'Fairly good result. You can do better, Queen', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/e3f9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 113, 9, 'An average result Student shows potential but needs consistency across all subjects. Encourage more study time and less distraction.\"', 'Poor attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/1ed8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 100, 22, 'Very poor performance. Am not impressed atall Failed all subjects. Student needs urgent intervention,remedial classes, and assessment for learning difficulties. Student needs seriousness in learning more consistency across all subjects. Encourage more stu', 'Very poor result. Please, sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/425c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 112, 10, 'Very weak performance . Compared to last term he needs to do better  \nStudent needs closer supervision in reading for learning difficulties.\nEncourage more study time,tutorials and less distraction from non academic’s activities.', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/9b71';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'A very poor performance,am not impressed At all \nEncourage more study time extra tutorials classes and less distraction from non academical activities', 'Poor result. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2026/e6a9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 120, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/728d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8d5f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4eb1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1e56';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9e48';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/30a3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a796';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/82ea';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/960f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a592';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5d81';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/36dc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1ff4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4f4e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1467';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3ff5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/e3f9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0e6f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/6784';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/fee0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/68d5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1efb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/42e7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5ef8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ef59';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/acd6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/64e1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9095';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1dee';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/48b2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3865';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f12f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/cbda';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/c7e2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/ddcc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/b000';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/86bc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/50bf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/ed04';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/0eb7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/02ef';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/7014';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/3607';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/dec8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/e2f1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/b29a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/960d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/5189';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/ae18';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/1ed8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/ac01';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/425c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/9b71';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/cbc9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/5cd4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/2d9a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/0669';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/ebe4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/cbdb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/6732';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/e63b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/9ec1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/8ec8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/1c47';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/6752';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 3, 8, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2026/e6a9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 108, 14, 'A very respectful and well-mannered student who relates kindly with classmates and adults. Always a joy to have in class.', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/25d3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 112, 10, 'He at times finds it difficult to follow instructions immediately and needs to be more responsive to guidance.', 'Poor result. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/e081';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/ace9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 116, 6, 'He sas good potential but can be easily distracted at times. Would benefit from being more attentive during lessons.', 'Poor attempt. Work harder', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/bab7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 117, 5, 'She shows a strong sense of responsibility and takes instructions seriously. Interacts positively with others.', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/beb0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 116, 6, 'She shows initiative and can be relied upon to take responsibility when given tasks.', 'Very good academic performance. Keep it up, Zamat', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/c58a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 120, 2, 'She shows initiative and can be relied upon to take responsibility when given tasks.', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/7702';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 112, 10, 'She would benefit from developing a more positive attitude towards correction and classroom rules.', 'Poor result. Work harder please.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2026/1cd7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/52a1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/e4cc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/cf4a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/f6e4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/b6a8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/f99c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/721d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/5382';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/728d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9e48';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/a796';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/82ea';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5d81';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1ff4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/3ff5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0e6f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/6784';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/fee0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/68d5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1efb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/42e7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5ef8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ef59';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/acd6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/64e1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9095';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1dee';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f12f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/cbda';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/ddcc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/b000';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/86bc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/ed04';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/0eb7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/7014';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/3607';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/e2f1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/ac01';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, '', 'Fairly good result. Try harder still', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/2d9a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/0669';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 100, 22, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/ebe4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/e63b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Fumilayo is a well behaved student.', 'Very good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f058';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 120, 2, 'She is well behaved.', 'Excellent academic performance. Sofiayat is very hardworking. Keep it up, girl!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4727';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 120, 2, 'Goodluck is too playful', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ccd7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 120, 2, 'She is a well behaved student.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/be4a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 120, 2, 'Favour is a well behaved student.', 'Very good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/06cc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 120, 2, 'She is playful.', 'Poor result. Work harder please.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2caa';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 112, 10, 'Richard is a well behaved student.', 'Fairly good result. Work harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4d97';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 113, 9, 'She is a well behaved student.', 'Fairly good result. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/dfe8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 113, 9, 'She is a well behaved student.', 'Fairly good performance. Work harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4478';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 120, 2, 'He is a playful student.', 'Poor attempt. Work harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/7266';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 118, 4, 'He is too playful.', 'Very poor performance. Get serious with your studies.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/783e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 116, 6, 'She is a disciplined student.', 'Fairly good result. Sit up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/9781';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 120, 2, 'He is a disciplined student.', 'Fairly good result. Try harder', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/be89';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 120, 2, 'He is a playful student.', 'Fairly good result. Work harder still.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/2bd8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 113, 9, 'He is a playful student.', 'Poor result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/4c52';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 110, 12, 'Ramadan is a playful student.', 'Very poor result. Get serious with your studies.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/702a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 116, 6, 'She is a disciplined student.', 'Good result. However, you can do better than this.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/0afb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 120, 2, 'She is a disciplined student.', 'Good result. Keep it up, girl.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f726';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 120, 2, 'She is a disciplined student.', 'Evidence of hard work. Fiyin is very industrious. Please do not relent.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/1037';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 120, 2, 'Joshua is a disciplined student.', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/3e7c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 104, 18, 'Olabosipo is a disciplined student.', 'Fairly good result. Work harder still', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/509d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 104, 18, 'He is too playful.', 'Very poor result. Get serious with your studies.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/e560';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'She is a disciplined student.', 'Good result. Keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/e854';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 110, 12, 'He is a disciplined student.', 'Fairly good attempt. Sit up, Chiabuotu', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/ef24';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Stanley is too playful \n', 'Very poor performance. Get serious with your studies.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/0f81';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'He is a disciplined student \n', 'Fairly good result. Work harder still', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/b311';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'He is a disciplined student.', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/f2e9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'She is a disciplined student.', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/822e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 112, 10, 'Victory is too playful.', 'Poor result. But Victory has the potential of doing better than this.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/dc58';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 120, 2, 'Monica is a playful student .\n\n', 'Fair attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/4148';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'He is a disciplined student.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/9b1a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'He is a disciplined student.', 'Fairly good attempt. Work harder', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/ce09';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 112, 10, 'She is a disciplined student.', 'Fair attempt. Try harder still', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/1c37';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 0, 'She is a disciplined student.', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/1c37';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 114, 8, 'Atafiri is too playful.', 'Poor result. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/277f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 120, 2, 'Vanessa is a disciplined student.', 'Fairly good attempt. Work harder please', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/a339';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'He is a disciplined student.', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/2586';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'She is a well behaved students.', 'Good result keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/ef63';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Ruth is a disciplined student.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/7ab5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'She is a disciplined student.', 'Good result. Keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/f1a0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 108, 14, 'She is a disciplined student.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/7d96';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Ruth is a disciplined student.', 'Very good result. Keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/81ca';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'Ruth is disciplined student.', 'Very good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/b343';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'She is a disciplined student.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/6201';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'He is a playful student.', 'Poor result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/38c6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'He is a disciplined student.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/dd3f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 114, 8, 'He is a disciplined student.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/78ad';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'She is a disciplined student.', 'Fairly good result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/f17f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'He is a disciplined student.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/a551';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 108, 14, 'She is a disciplined student.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4b53';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'He is a disciplined student.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/3883';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 114, 8, 'She is a disciplined student.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/c303';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'She is a disciplined student.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/7b79';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'HE is a playful student.', 'Poor result. Sit up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/fb57';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'She is a disciplined student.', 'Good result. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/936e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'She is a disciplined student.', 'Good result. Keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/8f9d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'She is a disciplined student.', 'Very good result. Keep it up, Christabel', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/b4cd';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'She is a disciplined student.', 'Excellent academic performance. Keep it up, Clara.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/cc2e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'He is a disciplined student.', 'Fairy good result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/ee4e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'He is a disciplined student.', 'Fairy good result. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/64c1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 122, 0, 'He is a disciplined student.', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/229c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 114, 8, 'He is a disciplined student.', 'Poor attempt. Sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/ed86';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 118, 4, 'She is a disciplined student.', 'Excellent academic performance. Michelle is very hardworking. Please, do not relent!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/1522';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/ba73';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/68b3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/5e7c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/f4d8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/d40b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/1098';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4426';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/c974';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4e74';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/d777';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/e52e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/14ef';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2025/9d71';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/20f9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/e447';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/42dd';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2022/8c69';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/ac78';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/d325';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/a2d9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/ecdb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/119a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/fad5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/fe62';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/b08c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/cfdd';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/ff90';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/d808';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/880b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/a46f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/4ecc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/d59a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/a54e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2023/6ca2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/abde';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/f33e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/f0f3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 11, 32, 0, 122, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'greatkings/2024/ba60';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 114, 12, 'He exhibits a positive outlook and attitude in the classroom.', 'A very talented young man. The sky is just your starting point', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/8d96';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 128, 4, 'yes', 'Excellent result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/83d0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'Fair result, you need to improve more next term', 'You need to work harder and be focus on your studies', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/135e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 124, 2, 'He is an enthusiastic learner who seems to enjoy school.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/5429';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 124, 2, 'A fairly good result. You need to work harder next term', 'Good result work harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/bb0e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 120, 6, 'Good performance but there is room for improvement', 'Good performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/9ca8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 118, 8, 'He sets achievable goals with respect to time.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/3d8b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'Fair result, improve more next term', 'You need to be more hardworking next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/0e02';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'A very good performance.try more next term', 'Amazing result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/50fe';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 92, 34, 'He takes his classroom jobs seriously and demonstrates responsibility when completing them.', 'Great performance! Promoted to JSS3 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/58ff';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'Great Performance, keep soaring high Arnold!', 'Great performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/3a34';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'Average performance, sit up next time!', 'Average performance! You have to sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/af14';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 114, 12, 'She is always well-prepared for class each day.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/cafb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'Great Performance, keep soaring high Balogun!', 'Good performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b421';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'Good performance but there is room for improvement', 'Good performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/32a6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'A very exceptional and smart student. The sky is just your starting point!', 'Great performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/baac';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'Good performance but there is room for improvement', 'Good performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/33b9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'Average performance. He has the ability to do better if only he can put more effort on his academics.', 'Fair performance! You have to sit up and focus on your academics.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/6aa3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'Good performance but there is room for improvement', 'Good performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/0c00';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 124, 2, 'Good performance but you have the capacity to do better', 'Fair performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/4c19';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'Average performance, sit up next time!', 'This is an average result, you need to sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/a6e7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'Good performance but there is room for improvement', 'Good performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/3917';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 120, 6, 'Good performance but there is room for improvement', 'Average performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/247d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'Average performance, sit up next time!', 'Average performance! you need to work harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d3cf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'Good performance but there is room for improvement', 'Good performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d4e7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 120, 6, 'A good result but she has the capacity to do much better.', 'Fair performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b5c1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 112, 14, 'Fair result, you need to improve more next term', 'There is room for improvement,  work harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/dd62';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'Average performance, sit up next time!', 'Fair performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/ab82';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 124, 6, 'Great Performance, keep soaring high Angel!', 'Good performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/2610';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 124, 2, 'Average performance, sit up next time!', 'Average performance! you need to sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/8bc9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'Olajide is an exceptional student. The sky is just her starting point!', 'Great performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/9db5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'Average performance, sit up next time!', 'There is room for improvement,  work harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/611d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'Good result, there is still room for improvement', 'Good performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b041';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'Very good result, keep it up', 'Very good result,  there is room for improvement,  work harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/7d69';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'Good performance but there is room for improvement', 'Good performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/e12b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'Penuel is a very smart girl and with more attention on her academics, the sky will be her starting point', 'Great performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/33dd';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'She accepts the recommendations of peers and acts on them when appropriate.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/00f1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 122, 4, 'She is a self-motivated student that loves thriving in her studies.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/8e08';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 118, 8, 'She listens to the comments and ideas of others without interrupting.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/c0e0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 94, 32, 'She is patient and kind when working with her peers who need extra assistance.', 'Good performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/73e8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 116, 10, 'He works independently in class.', 'Average result, you can perform better! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/1b61';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 116, 10, 'He is smart and always willing to participate in class.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/6c05';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'She takes an active role in discussions.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/a2ed';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 124, 2, 'He has an impressive understanding and depth of knowledge about his interests.', 'Keep it up David, the sky is your starting point.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/027f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 114, 12, 'He asks for clarification when needed.', 'Average performance! You have to work harder next term.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/a143';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'He is always honest and can be counted on to recount information when asked.', 'Good performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b7ca';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 116, 10, 'She can always be counted on to cooperate with her peers.', 'Good performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/5188';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 120, 6, 'She is thoughtful and kind in her interactions with others.', 'Great performance! Keep it up! Promoted to JSS3 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/9bd2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 118, 8, 'He needs to be calm always in interacting with his peers', 'Good performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/612f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 112, 14, 'He tackles classroom assignments, tasks, and group work in an organized manner.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/7ce5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 110, 16, 'She remains an active learner always throughout the school day.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/6ee1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 120, 6, 'He faithfully performs classroom tasks.', 'Fair performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/ff3f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 116, 10, 'He is a valued member of the class..', 'Average performance! You can perform better next term. Promoted to JSS3!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b15e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'She is trustworthy and can always be counted on to step in and help where needed.', 'Good performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/9c3d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 122, 4, 'He handles disagreements with peers appropriately.', 'Average performance! With more concentration on your academics the sky will be your starting point.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/dd25';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 114, 12, 'She does not give up when facing a task that is difficult and always does her best', 'Good performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/eced';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 114, 12, 'She perseveres when faced with difficulty by asking questions and trying her best', 'Good performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/c791';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 122, 4, 'He avoids careless errors through paying attention to details.', 'Good result, you can do better! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/ee14';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'A fairly good results but you need to pay more attention to your studies', 'Good result work harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/0abf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'A very good performance.try more next term', 'Excellent performance keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/4637';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'A very good result perform more better next term', 'Amazing result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/e9ab';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'A very good performance try harder next term', 'Good result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/99ef';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 120, 6, 'A very good result work harder on your weak subject', 'Good result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/c954';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 114, 12, 'A good performance try and work harder next term', 'Good result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/bfce';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 116, 10, 'A very good performance,work harder on ur weak subject', 'Amazing keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/f17d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 118, 8, 'A very good performance need to try more better next term', 'Amazing result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/e8d5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'A very good performance. keep it up', 'Amazing result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d2e2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'A very good performance.try more next term', 'Excellent performance keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/1a6d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'A very good performance. keep it up', 'Excellent performance keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/4be6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'A very good performance keep it up', 'Amazing result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d592';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'A very good performance.try more next term', 'Good performance try harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/3f6d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'A very good performance.try more next term', 'Nice result keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d07d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 124, 2, 'A fairly good results but you need to pay more attention to your studies', 'There is a room for improvement.you have to studies hard next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/26a3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 90, 36, 'A good performance try and work harder next term', 'Kanyinsola, you need to work harder and be more focused on your academics', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/ff4b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 122, 6, 'He cooperates consistently with the teacher and other students.', 'Great performance Ronaldo. Keep it up! Promoted to SS2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/37bf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 110, 18, 'He responds appropriately when corrected.', 'Average performance! With more concentration on your academics you will perform better.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/c775';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 114, 14, 'She resists the urge to be distracted by other students.', 'Average performance! With more concentration on your academics you can perform better.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/92d4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'Good performance. Royhan is very intentional about learning but needs to devote more time to studying.', 'Good performance but you can perform better. Promoted to SS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/72c2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 118, 10, 'She is thoughtful in interactions with others.', 'Great performance! Keep it up !', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/ac60';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 126, 0, 'A good performance, keep it up Hephzibah. The sky is just your starting point.', 'Amazing result,  do not lose focus...keep it up', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d5dc';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 120, 8, 'She takes her classroom jobs seriously and demonstrates responsibility when completing them.', 'Average performance! With more concentration on your academics you can perform better.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/60eb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 118, 10, 'He is always honest and can be counted on to recount information when asked.', 'Good performance! With more attention on your academics you can perform better.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/273a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 115, 13, 'He does not give up when facing a task that is difficult and always does his best.', 'Good result but you can do better. Promoted to SS3.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/4a99';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 110, 16, 'Fairly good result, with more focus on your academics you can perform better', 'Good result,  you need to work harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/6aae';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 116, 12, 'She can always be counted on to cooperate with her peers.', 'Good result. Keep it up! Promoted to SS3.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/0af2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 41, 120, 8, 'She is always enthusiastic when completing her work.', 'Good result, keep it up. Promoted to SS3.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/0b00';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 92, 34, 'He takes his classroom jobs seriously and demonstrates responsibility when completing them.', 'Great performance! Promoted to JSS3 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/58ff';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 112, 14, 'She is honest and trustworthy in dealings with others.', 'Fair performance! Promoted to JSS3 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/e5e8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 122, 4, 'She resists the urge to be distracted by other students always.', 'Good performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/cbab';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 123, 3, 'Good performance but there is room for improvement', 'Good performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/c63d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 110, 16, 'She remains an active learner always throughout the school day.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/6ee1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 122, 4, 'Good performance but there is room for improvement', 'Good performance but you can do better next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/de0e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 118, 8, 'He sets achievable goals with respect to time.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/3d8b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 114, 12, 'She is always well-prepared for class each day.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/cafb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 126, 0, 'She accepts the recommendations of peers and acts on them when appropriate.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/00f1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 122, 4, 'She is a self-motivated student that loves thriving in her studies.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/8e08';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 118, 8, 'She listens to the comments and ideas of others without interrupting.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/c0e0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 94, 32, 'She is patient and kind when working with her peers who need extra assistance.', 'Good performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/73e8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 124, 2, 'He is an enthusiastic learner who seems to enjoy school.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/5429';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 116, 10, 'He works independently in class.', 'Average result, you can perform better! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/1b61';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 116, 10, 'He is smart and always willing to participate in class.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/6c05';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 126, 0, 'She takes an active role in discussions.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/a2ed';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 124, 2, 'He has an impressive understanding and depth of knowledge about his interests.', 'Keep it up David, the sky is your starting point.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/027f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 114, 12, 'He exhibits a positive outlook and attitude in the classroom.', 'A very talented young man. The sky is just your starting point', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/8d96';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 115, 13, 'He does not give up when facing a task that is difficult and always does his best.', 'Good result but you can do better. Promoted to SS3.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/4a99';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 122, 4, 'He avoids careless errors through paying attention to details.', 'Good result, you can do better! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/ee14';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 110, 16, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/6aae';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 126, 0, 'He is always honest and can be counted on to recount information when asked.', 'Good performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b7ca';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 122, 4, 'He handles disagreements with peers appropriately.', 'Average performance! With more concentration on your academics the sky will be your starting point.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/dd25';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 116, 12, 'She can always be counted on to cooperate with her peers.', 'Good result. Keep it up! Promoted to SS3.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/0af2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 120, 8, 'She is always enthusiastic when completing her work.', 'Good result, keep it up. Promoted to SS3.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/0b00';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 114, 12, 'He asks for clarification when needed.', 'Average performance! You have to work harder next term.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/a143';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 120, 6, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d139';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 116, 10, 'She can always be counted on to cooperate with her peers.', 'Good performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/5188';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 120, 6, 'She is thoughtful and kind in her interactions with others.', 'Great performance! Keep it up! Promoted to JSS3 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/9bd2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 126, 0, 'She is trustworthy and can always be counted on to step in and help where needed.', 'Good performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/9c3d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 118, 8, 'He needs to be calm always in interacting with his peers', 'Good performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/612f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 114, 12, 'She does not give up when facing a task that is difficult and always does her best', 'Good performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/eced';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 114, 12, 'She perseveres when faced with difficulty by asking questions and trying her best', 'Good performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/c791';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 112, 14, 'He tackles classroom assignments, tasks, and group work in an organized manner.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/7ce5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 120, 6, 'He faithfully performs classroom tasks.', 'Fair performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/ff3f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 42, 116, 10, 'He is a valued member of the class..', 'Average performance! You can perform better next term. Promoted to JSS3!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b15e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 128, 0, 'yes', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/83d0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'He exhibits a positive outlook and attitude in the classroom.', 'A very talented young man. The sky is just your starting point', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/8d96';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'He is an enthusiastic learner who seems to enjoy school.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/5429';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'He has an impressive understanding and depth of knowledge about his interests.', 'Keep it up David, the sky is your starting point.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/027f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'She takes an active role in discussions.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/a2ed';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'She remains an active learner always throughout the school day.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/6ee1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'He avoids careless errors through paying attention to details.', 'Good result, you can do better! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/ee14';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'He sets achievable goals with respect to time.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/3d8b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'He works independently in class.', 'Average result, you can perform better! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/1b61';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'He is smart and always willing to participate in class.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/6c05';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'He is a valued member of the class..', 'Average performance! You can perform better next term. Promoted to JSS3!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b15e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'He asks for clarification when needed.', 'Average performance! You have to work harder next term.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/a143';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'He handles disagreements with peers appropriately.', 'Average performance! With more concentration on your academics the sky will be your starting point.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/dd25';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'He tackles classroom assignments, tasks, and group work in an organized manner.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/7ce5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'She is always well-prepared for class each day.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/cafb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'She is a self-motivated student that loves thriving in her studies.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/8e08';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'She accepts the recommendations of peers and acts on them when appropriate.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/00f1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'She listens to the comments and ideas of others without interrupting.', 'Great result, keep it up! Promoted to JSS3', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/c0e0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'She is patient and kind when working with her peers who need extra assistance.', 'Good performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/73e8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'She can always be counted on to cooperate with her peers.', 'Good performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/5188';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'She is thoughtful and kind in her interactions with others.', 'Great performance! Keep it up! Promoted to JSS3 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/9bd2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'She is trustworthy and can always be counted on to step in and help where needed.', 'Good performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/9c3d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'He takes his classroom jobs seriously and demonstrates responsibility when completing them.', 'Great performance! Promoted to JSS3 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/58ff';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'He is always honest and can be counted on to recount information when asked.', 'Good performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b7ca';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'He needs to be calm always in interacting with his peers', 'Good performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/612f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'He faithfully performs classroom tasks.', 'Fair performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/ff3f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'She does not give up when facing a task that is difficult and always does her best', 'Good performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/eced';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'She perseveres when faced with difficulty by asking questions and trying her best', 'Good performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/c791';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'She is honest and trustworthy in dealings with others.', 'Fair performance! Promoted to JSS3 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/e5e8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'She resists the urge to be distracted by other students always.', 'Good performance! promoted to JSS3 class', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/cbab';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'Penuel is a very smart girl and with more attention on her academics, the sky will be her starting point', 'Great performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/33dd';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 115, 13, 'He does not give up when facing a task that is difficult and always does his best.', 'Good result but you can do better. Promoted to SS3.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/4a99';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 116, 12, 'She can always be counted on to cooperate with her peers.', 'Good result. Keep it up! Promoted to SS3.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/0af2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 120, 8, 'She is always enthusiastic when completing her work.', 'Good result, keep it up. Promoted to SS3.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/0b00';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 122, 6, 'He cooperates consistently with the teacher and other students.', 'Great performance Ronaldo. Keep it up! Promoted to SS2', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/37bf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 110, 18, 'He responds appropriately when corrected.', 'Average performance! With more concentration on your academics you will perform better.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/c775';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 114, 14, 'She resists the urge to be distracted by other students.', 'Average performance! With more concentration on your academics you can perform better.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/92d4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'Good performance. Royhan is very intentional about learning but needs to devote more time to studying.', 'Good performance but you can perform better. Promoted to SS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/72c2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 118, 10, 'She is thoughtful in interactions with others.', 'Great performance! Keep it up !', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/ac60';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 120, 8, 'She takes her classroom jobs seriously and demonstrates responsibility when completing them.', 'Average performance! With more concentration on your academics you can perform better.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/60eb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 118, 10, 'He is always honest and can be counted on to recount information when asked.', 'Good performance! With more attention on your academics you can perform better.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/273a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'Good performance but there is room for improvement', 'Good performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/9ca8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'Great Performance, keep soaring high Arnold!', 'Great performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/3a34';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'Average performance, sit up next time!', 'Average performance! You have to sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/af14';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'Great Performance, keep soaring high Balogun!', 'Good performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b421';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'Good performance but there is room for improvement', 'Good performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/32a6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'A very exceptional and smart student. The sky is just your starting point!', 'Great performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/baac';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'Good performance but there is room for improvement', 'Good performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/33b9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'Average performance. He has the ability to do better if only he can put more effort on his academics.', 'Fair performance! You have to sit up and focus on your academics.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/6aa3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'Good performance but there is room for improvement', 'Good performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/0c00';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'Good performance but you have the capacity to do better', 'Fair performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/4c19';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'Average performance, sit up next time!', 'This is an average result, you need to sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/a6e7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'Good performance but there is room for improvement', 'Good performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/3917';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'Good performance but there is room for improvement', 'Average performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/247d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'Average performance, sit up next time!', 'Average performance! you need to work harder next term', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d3cf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'Good performance but there is room for improvement', 'Good performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d4e7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'A good result but she has the capacity to do much better.', 'Fair performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b5c1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'Average performance, sit up next time!', 'Fair performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/ab82';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'Great Performance, keep soaring high Angel!', 'Good performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/2610';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'Average performance, sit up next time!', 'Average performance! you need to sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/8bc9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'Olajide is an exceptional student. The sky is just her starting point!', 'Great performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/9db5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'Average performance, sit up next time!', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/611d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'Good performance but there is room for improvement', 'Good performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/e12b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 29, 43, 0, 0, 'Good performance but there is room for improvement', 'Good performance! promoted to JSS2 class.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/c63d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 116, 12, 'She can always be counted on to cooperate with her peers.', 'Good result Dolapo, the sky is just your starting point!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/0af2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 122, 6, 'He cooperates consistently with the teacher and other students.', 'Outstanding performance. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/37bf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 110, 18, 'He responds appropriately when corrected.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/c775';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 114, 14, 'She resists the urge to be distracted by other students.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/92d4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 118, 10, 'She is thoughtful in interactions with others.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/ac60';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 120, 8, 'She takes her classroom jobs seriously and demonstrates responsibility when completing them.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/60eb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 118, 10, 'He is always honest and can be counted on to recount information when asked.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/273a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 106, 22, 'She demonstrates her caring nature when helping her peers when they need the assistance.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/84ff';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 110, 18, 'She does not give up when facing a task that is difficult and always does her best.', 'A fair performance. More effort is needed to improve.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/aff3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 115, 13, 'He does not give up when facing a task that is difficult and always does his best.', 'Good result David, with more dedication on your academics you can perform better!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/4a99';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 120, 8, 'She is always enthusiastic when completing her work.', 'Good result Mfoniso, the sky is just your starting point!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/0b00';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 122, 6, 'Miracle is friendly and very active in class.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/83d0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 100, 28, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/135e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 100, 28, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/0e02';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 90, 38, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/3917';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 80, 48, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/7d69';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/1fab';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/abf7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 124, 4, 'You have the potential to do better. Put in more effort.', 'Good result, the sky is just your starting point!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/562d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 122, 6, 'You have done so well. Channel more strength to your weaknesses. Do not relent.', 'Impressive result, the sky is just your starting point!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/cb37';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 116, 12, 'You need to dedicate more time to study and practice. \nYou can do better, it all starts with you being determined to improve.', 'Poor result but you have the tendency to perform better next term!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/4451';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 116, 12, 'You are always eager to learn. Do not feel discouraged.\nI believe in you and I need you to believe in yourself that you can improve.', 'Average result but you have the tendency to perform better next term!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/38e2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 123, 5, 'I see the enthusiasm to learn in you. Put in more effort and you will be proud of how great you will improve.', 'Good result but you have the tendency to perform better!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/4e4d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 124, 4, 'Do not feel discouraged, you can do better. \nI need you to put in more effort.', 'Average result but you have the tendency to perform better!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/2d37';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 124, 4, 'I am proud of how excited you are about learning. \nChannel that excitement to your studies and you will improve so much. Well done dear.', 'Good result but you have the tendency to perform better!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/df35';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 128, 0, 'Well done! You can do better. This is not best you can do, the sky is your starting point.', 'Good result but you have the tendency to perform better!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/133c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 128, 0, 'You can really do better. I need you to limit the way you play and put more effort into your studies.', 'Good result but you have the tendency to perform better!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/392b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 118, 10, 'I see the willingness to do better each day in you. Do not give up my dear.', 'Average result, but you have the tendency to perform better next term!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/8ae0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 128, 0, 'This is so impressive and I am really proud of how you have put in so much effort this term. \nThe goal is to keep getting better. Do not ever settle for less dear.', 'Great result, the sky is just your starting point!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/44e9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 114, 14, 'You can do better. This is just your starting point. Do not settle for less.', 'average result but you have the tendency to perform better next term!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/87db';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 121, 7, 'Well done!\nYou are always ready to learn and I commend that. I want you to put in more effort.', 'Good result but you have the tendency to perform better next term!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/f3c5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 114, 14, 'You can do better. Please do not be non challant with your studies. \nThe best you desire is in you , unleash it dear.', 'Poor result but you have the tendency to perform better next term!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/0dc1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 122, 6, 'He can do better, more seriousness in his studies', 'Poor result, you need to sit up Paul!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d3cf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 126, 2, 'He is calm, inquisitive and ready to learn, more encouragement especially in his handwriting', 'Great result Arnold, keep it up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/3a34';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 128, 0, 'She is easily distracted, more encouragement, she can do better', 'Average result, you can perform better with more dedication on your academics.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/611d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 124, 4, 'He is easily distracted, he can do better more seriousness, concentrations and encouragement', 'Poor result, you need to sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/a6e7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 116, 12, 'Praise is gentle and respectful.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/bb0e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/72c2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/50fe';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/0abf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 124, 4, 'A good performance. With continued effort, better results are possible.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/4637';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 116, 12, 'A good performance. With continued effort, better results are possible.', 'Outstanding performance. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/e9ab';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/ff4b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 98, 30, 'A good performance. With continued effort, better results are possible.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/99ef';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/c954';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 110, 18, 'A good performance. With continued effort, better results are possible.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/bfce';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/e8d5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 124, 4, 'A good performance. With continued effort, better results are possible.', 'Outstanding performance. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d2e2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/1a6d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 126, 2, 'A good performance. With continued effort, better results are possible.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/4be6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 106, 22, 'A good performance. With continued effort, better results are possible.', 'A fair performance. More effort is needed to improve.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b0e6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 124, 4, 'An excellent performance. Shows strong understanding and commitment.', 'Outstanding performance. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d592';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 124, 4, 'A good performance. With continued effort, better results are possible.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/3f6d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 126, 2, 'A good performance. With continued effort, better results are possible.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d07d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 106, 22, 'Performance is below expectation. Greater focus and hard work are required.', 'Below expectation. Serious improvement is required.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/26a3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 118, 10, 'A good performance. With continued effort, better results are possible.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/89ae';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 124, 4, 'A good performance. With continued effort, better results are possible.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/0a53';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 116, 12, 'A good performance. With continued effort, better results are possible.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/a323';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 124, 4, 'A good performance. With continued effort, better results are possible.', 'A good performance. With continued effort, better results are possible.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/ec77';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 100, 28, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/c0e0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d139';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 128, 0, 'He is ready to learn, more encouragement for better performances', 'Good result, the sky is just your starting point!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/9ca8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/af14';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 126, 2, 'A good performance. With continued effort, better results are possible.', 'Good result, the sky is just the starting point!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b421';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 122, 6, 'A fair performance. More consistency and effort are needed.', 'Average result, you need to work harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/32a6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/baac';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 126, 2, 'A fair performance. More consistency and effort are needed.', 'Average result, you can perform better next term.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/33b9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 128, 0, 'Performance is below expectation. Greater focus and hard work are required.', 'Poor result, with more dedication on your academics, you can perform better.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/6aa3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/0c00';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/4c19';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 128, 0, 'Performance is below expectation. Greater focus and hard work are required.', 'Average result, you need to work harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/247d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 128, 0, 'A good performance. With continued effort, better results are possible.', 'Good result but you have the tendency to perform better', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d4e7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 126, 2, 'A fair performance. More consistency and effort are needed.', 'Average result, you can perform better with more dedication on your academics.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b5c1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/dd62';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 126, 2, 'Average result Precious! with more dedication on your academics, you perform better.', 'Average result, you need to work harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/ab82';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 124, 4, '', 'Great result, the sky is just your starting point.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/2610';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 126, 2, 'A fair performance. More consistency and effort are needed.', 'Average result, you need to work harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/8bc9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/9db5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 126, 2, 'A good performance. With continued effort, better results are possible.', 'Good result but you have the tendency to perform better.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b041';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 126, 2, 'A good performance. With continued effort, better results are possible.', 'good result but you need to work harder on your academics.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/e12b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 128, 0, 'An excellent performance. Shows strong understanding and commitment.', 'Great result, the sky is just your starting point.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/33dd';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/2c51';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/8323';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 106, 22, 'A good performance with continued effort, better results are possible.', 'Average result, you can perform better next term.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/c63d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 116, 12, 'A fair performance. More consistency and effort are needed.', 'Average result, you need to improve next term.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/8929';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 100, 28, 'A fair performance. More consistency and effort are needed.', 'Poor result, with more dedication on your academics, you can perform better.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/355b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 126, 2, 'A fair performance. More consistency and effort are needed.', 'Average result, you need to work harder.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/6137';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 86, 42, 'Performance is below expectation. Greater focus and hard work are required.', 'Poor result, you need to sit up!', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/a51d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 0, 128, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/de0e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 126, 2, 'A good performance. With continued effort, better results are possible.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/8d96';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 124, 4, 'An excellent performance. Shows strong understanding and commitment.', 'Outstanding performance. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/5429';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 126, 2, 'An excellent performance. Shows strong understanding and commitment.', 'Outstanding performance. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/027f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 128, 0, 'An excellent performance. Shows strong understanding and commitment.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/a2ed';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 108, 20, 'An excellent performance. Shows strong understanding and commitment.', 'Great result, the sky is just your starting point.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/6ee1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 122, 6, 'A good performance. With continued effort, better results are possible.', 'A fair performance. More effort is needed to improve.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/ee14';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 120, 8, 'A good performance. With continued effort, better results are possible.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/3d8b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 126, 2, 'A fair performance. More consistency and effort are needed.', 'A fair performance. More effort is needed to improve.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/1b61';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 124, 4, 'A good performance. With continued effort, better results are possible.', 'A fair performance. More effort is needed to improve.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/6c05';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 124, 4, 'A good performance. With continued effort, better results are possible.', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b15e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 120, 8, 'A good performance. With continued effort, better results are possible.', 'Below expectation. Serious improvement is required.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/a143';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 122, 6, 'A good performance. With continued effort, better results are possible.', 'A fair performance. More effort is needed to improve.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/dd25';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 112, 16, 'An excellent performance. Shows strong understanding and commitment.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/7ce5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 126, 2, 'An excellent performance. Shows strong understanding and commitment.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/cafb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 122, 6, 'An excellent performance. Shows strong understanding and commitment.', 'Great result, the sky is just your starting point.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/8e08';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 124, 4, 'An excellent performance. Shows strong understanding and commitment.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/00f1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 44, 84, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/73e8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 122, 6, 'A good performance. With continued effort, better results are possible.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/5188';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 118, 10, 'An excellent performance. Shows strong understanding and commitment.', 'Great result, the sky is just your starting point.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/9bd2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 114, 14, 'A fair performance. More consistency and effort are needed.', 'A fair performance. More effort is needed to improve.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/9c3d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 112, 16, 'An excellent performance. Shows strong understanding and commitment.', 'Outstanding performance. Keep it up.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/58ff';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 128, 0, 'A fair performance. More consistency and effort are needed.', 'A fair performance. More effort is needed to improve.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b7ca';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 126, 2, 'A good performance. With continued effort, better results are possible.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/612f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 124, 4, 'A good performance. With continued effort, better results are possible.', 'A fair performance. More effort is needed to improve.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/ff3f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 120, 8, 'A good performance. With continued effort, better results are possible.', 'A fair performance. More effort is needed to improve.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/eced';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 122, 6, 'A good performance. With continued effort, better results are possible.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/c791';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 126, 2, 'A fair performance. More consistency and effort are needed.', 'Below expectation. Serious improvement is required.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/e5e8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 128, 0, 'A good performance. With continued effort, better results are possible.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/cbab';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 128, 0, 'A good performance. With continued effort, better results are possible.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/83a5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 44, 124, 4, 'A good performance. With continued effort, better results are possible.', 'A good result. Keep up the effort.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/1cd0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 100, 0, 'Great result!', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/bef6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, 'A very impressive result. You are a hardworking student. Aim for the top position next term.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/4b9b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, 'A brilliant performance! You have shown great interest in your studies. Keep up this standard.', 'An outstanding result. Keep up the excellent work and continue to be a role model to your peers.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/f063';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/a5e6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/692d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/bd2b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/a4bf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/23f4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/c72a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b4f1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/8172';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/e6d9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/816f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d686';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d161';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/5e97';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/0b25';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/30a3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/53fe';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d4c8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/e104';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/6fc6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/7f4b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/78e9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/3de0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b421';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/8929';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/9ca8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/2610';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/c0e0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d139';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/3a34';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d3cf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/a6e7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d4e7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/a51d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/0c00';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b5c1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/611d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/baac';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b041';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/c63d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/dd62';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/33b9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/355b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/e12b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/4c19';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/af14';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/9db5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/33dd';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/ab82';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/6137';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/32a6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/247d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/6aa3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 46, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/8bc9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'Calm and observant \nBut somewhat needs to be more focused', 'An outstanding result. Keep up the excellent work and continue to be a role model to your peers.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/8e08';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 108, 0, 'Magnificent result,Talks too much in the class \nBrilliant though but needs to be more concentrated in class', 'An outstanding result. Keep up the excellent work and continue to be a role model to your peers.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/6ee1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 110, 0, 'A brilliant performance! You have shown great interest in your studies. Keep up this standard.', 'An outstanding result. Keep up the excellent work and continue to be a role model to your peers.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/9bd2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'Fair result but needs to be more focused and determined', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/ee14';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'A very impressive result. You are a hardworking student. Aim for the top position next term.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b7ca';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'Excellent result but needs to be more focused and serious in class', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/a2ed';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'A brilliant performance! You have shown great interest in your studies. Keep up this standard.', 'An outstanding result. Keep up the excellent work and continue to be a role model to your peers.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/027f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'A very impressive result. You are a hardworking student. Aim for the top position next term.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b15e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/de0e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'A very impressive result. You are a hardworking student. Aim for the top position next term.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/9c3d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'Good result but you can do better', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/7ce5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 82, 0, 'A very impressive result. You are a hardworking student. Aim for the top position next term.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/73e8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'A brilliant student but lacks concentration in class', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/83a5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'You can always do better', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/1b61';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'Putting in his best to be who he is but can still take another plight', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/ff3f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'You have performed well this term. However, you need to participate more actively in class activities.', 'A good result. You have shown potential. Put in more effort in weak areas to improve further.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/dd25';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 108, 0, 'A very impressive result. You are a hardworking student. Aim for the top position next term.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/1cd0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'A very impressive result. You are a hardworking student. Aim for the top position next term.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/eced';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 110, 0, 'A very impressive result. You are a hardworking student. Aim for the top position next term.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/8d96';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 108, 0, 'A very impressive result. You are a hardworking student. Aim for the top position next term.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/00f1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'A very impressive result. You are a hardworking student. Aim for the top position next term.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/612f';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 110, 0, 'A very impressive result. You are a hardworking student. Aim for the top position next term.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/5188';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'A very impressive result. You are a hardworking student. Aim for the top position next term.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/cafb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, 'Your result is quite weak. You need to be more dedicated to your studies and avoid all distractions.', 'Poor result. This calls for urgent attention. Parents should work closely with the school to help the student improve.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/cbab';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 102, 0, 'A very impressive result. You are a hardworking student. Aim for the top position next term.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/3d8b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'A brilliant performance! You have shown great interest in your studies. Keep up this standard.', 'An outstanding result. Keep up the excellent work and continue to be a role model to your peers.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/58ff';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'A very impressive result. You are a hardworking student. Aim for the top position next term.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/5429';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'A very impressive result. You are a hardworking student. Aim for the top position next term.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/c791';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'A very impressive result. You are a hardworking student. Aim for the top position next term.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/a143';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'A very impressive result. You are a hardworking student. Aim for the top position next term.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/e5e8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 106, 0, 'A very impressive result. You are a hardworking student. Aim for the top position next term.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/6c05';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 110, 0, 'She is making a steady progress and shows a positive attitude towards learning but needs to be more focused and less easily distracted.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/ec77';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 112, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/0e02';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 10, 102, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/f91b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'You achieved a fair result. Set new goals and take realistic steps towards achieving your goals. Show commitment and reduce being carefree.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/4e4d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 110, 2, 'You require significant improvement in time management, effective study and preparation for assessment. Take time to study, understand and memorize where need be.', 'A good result. You have shown potential. Put in more effort in weak areas to improve further.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/87db';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'Outstanding performance this term. Your effort and understanding are exceptional. Keep up the brilliant work.', 'An outstanding result. Keep up the excellent work and continue to be a role model to your peers.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/44e9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 108, 4, 'Fair performance. You need to put in more effort. Practice more, ask questions and assess yourself frequently.', 'With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/392b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 112, 'Your result is quite weak. You need to be more dedicated to your studies and avoid all distractions.', 'Poor result. This calls for urgent attention. Parents should work closely with the school to help the student improve.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/7d69';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 112, 'Your result is quite weak. You need to be more dedicated to your studies and avoid all distractions.', 'Poor result. This calls for urgent attention. Parents should work closely with the school to help the student improve.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/135e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 110, 2, 'On track to pass with a good grade. \nA structured study time table, study guide and study material is strongly recommended.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/8ae0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 111, 1, 'You are eager to study. You must need more focus and less play. A better grade is attainable, just put in the effort', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/2d37';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 110, 2, 'You display strong academic discipline. You meet deadlines, you complete your notes, you do assignments which is really impressive. \nHowever, I believe you can do better. Well done.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/cd4a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 110, 2, 'Not meeting minimum expectations for this stage. One to one support is greatly recommended. We also need to create action plan for him.', 'Poor result. This calls for urgent attention. Parents should work closely with the school to help the student improve.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/ced6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'Good. However, you can do better. Do not settle for less.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/3787';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 110, 2, 'Good. You can do better. Set new goals and take steps towards achieving them.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/f3c5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 112, 'Your result is quite weak. You need to be more dedicated to your studies and avoid all distractions.', 'Poor result. This calls for urgent attention. Parents should work closely with the school to help the student improve.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/abf7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 112, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/1fab';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 110, 2, 'Average performance. Dedicate more time to studying and henceforth, answer questions with patience and calmness. Do not rush.', 'A good result. You have shown potential. Put in more effort in weak areas to improve further.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/0dc1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'Average performance. Channel more strength to the subjects you struggle with and I believe there would be a significant improvement next term.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/4451';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 110, 2, 'Steady progress this term. Aim for a better result and do not relent.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/df35';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 106, 6, 'Average performance. You need to put in consistent effort and ask the right questions. You can do better', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/38e2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'Always willing to study and she pays attention in class. She needs more monitoring and a structured study guide.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/133c';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 112, 'Your result is quite weak. You need to be more dedicated to your studies and avoid all distractions.', 'Poor result. This calls for urgent attention. Parents should work closely with the school to help the student improve.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/3917';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'Study more and play less. A better result is attainable you just need to put in more effort.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/562d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/0abf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 108, 0, 'She is a bright and diligent worker who takes pride in her achievement, demonstrating a higher 1qsense of responsibility and intellectual curiosity. Keep striving for higher goals.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/e9ab';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 110, 0, 'He is capable of doing the work but additional focus and participation in class discussions and less easily distracted are required.', 'A good result. You have shown potential. Put in more effort in weak areas to improve further.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/26a3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'He is a bright and diligent, who set an example of excellent in behavior and academic performance. keep striving for higher goals  especially in mathematics and Chemistry', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d2e2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/c954';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 104, 0, 'He has the potential  but struggles with certain concepts, additional focus and participation in class discussions are required.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/89ae';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 102, 0, 'He is making a steady progress and shows a positive attitude towards learning, although consistent focus in English and mathematics etc will boost him further.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/bfce';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 106, 0, 'He demonstrate leadership qualities and a high sense of responsibility, additional focus and participation in class discussions are required.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/99ef';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'She has a strong  grasp of fundamental concepts and is developing a strong analytical skills, although consistent focus in mathematics will boost her further.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/4be6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'He is a bright, motivated student who set a great example to peers,although more consistent focus in mathematics will boost him further', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d07d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 102, 0, 'He struggles with certain concepts, needs to work on collaborating and additional focus,participation, less easily distracted and constructively within group setting are required', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b0e6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'She is respectful to peers and teachers, and demonstrating a high sense of responsibility and intellectual curiosity.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/4637';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/ff4b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/1a6d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 110, 0, 'She  constantly produces a top-tier work, demonstrating a high sense of responsibility and intellectual curiosity, although consistent focus in mathematics will boost her further.', 'An outstanding result. Keep up the excellent work and continue to be a role model to your peers.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/83d0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/50fe';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'She has potential and active participation in class discussions, but would benefit from reviewing the work carefully before submission', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/3f6d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 110, 0, 'He is a diligent worker who takes  pride in his achievement but needs to be more focused and less easily distracted.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/bb0e';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 104, 0, 'She is a bright and diligent worker who takes pride in her achievement. Keep striving for higher goals although consistent focus in chemistry will boost her further.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/0a53';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/e8d5';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'She is capable of doing the work but struggles with certain concepts, additional focus,  less easily distracted and participation in class discussions are required', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/a323';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, 'A brilliant performance! You have shown great interest in your studies. Keep up this standard.', 'An outstanding result. Keep up the excellent work and continue to be a role model to your peers.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/72c2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'She is respectful, an example of excellent behavior and academic performance, constantly demonstrating a high sense of responsibility and intellectual curiosity.', 'An outstanding result. Keep up the excellent work and continue to be a role model to your peers.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d592';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 108, 4, 'cooperates consistently with the teacher and other students.', 'An outstanding result. Keep up the excellent work and continue to be a role model to your peers.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b421';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 110, 2, 'She takes responsibility for her learning.', 'A good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/8929';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'He shows initiative and looks for new ways to get involved.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/9ca8';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 104, 8, 'She exhibits a positive outlook and attitude in the classroom.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/2610';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 110, 2, 'He sets an example of excellence in behavior and cooperation.', 'An outstanding result. Keep up the excellent work and continue to be a role model to your peers.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/3a34';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 108, 4, 'He does not give up when facing a task that is difficult and always does his best', 'There is room for improvement. Be more serious with your studies and seek help in difficult subjects.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d3cf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 104, 8, 'He is such a caring boy/girl and demonstrates concern for his peers', 'An average result. You have shown potential. Put in more effort in weak areas to improve further.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/a6e7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'He is thoughtful and kind in his interactions with others.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d4e7';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 106, 6, 'He displays good citizenship by assisting other students.', 'Poor result. This calls for urgent attention. Parents should work closely with the school to help the student improve.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/a51d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'She takes her classroom jobs seriously and demonstrates responsibility when completing them.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b5c1';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 110, 2, 'She is thoughtful and kind in her interactions with others.', 'A good result. You have shown potential. Put in more effort in weak areas to improve further.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/611d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'She is very hardworking and always completes all of her work.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/b041';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 102, 10, 'He is exceptionally organized and takes care of her things.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/c63d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 102, 10, 'He is kind and helpful to everyone in the classroom.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/33b9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'He cooperates consistently with the teacher and other students.', 'A good result. You have shown potential. Put in more effort in weak areas to improve further.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/355b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'She shows respect for teachers and peers.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/e12b';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'She is thoughtful in interactions with others.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/33dd';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 110, 2, 'She is always honest and can be counted on to recount information when asked.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/ab82';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'He is able to cooperate and work well with any of the other students in the class', 'A good result. You have shown potential. Put in more effort in weak areas to improve further.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/6137';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'He can be depended on to do what he is asked to do.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/32a6';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 110, 2, 'He does not give up when facing a task that is difficult and always does his best', 'A good result. You have shown potential. Put in more effort in weak areas to improve further.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/247d';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, 'She needs to develop good Moral conduct, and put more effort in her Studies', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2025/aff3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'He is such a caring boy and demonstrates concern for his peers.', 'There is room for improvement. Be more serious with your studies and seek help in difficult subjects.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/6aa3';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 112, 0, 'She is kind and helpful to everyone in the classroom.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/8bc9';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, 'She is a good girl towards  her Studies and in morals, but easily influenced by her classmates .', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/60eb';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, 'She is very respectful and pays good attention in Class.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/92d4';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, 'He is an intelligent Boy and always outstanding among all his peers.Keep it up..', 'An outstanding result. Keep up the excellent work and continue to be a role model to your peers.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/37bf';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, 'He his a cool headed Boy\nEasy going and he pays more attention to his studies. Keep it up', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/273a';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, 'She is intelligent and Smart\nBut talks too much in the class..', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/ac60';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, 'Brilliant and participates actively in class. He just needs to go from relying heavily on group learning to disciplined, independent study.', 'A very good result. With more consistency and attention to detail, you can attain excellence.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/4a99';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 0, 'Smart, proactive, and deeply committed to her academic goals. Maintained an excellent standard throughout the term.', 'An outstanding result. Keep up the excellent work and continue to be a role model to your peers.', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/0af2';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 112, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/c0e0';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 112, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/d139';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 112, 'Your result is quite weak. You need to be more dedicated to your studies and avoid all distractions.', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/0c00';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 112, 'Your result is quite weak. You need to be more dedicated to your studies and avoid all distractions.', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/baac';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 112, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/dd62';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 112, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/4c19';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 112, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/af14';
+
+INSERT INTO Attendance (studentId, sessionId, termId, present, absent, teacherComment, principalComment, createdAt, updatedAt) SELECT s.id, 30, 45, 0, 112, '', '', NOW(), NOW() FROM Student s WHERE s.studentNo = 'fpis/2024/9db5';

@@ -85,6 +85,7 @@ model School {
   users               User[]
   classes             ClassRoom[]
   sessions            AcademicSession[]
+  academicTerms       AcademicTerm[]
   attendanceLocations AttendanceLocation[]
   leaveEntitlements   LeaveEntitlement[]
   payrollDeductions   PayrollDeduction[]
@@ -200,27 +201,30 @@ model Staff {
 model AcademicSession {
   id        BigInt   @id @default(autoincrement())
   schoolId  BigInt?
-  name      String   @unique @db.VarChar(20)
+  name      String   @db.VarChar(20)
   startsAt  DateTime?
   endsAt    DateTime?
   isCurrent Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  school    School?  @relation(fields: [schoolId], references: [id])
-  terms     AcademicTerm[]
-  results   Result[]
-  attendance Attendance[]
-  feeConfigs SchoolFeeConfig[]
-  feePayments SchoolFeePayment[]
-  scratchCards ScratchCard[]
-  cbtTests  CbtTest[]
-  traits    StudentTrait[]
-}
+   school    School?  @relation(fields: [schoolId], references: [id])
+   terms     AcademicTerm[]
+   results   Result[]
+   attendance Attendance[]
+   feeConfigs SchoolFeeConfig[]
+   feePayments SchoolFeePayment[]
+   scratchCards ScratchCard[]
+   cbtTests  CbtTest[]
+   traits    StudentTrait[]
+
+   @@unique([schoolId, name])
+ }
 
 model AcademicTerm {
   id         BigInt          @id @default(autoincrement())
   sessionId  BigInt
+  schoolId   BigInt?
   name       TermName
   startsAt   DateTime?
   endsAt     DateTime?
@@ -230,6 +234,7 @@ model AcademicTerm {
   updatedAt  DateTime        @updatedAt
 
   session    AcademicSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  school     School?         @relation(fields: [schoolId], references: [id], onDelete: SetNull)
   results    Result[]
   attendance Attendance[]
   feeConfigs SchoolFeeConfig[]
