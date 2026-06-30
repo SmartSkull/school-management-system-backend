@@ -131,6 +131,7 @@ export class StudentService {
   }
 
   async getResults(user: any, q: any) {
+    const schoolId = this.schoolId(user);
     const session = q.session || await this.getCurrentSession();
     const term = q.term || await this.getCurrentTerm();
 
@@ -138,10 +139,12 @@ export class StudentService {
       throw new BadRequestException('No active session or term found. Please contact admin.');
     }
 
-    const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
-    const termEntity = await this.prisma.academicTerm.findFirst({ 
-      where: { name: term as any, sessionId: sessionEntity?.id } 
-    });
+    const sessionWhere: any = { name: session };
+    if (schoolId) sessionWhere.schoolId = schoolId;
+    const sessionEntity = await this.prisma.academicSession.findFirst({ where: sessionWhere });
+    const termWhere: any = { name: term as any, sessionId: sessionEntity?.id };
+    if (schoolId) termWhere.schoolId = schoolId;
+    const termEntity = await this.prisma.academicTerm.findFirst({ where: termWhere });
 
     if (!sessionEntity || !termEntity) {
       throw new BadRequestException('Session or Term not found.');

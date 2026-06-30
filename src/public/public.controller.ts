@@ -282,10 +282,17 @@ export class PublicController {
   }
 
   @Get('public/approved-results-meta')
-  async approvedResultsMeta() {
+  async approvedResultsMeta(@Query('school') school?: string) {
+    const selectedSchool = school
+      ? await this.prisma.school.findUnique({ where: { slug: school }, select: { id: true } })
+      : null;
+    const schoolId = selectedSchool?.id;
     const [sessionTermRows, classRooms] = await Promise.all([
       this.prisma.result.findMany({
-        where: { approvedAt: { not: null } },
+        where: {
+          approvedAt: { not: null },
+          ...(schoolId ? { session: { schoolId } } : {}),
+        },
         select: {
           session: { select: { name: true } },
           term: { select: { name: true } },
@@ -294,8 +301,9 @@ export class PublicController {
       }),
       this.prisma.classRoom.findMany({
         where: {
+          schoolId,
           students: {
-            some: { results: { some: { approvedAt: { not: null } } } }
+            some: { results: { some: { approvedAt: { not: null }, session: { schoolId } } } }
           }
         },
         select: { name: true },
