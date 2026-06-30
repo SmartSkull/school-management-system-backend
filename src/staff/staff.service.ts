@@ -71,15 +71,19 @@ export class StaffService {
     return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
   }
 
-  private async getCurrentSession(): Promise<string> {
-    const r = await this.prisma.academicSession.findFirst({ where: { isCurrent: true } })
-      ?? await this.prisma.academicSession.findFirst({ orderBy: { createdAt: 'desc' } });
+  private async getCurrentSession(user?: any): Promise<string> {
+    const schoolId = user?.schoolId ? BigInt(user.schoolId) : undefined;
+    const where = schoolId ? { schoolId } : {};
+    const r = await this.prisma.academicSession.findFirst({ where: { ...where, isCurrent: true } })
+      ?? await this.prisma.academicSession.findFirst({ where, orderBy: { createdAt: 'desc' } });
     return r?.name || '';
   }
 
-  private async getCurrentTerm(): Promise<string> {
-    const r = await this.prisma.academicTerm.findFirst({ where: { isCurrent: true } })
-      ?? await this.prisma.academicTerm.findFirst({ orderBy: { createdAt: 'desc' } });
+  private async getCurrentTerm(user?: any): Promise<string> {
+    const schoolId = user?.schoolId ? BigInt(user.schoolId) : undefined;
+    const where: any = schoolId ? { schoolId } : {};
+    const r = await this.prisma.academicTerm.findFirst({ where: { ...where, isCurrent: true } })
+      ?? await this.prisma.academicTerm.findFirst({ where, orderBy: { createdAt: 'desc' } });
     return r?.name || '';
   }
 
@@ -327,8 +331,8 @@ export class StaffService {
 
   async uploadResult(user: any, body: any) {
     const schoolId = this.schoolId(user);
-    const session = await this.getCurrentSession();
-    const term = await this.getCurrentTerm();
+    const session = await this.getCurrentSession(user);
+    const term = await this.getCurrentTerm(user);
     
     const sessionWhere: any = { name: session };
     if (schoolId) sessionWhere.schoolId = schoolId;
@@ -399,8 +403,8 @@ export class StaffService {
 
   async getResults(user: any, q: any) {
     const schoolId = this.schoolId(user);
-    const session = q.session || await this.getCurrentSession();
-    const term = q.term || await this.getCurrentTerm();
+    const session = q.session || await this.getCurrentSession(user);
+    const term = q.term || await this.getCurrentTerm(user);
     
     const sessionWhere: any = { name: session };
     if (schoolId) sessionWhere.schoolId = schoolId;
@@ -524,8 +528,8 @@ export class StaffService {
 
   async getAttendance(user: any, q: any) {
     const schoolId = this.schoolId(user);
-    const session = q.session || await this.getCurrentSession();
-    const term = q.term || await this.getCurrentTerm();
+    const session = q.session || await this.getCurrentSession(user);
+    const term = q.term || await this.getCurrentTerm(user);
     
     const sessionWhere: any = { name: session };
     if (schoolId) sessionWhere.schoolId = schoolId;
@@ -562,8 +566,8 @@ export class StaffService {
 
   async updateAttendance(user: any, body: any) {
     const schoolId = this.schoolId(user);
-    const session = body.session || await this.getCurrentSession();
-    const term = body.term || await this.getCurrentTerm();
+    const session = body.session || await this.getCurrentSession(user);
+    const term = body.term || await this.getCurrentTerm(user);
     
     const sessionWhere: any = { name: session };
     if (schoolId) sessionWhere.schoolId = schoolId;
