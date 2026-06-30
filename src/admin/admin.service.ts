@@ -25,7 +25,12 @@ export class AdminService {
 
   async dashboard(user: any) {
     const schoolId = this.schoolId(user);
-    const schoolWhere = schoolId ? { schoolId } : {};
+    let effectiveSchoolId = schoolId;
+    if (!effectiveSchoolId) {
+      const managedSchool = await this.findManagedSchool(user);
+      effectiveSchoolId = BigInt(managedSchool.id);
+    }
+    const schoolWhere = { schoolId: effectiveSchoolId };
     const [totalStudents, activeStudents, pendingStudents, totalStaff, activeStaff, session, term, recentUsers, recentPayments, grouped] = await Promise.all([
       this.prisma.user.count({ where: { role: 'STUDENT', ...schoolWhere } }),
       this.prisma.user.count({ where: { role: 'STUDENT', status: 'ACTIVE', ...schoolWhere } }),
@@ -33,10 +38,10 @@ export class AdminService {
       this.prisma.user.count({ where: { role: 'STAFF', ...schoolWhere } }),
       this.prisma.user.count({ where: { role: 'STAFF', status: 'ACTIVE', ...schoolWhere } }),
       this.prisma.academicSession.findFirst({ where: { isCurrent: true, ...schoolWhere } }),
-      this.prisma.academicTerm.findFirst({ where: { isCurrent: true, ...(schoolId ? { session: { schoolId } } : {}) } }),
+      this.prisma.academicTerm.findFirst({ where: { isCurrent: true, schoolId: effectiveSchoolId } }),
       this.prisma.user.findMany({ where: { role: 'STUDENT', ...schoolWhere }, orderBy: { createdAt: 'desc' }, take: 3, select: { firstName: true, lastName: true, createdAt: true } }),
-      this.prisma.schoolFeePayment.findMany({ where: schoolId ? { student: { user: { schoolId } } } : {}, orderBy: { createdAt: 'desc' }, take: 3, include: { student: { include: { user: true } } } }),
-      this.prisma.student.groupBy({ by: ['classRoomId'], where: schoolId ? { user: { schoolId } } : {}, _count: { _all: true } }),
+      this.prisma.schoolFeePayment.findMany({ where: { student: { user: { schoolId: effectiveSchoolId } } }, orderBy: { createdAt: 'desc' }, take: 3, include: { student: { include: { user: true } } } }),
+      this.prisma.student.groupBy({ by: ['classRoomId'], where: { user: { schoolId: effectiveSchoolId } }, _count: { _all: true } }),
     ]);
 
     const classRooms = await this.prisma.classRoom.findMany({ where: schoolWhere });
@@ -628,8 +633,9 @@ export class AdminService {
     const termEntity = await this.prisma.academicTerm.findFirst({ where: termWhere });
 
     const sessionListWhere = schoolId ? { schoolId } : {};
+    const classWhere = schoolId ? { schoolId } : {};
     const [classes, sessions] = await Promise.all([
-      this.prisma.classRoom.findMany({ orderBy: { name: 'asc' } }),
+      this.prisma.classRoom.findMany({ where: classWhere, orderBy: { name: 'asc' } }),
       this.prisma.academicSession.findMany({ where: sessionListWhere, orderBy: { name: 'desc' } }),
     ]);
 
@@ -655,7 +661,7 @@ export class AdminService {
         where: userWhere, 
         select: { uniqueId: true, firstName: true, lastName: true, image: true, student: { include: { classRoom: true } } } 
       }),
-      this.prisma.classRoom.findMany({ orderBy: { name: 'asc' } }),
+      this.prisma.classRoom.findMany({ where: classWhere, orderBy: { name: 'asc' } }),
       this.prisma.academicSession.findMany({ where: sessionListWhere, orderBy: { name: 'desc' } }),
     ]);
 
@@ -709,8 +715,27 @@ export class AdminService {
 
     if (!user || !user.student || !sessionEntity || !termEntity) throw new NotFoundException('Student or Session/Term not found');
 
-    const [results, attendance, trait, principal, classWithTeacher] = await Promise.all([
+    const termUpper = term.toUpperCase();
+    const needFirst = termUpper === 'SECOND' || termUpper === 'THIRD';
+    const needSecond = termUpper === 'THIRD';
+
+    const [firstTerm, secondTerm] = await Promise.all([
+      needFirst
+        ? this.prisma.academicTerm.findFirst({ where: { name: 'FIRST', sessionId: sessionEntity.id, ...(schoolId ? { schoolId: BigInt(schoolId) } : {}) } })
+        : Promise.resolve(null),
+      needSecond
+        ? this.prisma.academicTerm.findFirst({ where: { name: 'SECOND', sessionId: sessionEntity.id, ...(schoolId ? { schoolId: BigInt(schoolId) } : {}) } })
+        : Promise.resolve(null),
+    ]);
+
+    const [results, firstResults, secondResults, attendance, trait, principal, classWithTeacher] = await Promise.all([
       this.resultsWithTotals({ studentId: user.student.id, sessionId: sessionEntity.id, termId: termEntity.id }),
+      needFirst && firstTerm
+        ? this.resultsWithTotals({ studentId: user.student.id, sessionId: sessionEntity.id, termId: firstTerm.id })
+        : Promise.resolve([]),
+      needSecond && secondTerm
+        ? this.resultsWithTotals({ studentId: user.student.id, sessionId: sessionEntity.id, termId: secondTerm.id })
+        : Promise.resolve([]),
       this.prisma.attendance.findFirst({ where: { studentId: user.student.id, sessionId: sessionEntity.id, termId: termEntity.id } }),
       this.prisma.studentTrait.findFirst({ where: { studentId: user.student.id, sessionId: sessionEntity.id, termId: termEntity.id } }),
       this.prisma.user.findFirst({ where: { role: 'ADMIN', ...(schoolId ? { schoolId } : {}) }, select: { firstName: true, lastName: true, image: true } }),
@@ -718,6 +743,38 @@ export class AdminService {
         ? this.prisma.classRoom.findUnique({ where: { id: user.student.classRoomId }, include: { classTeacher: { include: { user: true } } } })
         : Promise.resolve(null),
     ]);
+
+    const numTerms = 1 + (firstTerm ? 1 : 0) + (secondTerm ? 1 : 0);
+    const firstBySubject = new Map(firstResults.map(r => [r.subjectId.toString(), r.total_score]));
+    const secondBySubject = new Map(secondResults.map(r => [r.subjectId.toString(), r.total_score]));
+
+    const enriched = results.map(r => {
+      const currentTotal = Number(r.total_score);
+      const firstScore = Number(firstBySubject.get(r.subjectId.toString()) ?? 0);
+      const secondScore = Number(secondBySubject.get(r.subjectId.toString()) ?? 0);
+
+      const cumulative = currentTotal + firstScore + secondScore;
+      const average = numTerms > 0 ? cumulative / numTerms : currentTotal;
+
+      let grade = 'F';
+      let remark = 'Failed';
+      if (average >= 75) { grade = 'A'; remark = 'Excellent'; }
+      else if (average >= 65) { grade = 'B'; remark = 'Very Good'; }
+      else if (average >= 55) { grade = 'C'; remark = 'Good'; }
+      else if (average >= 45) { grade = 'D'; remark = 'Pass'; }
+      else { grade = 'F'; remark = 'Fail'; }
+
+      return {
+        ...r,
+        first_term_score: firstBySubject.get(r.subjectId.toString()) ?? '-',
+        second_term_score: secondBySubject.get(r.subjectId.toString()) ?? '-',
+        cumulative: cumulative.toFixed(1),
+        average: average.toFixed(1),
+        grade,
+        remark,
+      };
+    });
+
     const classTeacher = classWithTeacher?.classTeacher ?? null;
 
     return this.ok({
@@ -727,7 +784,7 @@ export class AdminService {
         image: user.image,
         uniqueId: user.uniqueId,
       },
-      results,
+      results: enriched,
       attendance,
       session,
       term,
@@ -741,27 +798,34 @@ export class AdminService {
         drawing: trait.drawing, physicalActivity: trait.physicalActivity, accuracy: trait.accuracy,
         handlingOfTools: trait.handlingOfTools, mentalSkills: trait.mentalSkills,
       } : null,
+      principalComment: null,
+      teacherComment: classTeacher?.user?.teacherComment ?? null,
     });
   }
 
   async approveResults(currentUser: any, studentId: string, body: any) {
     const session = body.session || await this.getCurrentSession(currentUser);
     const term = body.term || await this.getCurrentTerm(currentUser);
-    
-    const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
+    const schoolId = this.schoolId(currentUser);
+
+    const sessionWhere: any = { name: session };
+    if (schoolId) sessionWhere.schoolId = schoolId;
+    const sessionEntity = await this.prisma.academicSession.findFirst({ where: sessionWhere });
     const termWhere: any = { name: term.toUpperCase() as any, sessionId: sessionEntity?.id };
-    if (currentUser?.schoolId) termWhere.schoolId = BigInt(currentUser.schoolId);
+    if (schoolId) termWhere.schoolId = BigInt(schoolId);
     const termEntity = await this.prisma.academicTerm.findFirst({ where: termWhere });
     const studentUser = await this.prisma.user.findUnique({
       where: { uniqueId: studentId },
       include: { student: { include: { classRoom: true } }, school: { select: { name: true, website: true } } },
     });
 
-    if (!studentUser || !studentUser.student || !sessionEntity || !termEntity) return;
+    if (!studentUser || !studentUser.student || !sessionEntity || !termEntity) {
+      throw new NotFoundException('Student, session, or term not found');
+    }
 
-    const updated = await this.prisma.result.updateMany({ 
-      where: { studentId: studentUser.student.id, sessionId: sessionEntity.id, termId: termEntity.id }, 
-      data: { approvedAt: new Date() } 
+    const updated = await this.prisma.result.updateMany({
+      where: { studentId: studentUser.student.id, sessionId: sessionEntity.id, termId: termEntity.id },
+      data: { approvedAt: new Date() }
     });
 
     await this.prisma.notification.create({ 
@@ -807,18 +871,23 @@ export class AdminService {
   async unapproveResults(currentUser: any, studentId: string, body: any) {
     const session = body.session || await this.getCurrentSession(currentUser);
     const term = body.term || await this.getCurrentTerm(currentUser);
-    
-    const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
+    const schoolId = this.schoolId(currentUser);
+
+    const sessionWhere: any = { name: session };
+    if (schoolId) sessionWhere.schoolId = schoolId;
+    const sessionEntity = await this.prisma.academicSession.findFirst({ where: sessionWhere });
     const termWhere: any = { name: term.toUpperCase() as any, sessionId: sessionEntity?.id };
-    if (currentUser?.schoolId) termWhere.schoolId = BigInt(currentUser.schoolId);
+    if (schoolId) termWhere.schoolId = BigInt(schoolId);
     const termEntity = await this.prisma.academicTerm.findFirst({ where: termWhere });
     const studentUser = await this.prisma.user.findUnique({ where: { uniqueId: studentId }, include: { student: true } });
 
-    if (!studentUser || !studentUser.student || !sessionEntity || !termEntity) return;
+    if (!studentUser || !studentUser.student || !sessionEntity || !termEntity) {
+      throw new NotFoundException('Student, session, or term not found');
+    }
 
-    await this.prisma.result.updateMany({ 
-      where: { studentId: studentUser.student.id, sessionId: sessionEntity.id, termId: termEntity.id }, 
-      data: { approvedAt: null } 
+    await this.prisma.result.updateMany({
+      where: { studentId: studentUser.student.id, sessionId: sessionEntity.id, termId: termEntity.id },
+      data: { approvedAt: null }
     });
     return this.ok(null, 'Results unapproved successfully');
   }
@@ -844,10 +913,13 @@ export class AdminService {
   async updatePrincipalComment(currentUser: any, studentId: string, body: any) {
     const session = body.session || await this.getCurrentSession(currentUser);
     const term = body.term || await this.getCurrentTerm(currentUser);
-    
-    const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
-    const termWhere: any = { name: term as any, sessionId: sessionEntity?.id };
-    if (currentUser?.schoolId) termWhere.schoolId = BigInt(currentUser.schoolId);
+    const schoolId = this.schoolId(currentUser);
+
+    const sessionWhere: any = { name: session };
+    if (schoolId) sessionWhere.schoolId = schoolId;
+    const sessionEntity = await this.prisma.academicSession.findFirst({ where: sessionWhere });
+    const termWhere: any = { name: term.toUpperCase() as any, sessionId: sessionEntity?.id };
+    if (schoolId) termWhere.schoolId = BigInt(schoolId);
     const termEntity = await this.prisma.academicTerm.findFirst({ where: termWhere });
 
     const studentUser = await this.prisma.user.findUnique({ where: { uniqueId: studentId }, include: { student: true } });
