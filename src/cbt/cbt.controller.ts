@@ -3,7 +3,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { CbtService } from './cbt.service';
-import { JwtAuthGuard, StaffGuard, StudentGuard } from '../common/guards/auth.guard';
+import { JwtAuthGuard, StaffGuard, StudentGuard, AdminGuard } from '../common/guards/auth.guard';
 import { CurrentUser } from '../common/decorators/user.decorator';
 
 @Controller()
@@ -74,14 +74,18 @@ export class CbtController {
   bulkCreate(@CurrentUser() user: any, @Body() body: any) { return this.svc.bulkCreate(user, body); }
 
   @Post('admin/cbt/questions')
-  @UseGuards(StaffGuard)
+  @UseGuards(AdminGuard)
   adminCreateQuestion(@CurrentUser() user: any, @Body() body: any) { return this.svc.createQuestion(user, body); }
 
   @Get('admin/cbt/questions')
-  @UseGuards(StaffGuard)
+  @UseGuards(AdminGuard)
   adminGetQuestions(@Query('class') cls: string, @Query('course') course: string) { return this.svc.getQuestions(null, cls, course); }
 
+  @Get('admin/cbt/tests')
+  @UseGuards(AdminGuard)
+  adminGetTests(@Query() q: any) { return this.svc.adminGetTests(q); }
+
   @Delete('admin/cbt/questions/:id')
-  @UseGuards(StaffGuard)
+  @UseGuards(AdminGuard)
   adminDeleteQuestion(@Param('id') id: string) { return this.svc.deleteQuestion(id); }
 }

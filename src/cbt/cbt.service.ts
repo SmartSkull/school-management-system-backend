@@ -319,14 +319,78 @@ export class CbtService {
         // When staff is null (admin endpoint) all questions are returned.
         ...(staff ? { staffId: staff.id } : {}),
       },
+      include: {
+        // Include uploader info for admin view
+        staff: { include: { user: { select: { firstName: true, lastName: true } } } },
+      },
       orderBy: { id: 'asc' },
     });
 
     const testMap = new Map(tests.map((t: any) => [t.id.toString(), t]));
     return this.ok(questions.map(q => ({
-      ...q,
+      id: q.id.toString(),
+      question: q.question,
+      optionA: q.optionA,
+      optionB: q.optionB,
+      optionC: q.optionC,
+      optionD: q.optionD,
+      answer: q.answer,
+      createdAt: q.createdAt,
       class: testMap.get(q.testId.toString())?.classRoom?.name,
       course: testMap.get(q.testId.toString())?.subject?.name,
+      testId: q.testId.toString(),
+      uploadedBy: q.staff?.user
+        ? `${q.staff.user.firstName} ${q.staff.user.lastName}`.trim()
+        : 'Unknown',
+    })));
+  }
+
+  /** Admin-only: returns a summary of all CbtTests with question count, uploader names and schedule */
+  async adminGetTests(q: any) {
+    const where: any = {};
+    if (q.class) where.classRoom = { name: q.class };
+    if (q.course) where.subject = { name: { contains: q.course } };
+
+    const tests = await this.prisma.cbtTest.findMany({
+      where: Object.keys(where).length ? where : undefined,
+      include: {
+        classRoom: true,
+        subject: true,
+        session: true,
+        term: true,
+        _count: { select: { questions: true } },
+        questions: {
+          distinct: ['staffId'],
+          select: {
+            staff: {
+              include: { user: { select: { firstName: true, lastName: true } } },
+            },
+            createdAt: true,
+          },
+          orderBy: { createdAt: 'asc' },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return this.ok(tests.map(t => ({
+      id: t.id.toString(),
+      title: t.title,
+      class: t.classRoom?.name ?? '—',
+      course: t.subject?.name ?? '—',
+      session: t.session?.name ?? '—',
+      term: (t.term?.name ?? '—'),
+      duration: t.durationMin,
+      questionCount: t._count.questions,
+      startTime: t.startTime ?? null,
+      endTime: t.endTime ?? null,
+      createdAt: t.createdAt,
+      uploaders: t.questions
+        .filter(q => q.staff?.user)
+        .map(q => ({
+          name: `${q.staff!.user.firstName} ${q.staff!.user.lastName}`.trim(),
+          uploadedAt: q.createdAt,
+        })),
     })));
   }
 
