@@ -523,6 +523,8 @@ model CbtTest {
   termId      BigInt?
   title       String        @db.VarChar(255)
   durationMin Int           @default(30)
+  startTime   DateTime?
+  endTime     DateTime?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 

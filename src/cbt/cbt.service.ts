@@ -12,6 +12,7 @@ export class CbtService {
 
   async getAvailableTests(user: any) {
     const student = await this.prisma.student.findUnique({ where: { userId: BigInt(user.id) } });
+    const now = new Date();
     const tests = await this.prisma.cbtTest.findMany({
       where: { classRoomId: student?.classRoomId },
       include: { 
@@ -22,6 +23,10 @@ export class CbtService {
     });
 
     const data = await Promise.all(tests.map(async test => {
+      // Enforce time window: if startTime/endTime are set, block access outside the window
+      const withinWindow = this.isWithinSchedule(test.startTime, test.endTime, now);
+      if (!withinWindow) return null;   // filtered below
+
       const result = await this.prisma.cbtResult.findUnique({ 
         where: { testId_studentId: { testId: test.id, studentId: student!.id } } 
       });
@@ -34,9 +39,18 @@ export class CbtService {
         completed: !!result,
         score: result ? Number(result.score) : undefined,
         percentage: result ? Number(result.percentage) : undefined,
+        startTime: test.startTime,
+        endTime: test.endTime,
       };
     }));
-    return this.ok(data);
+    return this.ok(data.filter(Boolean));
+  }
+
+  /** Returns true only when the current time falls within [startTime, endTime].
+   *  If both are null the test has no schedule and is NOT accessible (staff hasn't set it yet). */
+  private isWithinSchedule(startTime: Date | null, endTime: Date | null, now: Date): boolean {
+    if (!startTime || !endTime) return false;
+    return now >= startTime && now <= endTime;
   }
 
   async startTest(user: any, course: string) {
@@ -49,6 +63,12 @@ export class CbtService {
       include: { questions: true }
     });
     if (!test) throw new NotFoundException('Test not found');
+
+    // Enforce time window
+    const now = new Date();
+    if (!this.isWithinSchedule(test.startTime, test.endTime, now)) {
+      throw new ForbiddenException('This CBT is not currently available. Please check the scheduled time.');
+    }
 
     const result = await this.prisma.cbtResult.findUnique({ 
       where: { testId_studentId: { testId: test.id, studentId: student!.id } } 
@@ -137,7 +157,7 @@ export class CbtService {
 
   async getStaffExams(user: any) {
     const tests = await this.prisma.cbtTest.findMany({
-      include: { classRoom: true, subject: true },
+      include: { classRoom: true, subject: true, _count: { select: { questions: true } } },
       orderBy: { createdAt: 'desc' }
     });
     return this.ok(tests.map(t => ({
@@ -145,8 +165,29 @@ export class CbtService {
       title: t.title,
       class: t.classRoom?.name,
       course: t.subject?.name,
-      duration: t.durationMin
+      duration: t.durationMin,
+      questionCount: t._count.questions,
+      startTime: t.startTime ?? null,
+      endTime: t.endTime ?? null,
     })));
+  }
+
+  async updateTestSchedule(id: string, startTime: string | null, endTime: string | null) {
+    const test = await this.prisma.cbtTest.findUnique({ where: { id: BigInt(id) } });
+    if (!test) throw new NotFoundException('Test not found');
+
+    const start = startTime ? new Date(startTime) : null;
+    const end = endTime ? new Date(endTime) : null;
+
+    if (start && end && start >= end) {
+      throw new BadRequestException('Start time must be before end time');
+    }
+
+    await this.prisma.cbtTest.update({
+      where: { id: BigInt(id) },
+      data: { startTime: start, endTime: end },
+    });
+    return this.ok(null, 'Schedule updated successfully');
   }
 
   async createQuestion(user: any, body: any) {
@@ -201,6 +242,14 @@ export class CbtService {
         });
       }
       testId = test.id;
+    }
+
+    // Deduplication: skip if this exact question text already exists in the test for this staff
+    const existing = await this.prisma.cbtQuestion.findFirst({
+      where: { testId, staffId: staff?.id, question: body.question },
+    });
+    if (existing) {
+      return this.ok({ id: existing.id.toString() }, 'Question already exists');
     }
 
     const question = await this.prisma.cbtQuestion.create({

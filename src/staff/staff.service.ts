@@ -329,6 +329,72 @@ export class StaffService {
     return this.ok(student);
   }
 
+  private async schoolPrefix(schoolId?: bigint): Promise<string> {
+    if (!schoolId) return 'SCH';
+    const school = await this.prisma.school.findUnique({ where: { id: schoolId }, select: { slug: true } });
+    if (!school?.slug) return 'SCH';
+    const words = school.slug.split('-').filter(Boolean);
+    return words.map((w: string) => w[0].toUpperCase()).join('').slice(0, 3).padEnd(2, 'S');
+  }
+
+  private async generateStudentId(schoolId?: bigint): Promise<string> {
+    const year = new Date().getFullYear().toString().slice(-2);
+    const prefix = await this.schoolPrefix(schoolId);
+    const last = await this.prisma.user.findFirst({
+      where: { role: 'STUDENT', ...(schoolId ? { schoolId } : {}) },
+      orderBy: { createdAt: 'desc' },
+      select: { uniqueId: true },
+    });
+    const num = last ? parseInt(last.uniqueId.replace(/\D/g, '').slice(-4) || '0') + 1 : 1;
+    return `${prefix}${year}${String(num).padStart(4, '0')}`;
+  }
+
+  async createStudent(user: any, data: any) {
+    const schoolId = this.schoolId(user);
+    const studentId = await this.generateStudentId(schoolId);
+    const classRoom = await this.prisma.classRoom.findFirst({
+      where: { name: data.class, ...(schoolId ? { schoolId } : {}) },
+    });
+    const school = schoolId
+      ? await this.prisma.school.findUnique({ where: { id: schoolId }, select: { website: true } })
+      : null;
+    const firstName = data.firstName || data.firstname || '';
+    const lastName = data.lastName || data.lastname || '';
+
+    const bcrypt = await import('bcryptjs');
+    await this.prisma.user.create({
+      data: {
+        uniqueId: studentId,
+        schoolId,
+        role: 'STUDENT',
+        firstName,
+        lastName,
+        email: data.email || '',
+        telephone: data.telephone || '',
+        password: await bcrypt.hash(data.password || 'greatkings', 10),
+        image: 'image.png',
+        status: 'PENDING',   // Staff-registered students start as PENDING until admin verifies
+        student: {
+          create: {
+            studentNo: studentId,
+            classRoomId: classRoom?.id,
+          } as any,
+        },
+      },
+    });
+
+    this.emailService.sendStudentCreated({
+      firstName,
+      lastName,
+      email: data.email || '',
+      uniqueId: studentId,
+      password: data.password || 'greatkings',
+      website: this.normalizeWebsiteUrl(school?.website),
+    });
+
+    return this.ok({ student_id: studentId }, 'Student registered successfully. Awaiting admin verification.');
+  }
+
   async uploadResult(user: any, body: any) {
     const schoolId = this.schoolId(user);
     const session = await this.getCurrentSession(user);

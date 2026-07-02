@@ -34,6 +34,14 @@ export class CbtController {
   @UseGuards(StaffGuard)
   getStaffExams(@CurrentUser() user: any) { return this.svc.getStaffExams(user); }
 
+  @Put('staff/cbt/tests/:id/schedule')
+  @UseGuards(StaffGuard)
+  updateTestSchedule(
+    @Param('id') id: string,
+    @Body('startTime') startTime: string | null,
+    @Body('endTime') endTime: string | null,
+  ) { return this.svc.updateTestSchedule(id, startTime, endTime); }
+
   @Post('staff/cbt/questions')
   @UseGuards(StaffGuard)
   createQuestion(@CurrentUser() user: any, @Body() body: any) { return this.svc.createQuestion(user, body); }

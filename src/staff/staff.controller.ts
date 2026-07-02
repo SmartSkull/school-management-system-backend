@@ -28,6 +28,7 @@ export class StaffController {
   }
 
   @Get('students') getStudents(@CurrentUser() user: any, @Query('class') cls: string, @Query('search') search: string) { return this.svc.getStudents(user, cls, search); }
+  @Post('students') registerStudent(@CurrentUser() user: any, @Body() body: any) { return this.svc.createStudent(user, body); }
   @Get('students/:id') getStudentDetails(@CurrentUser() user: any, @Param('id') id: string) { return this.svc.getStudentDetails(user, id); }
 
   @Post('results') uploadResult(@CurrentUser() user: any, @Body() body: any) { return this.svc.uploadResult(user, body); }
