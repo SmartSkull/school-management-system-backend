@@ -323,7 +323,7 @@ export class CbtService {
         // Include uploader info for admin view
         staff: { include: { user: { select: { firstName: true, lastName: true } } } },
       },
-      orderBy: { id: 'asc' },
+      orderBy: { id: 'desc' },
     });
 
     const testMap = new Map(tests.map((t: any) => [t.id.toString(), t]));
