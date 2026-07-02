@@ -341,4 +341,40 @@ export class PublicController {
       class: u.student?.classRoom?.name
     })) };
   }
+
+  @Get('public/staff/search')
+  async searchStaff(@Query('q') q: string, @Query('school') school?: string) {
+    if (!q) return { success: true, data: [] };
+    const selectedSchool = school
+      ? await this.prisma.school.findUnique({ where: { slug: school }, select: { id: true } })
+      : null;
+
+    const users = await this.prisma.user.findMany({
+      where: {
+        role: 'STAFF',
+        ...(selectedSchool ? { schoolId: selectedSchool.id } : {}),
+        OR: [
+          { firstName: { contains: q } },
+          { lastName: { contains: q } },
+          { uniqueId: { contains: q } },
+        ],
+      },
+      select: {
+        uniqueId: true,
+        firstName: true,
+        lastName: true,
+        staff: { select: { staffRole: true } },
+      },
+      take: 8,
+    });
+    return {
+      success: true,
+      data: users.map(u => ({
+        staff_id: u.uniqueId,
+        firstname: u.firstName,
+        lastname: u.lastName,
+        role: u.staff?.staffRole ?? null,
+      })),
+    };
+  }
 }

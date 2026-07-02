@@ -184,7 +184,20 @@ export class CbtService {
       });
       if (!test) {
         test = await this.prisma.cbtTest.create({
-          data: { title: `${course} — ${className}`, subjectId: subject.id, classRoomId: classRoom.id, sessionId, termId },
+          data: { 
+            title: `${course} — ${className}`, 
+            subjectId: subject.id, 
+            classRoomId: classRoom.id, 
+            sessionId, 
+            termId,
+            durationMin: body.duration ? parseInt(body.duration, 10) : 30,
+          },
+        });
+      } else if (body.duration) {
+        // If the test already exists and duration is provided, update it
+        test = await this.prisma.cbtTest.update({
+          where: { id: test.id },
+          data: { durationMin: parseInt(body.duration, 10) },
         });
       }
       testId = test.id;
@@ -206,7 +219,13 @@ export class CbtService {
     return this.ok({ id: question.id.toString() }, 'Question created successfully');
   }
 
-  async getQuestions(className: string, subjectName: string, sessionName?: string, termName?: string) {
+  async getQuestions(user: any | null, className: string, subjectName: string, sessionName?: string, termName?: string) {
+    // Resolve the staff record so we can filter by the logged-in staff's own questions.
+    // When called from the admin endpoint (user is null) no staff filter is applied.
+    const staff = user
+      ? await this.prisma.staff.findUnique({ where: { userId: BigInt(user.id) } })
+      : null;
+
     const where: any = {};
     if (className) where.classRoom = { name: className };
     if (subjectName) where.subject = { name: subjectName };
@@ -245,7 +264,12 @@ export class CbtService {
     if (!tests.length) return this.ok([]);
 
     const questions = await this.prisma.cbtQuestion.findMany({
-      where: { testId: { in: tests.map((t: any) => t.id) } },
+      where: {
+        testId: { in: tests.map((t: any) => t.id) },
+        // Only return questions created by this staff member.
+        // When staff is null (admin endpoint) all questions are returned.
+        ...(staff ? { staffId: staff.id } : {}),
+      },
       orderBy: { id: 'asc' },
     });
 
