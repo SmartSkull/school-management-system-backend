@@ -421,6 +421,33 @@ export class CbtService {
     return this.ok(null, 'Question deleted successfully');
   }
 
+  async adminDeleteTest(id: string) {
+    const testId = BigInt(id);
+
+    // 1. Get all question IDs for this test
+    const questions = await this.prisma.cbtQuestion.findMany({
+      where: { testId },
+      select: { id: true },
+    });
+    const questionIds = questions.map(q => q.id);
+
+    // 2. Delete CbtAnswers referencing those questions (no cascade on schema)
+    if (questionIds.length > 0) {
+      await this.prisma.cbtAnswer.deleteMany({ where: { questionId: { in: questionIds } } });
+    }
+
+    // 3. Delete CbtResults referencing this test (no cascade on schema)
+    await this.prisma.cbtResult.deleteMany({ where: { testId } });
+
+    // 4. Delete the questions
+    const { count } = await this.prisma.cbtQuestion.deleteMany({ where: { testId } });
+
+    // 5. Delete the test itself
+    await this.prisma.cbtTest.delete({ where: { id: testId } });
+
+    return this.ok(null, `Deleted test and ${count} question${count !== 1 ? 's' : ''} successfully`);
+  }
+
   async getExamResults(className: string, subjectName: string) {
     const test = await this.prisma.cbtTest.findFirst({
       where: { classRoom: { name: className }, subject: { name: subjectName } }

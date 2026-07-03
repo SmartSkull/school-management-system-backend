@@ -92,4 +92,8 @@ export class CbtController {
   @Delete('admin/cbt/questions/:id')
   @UseGuards(AdminGuard)
   adminDeleteQuestion(@Param('id') id: string) { return this.svc.deleteQuestion(id); }
+
+  @Delete('admin/cbt/tests/:id')
+  @UseGuards(AdminGuard)
+  adminDeleteTest(@Param('id') id: string) { return this.svc.adminDeleteTest(id); }
 }
