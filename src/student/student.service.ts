@@ -225,8 +225,6 @@ export class StudentService {
     if (termLower === 'first') {
       return results.map(r => ({
         ...r,
-        first_term_score: parseFloat(r.total_score) || 0,
-        second_term_score: 0,
         cumulative: parseFloat(r.total_score) || 0,
         average: parseFloat(r.total_score) || 0,
       }));
@@ -268,13 +266,11 @@ export class StudentService {
 
       if (termLower === 'second') {
         cumulative = first + current;
-        const termsWithScores = (first > 0 ? 1 : 0) + (current > 0 ? 1 : 0);
-        average = termsWithScores > 0 ? cumulative / termsWithScores : 0;
+        average = cumulative / 2;
       } else {
         // third
         cumulative = first + second + current;
-        const termsWithScores = (first > 0 ? 1 : 0) + (second > 0 ? 1 : 0) + (current > 0 ? 1 : 0);
-        average = termsWithScores > 0 ? cumulative / termsWithScores : 0;
+        average = cumulative / 3;
       }
 
       return {
@@ -283,6 +279,8 @@ export class StudentService {
         second_term_score: termLower === 'third' ? second : undefined,
         cumulative: Math.round(cumulative * 100) / 100,
         average: Math.round(average * 100) / 100,
+        grade: computeGrade(average),
+        remark: computeRemark(computeGrade(average)),
       };
     });
   }

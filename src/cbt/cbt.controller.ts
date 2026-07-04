@@ -96,4 +96,14 @@ export class CbtController {
   @Delete('admin/cbt/tests/:id')
   @UseGuards(AdminGuard)
   adminDeleteTest(@Param('id') id: string) { return this.svc.adminDeleteTest(id); }
+
+  // ─── Desktop App Endpoints ────────────────────────────────────────────────
+
+  @Get('admin/cbt/tests/:id/export')
+  @UseGuards(AdminGuard)
+  exportTestForDesktop(@Param('id') id: string) { return this.svc.exportTestForDesktop(id); }
+
+  @Post('admin/cbt/results/import')
+  @UseGuards(AdminGuard)
+  importResultsFromDesktop(@Body() body: any) { return this.svc.importResultsFromDesktop(body); }
 }

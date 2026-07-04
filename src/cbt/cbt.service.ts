@@ -503,6 +503,138 @@ export class CbtService {
 
 
 
+  // ─── Desktop App: Export test data ────────────────────────────────────────
+  // Returns everything the desktop app needs to run a test offline:
+  // the test metadata, all questions, and all students in that class.
+  async exportTestForDesktop(id: string) {
+    const test = await this.prisma.cbtTest.findUnique({
+      where: { id: BigInt(id) },
+      include: {
+        subject: true,
+        classRoom: true,
+        session: true,
+        term: true,
+        questions: true,
+      },
+    });
+    if (!test) throw new NotFoundException('Test not found');
+
+    // Fetch all students enrolled in this class
+    const students = await this.prisma.student.findMany({
+      where: { classRoomId: test.classRoomId ?? undefined },
+      include: {
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
+    });
+
+    return this.ok({
+      test: {
+        id: test.id.toString(),
+        schoolId: test.classRoom ? null : null,      // schoolId derived below via classRoom
+        title: test.title,
+        subjectName: test.subject?.name ?? '',
+        className: test.classRoom?.name ?? '',
+        durationMin: test.durationMin,
+        startTime: test.startTime ?? null,
+        endTime: test.endTime ?? null,
+      },
+      questions: test.questions.map(q => ({
+        id: q.id.toString(),
+        question: q.question,
+        optionA: q.optionA,
+        optionB: q.optionB,
+        optionC: q.optionC ?? null,
+        optionD: q.optionD ?? null,
+        answer: q.answer,
+      })),
+      students: students.map(s => ({
+        id: s.id.toString(),
+        admissionNumber: s.studentNo ?? '',
+        firstname: s.user.firstName,
+        lastname: s.user.lastName,
+        className: test.classRoom?.name ?? '',
+      })),
+    });
+  }
+
+  // ─── Desktop App: Import results ──────────────────────────────────────────
+  // Receives bulk results + answers from the desktop app after an offline exam.
+  // Only inserts records that don't already exist (idempotent).
+  async importResultsFromDesktop(body: any) {
+    const { results, answers } = body;
+
+    if (!Array.isArray(results) || !Array.isArray(answers)) {
+      throw new BadRequestException('Invalid payload: results and answers must be arrays');
+    }
+
+    let resultsInserted = 0;
+    let answersInserted = 0;
+
+    // Insert answers first (CbtAnswer per student per question)
+    for (const a of answers) {
+      try {
+        const existing = await this.prisma.cbtAnswer.findUnique({
+          where: {
+            studentId_questionId: {
+              studentId: BigInt(a.studentId),
+              questionId: BigInt(a.questionId),
+            },
+          },
+        });
+        if (!existing) {
+          await this.prisma.cbtAnswer.create({
+            data: {
+              studentId: BigInt(a.studentId),
+              questionId: BigInt(a.questionId),
+              selected: a.selectedAnswer,
+            },
+          });
+          answersInserted++;
+        }
+      } catch {
+        // Skip individual failures — continue with remaining records
+      }
+    }
+
+    // Insert results (CbtResult per student per test)
+    for (const r of results) {
+      try {
+        const existing = await this.prisma.cbtResult.findUnique({
+          where: {
+            testId_studentId: {
+              testId: BigInt(r.testId),
+              studentId: BigInt(r.studentId),
+            },
+          },
+        });
+        if (!existing) {
+          await this.prisma.cbtResult.create({
+            data: {
+              testId: BigInt(r.testId),
+              studentId: BigInt(r.studentId),
+              score: r.score,
+              percentage: r.percentage,
+              submittedAt: r.submittedAt ? new Date(r.submittedAt) : new Date(),
+            },
+          });
+          resultsInserted++;
+        }
+      } catch {
+        // Skip individual failures — continue with remaining records
+      }
+    }
+
+    return this.ok(
+      { resultsInserted, answersInserted },
+      `Imported ${resultsInserted} results and ${answersInserted} answers`,
+    );
+  }
+
   private parseQuestions(text: string): any[] {
     const questions: any[] = [];
     const parts = text.split(/\n\d+[\.\)]\s+/).filter(Boolean);

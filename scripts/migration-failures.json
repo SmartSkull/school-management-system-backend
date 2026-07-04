@@ -1,0 +1,20 @@
+[
+  {
+    "table": "User",
+    "id": 1,
+    "value": "1657408934.jpg",
+    "reason": "File not found in uploads/"
+  },
+  {
+    "table": "User",
+    "id": 40,
+    "value": "1754571076.png",
+    "reason": "File not found in uploads/"
+  },
+  {
+    "table": "Student",
+    "id": 664,
+    "value": "admin2",
+    "reason": "File not found in uploads/"
+  }
+]

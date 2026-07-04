@@ -332,12 +332,13 @@ export class PublicController {
         ...(selectedSchool ? { schoolId: selectedSchool.id } : {}),
         OR: [{ firstName: { contains: q } }, { lastName: { contains: q } }] 
       },
-      select: { uniqueId: true, firstName: true, lastName: true, student: { select: { classRoom: { select: { name: true } } } } },
+      select: { uniqueId: true, firstName: true, lastName: true, image: true, student: { select: { classRoom: { select: { name: true } } } } },
     });
     return { success: true, data: users.map(u => ({
       student_id: u.uniqueId,
       firstname: u.firstName,
       lastname: u.lastName,
+      image: u.image ?? null,
       class: u.student?.classRoom?.name
     })) };
   }
@@ -363,6 +364,7 @@ export class PublicController {
         uniqueId: true,
         firstName: true,
         lastName: true,
+        image: true,
         staff: { select: { staffRole: true } },
       },
       take: 8,
@@ -373,6 +375,7 @@ export class PublicController {
         staff_id: u.uniqueId,
         firstname: u.firstName,
         lastname: u.lastName,
+        image: u.image ?? null,
         role: u.staff?.staffRole ?? null,
       })),
     };

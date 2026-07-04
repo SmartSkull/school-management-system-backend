@@ -484,10 +484,62 @@ export class StaffService {
         where: { user: { uniqueId: q.student_id, ...(schoolId ? { schoolId } : {}) } },
         include: { user: true, classRoom: true }
       });
-      const results = await this.resultsWithTotals({ 
-        studentId: studentRecord?.id, 
-        sessionId: sessionEntity?.id, 
-        termId: termEntity?.id 
+
+      const termUpper = term.toUpperCase();
+      const needFirst  = termUpper === 'SECOND' || termUpper === 'THIRD';
+      const needSecond = termUpper === 'THIRD';
+
+      const [firstTerm, secondTerm] = await Promise.all([
+        needFirst
+          ? this.prisma.academicTerm.findFirst({ where: { name: 'FIRST' as any, sessionId: sessionEntity?.id, ...(schoolId ? { schoolId: BigInt(schoolId) } : {}) } })
+          : Promise.resolve(null),
+        needSecond
+          ? this.prisma.academicTerm.findFirst({ where: { name: 'SECOND' as any, sessionId: sessionEntity?.id, ...(schoolId ? { schoolId: BigInt(schoolId) } : {}) } })
+          : Promise.resolve(null),
+      ]);
+
+      const [rawResults, firstResults, secondResults] = await Promise.all([
+        this.resultsWithTotals({ studentId: studentRecord?.id, sessionId: sessionEntity?.id, termId: termEntity?.id }),
+        needFirst && firstTerm
+          ? this.resultsWithTotals({ studentId: studentRecord?.id, sessionId: sessionEntity?.id, termId: firstTerm.id })
+          : Promise.resolve([]),
+        needSecond && secondTerm
+          ? this.resultsWithTotals({ studentId: studentRecord?.id, sessionId: sessionEntity?.id, termId: secondTerm.id })
+          : Promise.resolve([]),
+      ]);
+
+      const numTerms = 1 + (firstTerm ? 1 : 0) + (secondTerm ? 1 : 0);
+      const firstBySubject  = new Map((firstResults  as any[]).map(r => [r.subjectId.toString(), r.total_score]));
+      const secondBySubject = new Map((secondResults as any[]).map(r => [r.subjectId.toString(), r.total_score]));
+
+      const results = (rawResults as any[]).map(r => {
+        const currentTotal = Number(r.total_score);
+        const firstScore   = Number(firstBySubject.get(r.subjectId.toString())  ?? 0);
+        const secondScore  = Number(secondBySubject.get(r.subjectId.toString()) ?? 0);
+
+        const cumulative = currentTotal + firstScore + secondScore;
+        const average    = numTerms > 0 ? cumulative / numTerms : currentTotal;
+
+        let grade = 'F'; let remark = 'Fail';
+        if (average >= 75) { grade = 'A1'; remark = 'Excellent'; }
+        else if (average >= 70) { grade = 'B2'; remark = 'Very Good'; }
+        else if (average >= 65) { grade = 'B3'; remark = 'Good'; }
+        else if (average >= 60) { grade = 'C4'; remark = 'Credit'; }
+        else if (average >= 55) { grade = 'C5'; remark = 'Credit'; }
+        else if (average >= 50) { grade = 'C6'; remark = 'Credit'; }
+        else if (average >= 45) { grade = 'D7'; remark = 'Pass'; }
+        else if (average >= 40) { grade = 'E8'; remark = 'Pass'; }
+        else { grade = 'F9'; remark = 'Fail'; }
+
+        return {
+          ...r,
+          first_term_score:  needFirst  ? (firstBySubject.get(r.subjectId.toString())  ?? '-') : undefined,
+          second_term_score: needSecond ? (secondBySubject.get(r.subjectId.toString()) ?? '-') : undefined,
+          cumulative: cumulative.toFixed(1),
+          average:    average.toFixed(1),
+          grade,
+          remark,
+        };
       });
 
       // Get teacher for this class via classRoom.classTeacher
