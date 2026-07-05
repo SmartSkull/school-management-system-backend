@@ -291,7 +291,7 @@ export class CbtService {
         optionD: body.optionD,
         answer: body.answer,
         sectionLabel: body.sectionLabel || null,
-        sectionOrder: body.sectionOrder ?? 0,
+        sectionOrder: parseInt(String(body.sectionOrder ?? 0), 10) || 0,
       },
     });
     return this.ok({ id: question.id.toString() }, 'Question created successfully');
@@ -433,7 +433,7 @@ export class CbtService {
         optionD: body.optionD,
         answer: body.answer,
         sectionLabel: body.sectionLabel !== undefined ? (body.sectionLabel || null) : undefined,
-        sectionOrder: body.sectionOrder !== undefined ? body.sectionOrder : undefined,
+        sectionOrder: body.sectionOrder !== undefined ? (parseInt(String(body.sectionOrder), 10) || 0) : undefined,
       },
     });
     return this.ok(null, 'Question updated successfully');
