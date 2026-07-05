@@ -75,17 +75,44 @@ export class CbtService {
     });
     if (result) throw new ForbiddenException('You have already completed this test');
 
-    // Seeded shuffle per student — same questions, different order for each student
-    const seed = Number(BigInt(user.id) % BigInt(1000000));
-    const shuffled = [...test.questions].sort((a, b) => {
-      const ha = Math.sin(seed + Number(a.id)) * 10000;
-      const hb = Math.sin(seed + Number(b.id)) * 10000;
-      return (ha - Math.floor(ha)) - (hb - Math.floor(hb));
+    // Fetch questions ordered by sectionOrder then id so sections are stable
+    const allQuestions = await this.prisma.cbtQuestion.findMany({
+      where: { testId: test.id },
+      orderBy: [{ sectionOrder: 'asc' }, { id: 'asc' }],
     });
+
+    // Seeded shuffle WITHIN each section only — sections stay in order
+    const seed = Number(BigInt(user.id) % BigInt(1000000));
+
+    // Group by sectionOrder
+    const sectionMap = new Map<number, typeof allQuestions>();
+    for (const q of allQuestions) {
+      const order = q.sectionOrder ?? 0;
+      if (!sectionMap.has(order)) sectionMap.set(order, []);
+      sectionMap.get(order)!.push(q);
+    }
+
+    // Shuffle within each section using the student seed
+    const shuffled: typeof allQuestions = [];
+    for (const [, group] of [...sectionMap.entries()].sort((a, b) => a[0] - b[0])) {
+      const shuffledGroup = [...group].sort((a, b) => {
+        const ha = Math.sin(seed + Number(a.id)) * 10000;
+        const hb = Math.sin(seed + Number(b.id)) * 10000;
+        return (ha - Math.floor(ha)) - (hb - Math.floor(hb));
+      });
+      shuffled.push(...shuffledGroup);
+    }
+
     return this.ok({ 
       id: test.id.toString(),
       title: test.title, 
-      questions: shuffled.map(q => ({ id: q.id.toString(), question: q.question, options: [q.optionA, q.optionB, q.optionC, q.optionD].filter(Boolean) })), 
+      questions: shuffled.map(q => ({
+        id: q.id.toString(),
+        question: q.question,
+        options: [q.optionA, q.optionB, q.optionC, q.optionD].filter(Boolean),
+        sectionLabel: q.sectionLabel ?? null,
+        sectionOrder: q.sectionOrder,
+      })), 
       total_questions: shuffled.length, 
       duration: test.durationMin, 
       remaining_time: test.durationMin * 60 
@@ -263,6 +290,8 @@ export class CbtService {
         optionC: body.optionC,
         optionD: body.optionD,
         answer: body.answer,
+        sectionLabel: body.sectionLabel || null,
+        sectionOrder: body.sectionOrder ?? 0,
       },
     });
     return this.ok({ id: question.id.toString() }, 'Question created successfully');
@@ -315,15 +344,12 @@ export class CbtService {
     const questions = await this.prisma.cbtQuestion.findMany({
       where: {
         testId: { in: tests.map((t: any) => t.id) },
-        // Only return questions created by this staff member.
-        // When staff is null (admin endpoint) all questions are returned.
         ...(staff ? { staffId: staff.id } : {}),
       },
       include: {
-        // Include uploader info for admin view
         staff: { include: { user: { select: { firstName: true, lastName: true } } } },
       },
-      orderBy: { id: 'desc' },
+      orderBy: [{ sectionOrder: 'asc' }, { id: 'asc' }],
     });
 
     const testMap = new Map(tests.map((t: any) => [t.id.toString(), t]));
@@ -335,6 +361,8 @@ export class CbtService {
       optionC: q.optionC,
       optionD: q.optionD,
       answer: q.answer,
+      sectionLabel: q.sectionLabel ?? null,
+      sectionOrder: q.sectionOrder,
       createdAt: q.createdAt,
       class: testMap.get(q.testId.toString())?.classRoom?.name,
       course: testMap.get(q.testId.toString())?.subject?.name,
@@ -404,6 +432,8 @@ export class CbtService {
         optionC: body.optionC,
         optionD: body.optionD,
         answer: body.answer,
+        sectionLabel: body.sectionLabel !== undefined ? (body.sectionLabel || null) : undefined,
+        sectionOrder: body.sectionOrder !== undefined ? body.sectionOrder : undefined,
       },
     });
     return this.ok(null, 'Question updated successfully');
@@ -551,6 +581,8 @@ export class CbtService {
         optionC: q.optionC ?? null,
         optionD: q.optionD ?? null,
         answer: q.answer,
+        sectionLabel: q.sectionLabel ?? null,
+        sectionOrder: q.sectionOrder,
       })),
       students: students.map(s => ({
         id: s.id.toString(),

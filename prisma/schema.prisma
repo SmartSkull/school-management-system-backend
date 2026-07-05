@@ -537,18 +537,20 @@ model CbtTest {
 }
 
 model CbtQuestion {
-  id          BigInt   @id @default(autoincrement())
-  testId      BigInt
-  staffId     BigInt?
-  subjectId   BigInt?
-  question    String   @db.Text
-  optionA     String   @db.Text
-  optionB     String   @db.Text
-  optionC     String?  @db.Text
-  optionD     String?  @db.Text
-  answer      String   @db.VarChar(10)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           BigInt   @id @default(autoincrement())
+  testId       BigInt
+  staffId      BigInt?
+  subjectId    BigInt?
+  question     String   @db.Text
+  optionA      String   @db.Text
+  optionB      String   @db.Text
+  optionC      String?  @db.Text
+  optionD      String?  @db.Text
+  answer       String   @db.VarChar(10)
+  sectionLabel String?  @db.Text   // heading/instruction shown above this group
+  sectionOrder Int      @default(0) // keeps sections in creation order
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   test        CbtTest  @relation(fields: [testId], references: [id], onDelete: Cascade)
   staff       Staff?   @relation(fields: [staffId], references: [id])
