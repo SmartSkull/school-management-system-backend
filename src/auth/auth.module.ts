@@ -9,7 +9,7 @@ import { EmailService } from '../common/email.service';
   imports: [
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'gka_jwt_secret_key_2024_secure_token',
-      signOptions: { expiresIn: process.env.JWT_EXPIRY || '24h' },
+      signOptions: { expiresIn: process.env.JWT_EXPIRY || '8h' },
     }),
   ],
   controllers: [AuthController],
