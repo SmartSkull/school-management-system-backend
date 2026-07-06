@@ -30,7 +30,7 @@ async function getAvailablePort(startPort: number): Promise<number> {
 
 async function bootstrap() {
   // Ensure upload dirs exist
-  ['uploads', 'uploads/messages', 'uploads/bookgame', 'uploads/assignments', 'uploads/leave', 'uploads/quiz-game'].forEach(dir => {
+  ['uploads', 'uploads/messages', 'uploads/bookgame', 'uploads/assignments', 'uploads/leave', 'uploads/quiz-game', 'uploads/cbt-images'].forEach(dir => {
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   });
 

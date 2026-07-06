@@ -73,6 +73,14 @@ export class CbtController {
   @UseInterceptors(FileInterceptor('file', { storage: diskStorage({ destination: './uploads', filename: (_, f, cb) => cb(null, `${Date.now()}${extname(f.originalname)}`) }) }))
   extractQuestions(@UploadedFile() file: Express.Multer.File) { return this.svc.extractQuestions(file); }
 
+  @Post('staff/cbt/upload-image')
+  @UseGuards(StaffGuard)
+  @UseInterceptors(FileInterceptor('image', { storage: diskStorage({ destination: './uploads/cbt-images', filename: (_, f, cb) => cb(null, `${Date.now()}-${Math.random().toString(36).slice(2)}${extname(f.originalname)}`) }) }))
+  uploadQuestionImage(@UploadedFile() file: Express.Multer.File) {
+    if (!file) throw new Error('No file uploaded');
+    return { success: true, data: { url: `/uploads/cbt-images/${file.filename}` } };
+  }
+
   @Post('staff/cbt/bulk-create')
   @UseGuards(StaffGuard)
   bulkCreate(@CurrentUser() user: any, @Body() body: any) { return this.svc.bulkCreate(user, body); }
