@@ -218,7 +218,8 @@ export class CbtService {
   }
 
   async createQuestion(user: any, body: any) {
-    const staff = await this.prisma.staff.findUnique({ where: { userId: BigInt(user.id) } });
+    const staffUserId = BigInt(user.authUserId ?? user.userId ?? user.id);
+    const staff = await this.prisma.staff.findFirst({ where: { userId: staffUserId } });
 
     let testId: bigint;
     let resolvedSubjectId: bigint | undefined;
@@ -300,8 +301,9 @@ export class CbtService {
   async getQuestions(user: any | null, className: string, subjectName: string, sessionName?: string, termName?: string) {
     // Resolve the staff record so we can filter by the logged-in staff's own questions.
     // When called from the admin endpoint (user is null) no staff filter is applied.
-    const staff = user
-      ? await this.prisma.staff.findUnique({ where: { userId: BigInt(user.id) } })
+    const staffUserId = user ? BigInt(user.authUserId ?? user.userId ?? user.id) : null;
+    const staff = staffUserId
+      ? await this.prisma.staff.findFirst({ where: { userId: staffUserId } })
       : null;
 
     const where: any = {};
@@ -511,7 +513,8 @@ export class CbtService {
     if (!Array.isArray(data) || !data.length) throw new BadRequestException('Missing questions data');
     if (!course || !className) throw new BadRequestException('course and class are required');
 
-    const staff = await this.prisma.staff.findUnique({ where: { userId: BigInt(user.id) } });
+    const staffUserId = BigInt(user.authUserId ?? user.userId ?? user.id);
+    const staff = await this.prisma.staff.findFirst({ where: { userId: staffUserId } });
 
     // Resolve or create the test (same logic as createQuestion)
     const subject = await this.prisma.subject.findFirst({ where: { name: { contains: course } } });
