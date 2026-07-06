@@ -416,9 +416,10 @@ export class CbtService {
       endTime: t.endTime ?? null,
       createdAt: t.createdAt,
       uploaders: t.questions
-        .filter(q => q.staff?.user)
         .map(q => ({
-          name: `${q.staff!.user.firstName} ${q.staff!.user.lastName}`.trim(),
+          name: q.staff?.user
+            ? `${q.staff.user.firstName} ${q.staff.user.lastName}`.trim()
+            : 'Unknown',
           uploadedAt: q.createdAt,
         })),
     })));
