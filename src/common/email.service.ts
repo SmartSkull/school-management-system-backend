@@ -1,10 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Resend } from 'resend';
+import axios from 'axios';
 
 @Injectable()
 export class EmailService {
-  private readonly resend = new Resend(process.env.RESEND_API_KEY);
-  private readonly from = process.env.RESEND_FROM || 'onboarding@resend.dev';
+  private readonly kudiToken = process.env.KUDISMS_API_KEY || '7YceLygwHDFU9qZKCESA2546BTr3aQOlhfWMnVIGRtzkjsbmiv81u0oNdpxJPX';
+  private readonly from = process.env.KUDISMS_EMAIL_FROM || 'email@smartcampus.com.ng';
+  private readonly senderName = process.env.KUDISMS_EMAIL_SENDER_NAME || 'Smart Campus';
   private readonly logger = new Logger(EmailService.name);
 
   async sendSchoolRegistered(school: {
@@ -365,22 +366,45 @@ export class EmailService {
 
   private async send(to: string, subject: string, html: string) {
     try {
-      const recipient = process.env.RESEND_TEST_TO || to;
+      const recipient = process.env.KUDISMS_TEST_TO || to;
       this.logger.log(`Sending email to ${recipient} | subject: "${subject}"`);
-      const result = await this.resend.emails.send({ from: this.from, to: recipient, subject, html });
-      if ((result as any).error) {
-        this.logger.error(`Resend rejected email to ${recipient}: ${JSON.stringify((result as any).error)}`);
-      } else {
-        this.logger.log(`Email sent successfully to ${recipient} | id: ${(result as any).data?.id}`);
+
+      const url = 'https://my.kudisms.net/api/email';
+      const payload = {
+        token: this.kudiToken,
+        sender: this.senderName,
+        from: this.from,
+        subject,
+        message: html,
+        type: 0, // 0 = HTML
+        recipients: recipient,
+      };
+
+      const response = await axios.post(url, payload);
+      this.logger.log(`Email sent via KudiSMS to ${recipient}: ${JSON.stringify(response.data)}`);
+
+      if (response.data && (response.data.status === 'error' || response.data.code === 'error')) {
+        this.logger.error(`KudiSMS rejected email to ${recipient}: ${JSON.stringify(response.data)}`);
       }
-    } catch (err) {
-      this.logger.error(`Failed to send email to ${to}: ${JSON.stringify(err)}`);
+    } catch (err: any) {
+      this.logger.error(`Failed to send email to ${to} via KudiSMS: ${err.message || (err.response ? JSON.stringify(err.response.data) : JSON.stringify(err))}`);
     }
   }
 
   async sendGeneric(opts: { to: string; subject: string; text: string }) {
     try {
-      await this.resend.emails.send({ from: this.from, to: opts.to, subject: opts.subject, text: opts.text });
+      const recipient = process.env.KUDISMS_TEST_TO || opts.to;
+      const url = 'https://my.kudisms.net/api/email';
+      const payload = {
+        token: this.kudiToken,
+        sender: this.senderName,
+        from: this.from,
+        subject: opts.subject,
+        message: opts.text,
+        type: 1, // 1 = plain text
+        recipients: recipient,
+      };
+      await axios.post(url, payload);
     } catch (e) { this.logger.error('sendGeneric failed', e); }
   }
 }

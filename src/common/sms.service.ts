@@ -12,7 +12,7 @@ export class SmsService {
     this.senderId = process.env.KUDISMS_SENDER_ID || 'Smart Campu';
   }
 
-  async sendSms(to: string, message: string) {
+  async sendSms(to: string, message: string, schoolName?: string) {
     try {
       // Format phone number. KudiSMS typically accepts standard Nigerian format (e.g. 07031882197 or 2347031882197)
       let phone = to.replace(/\D/g, '');
@@ -20,12 +20,15 @@ export class SmsService {
         phone = phone.slice(1);
       }
 
+      // Pick the sender ID that belongs to the school sending the message
+      const senderId = this.senderIdForSchool(schoolName);
+
       // KudiSMS modern v2 API endpoint
       const url = 'https://my.kudisms.net/api/sms';
       
       const payload = {
         token: this.kudiToken,
-        senderID: this.senderId,
+        senderID: senderId,
         message: message,
         recipients: phone
       };
@@ -48,12 +51,19 @@ export class SmsService {
 
   async sendAbsentStudentSms(parentPhone: string, studentName: string, className: string, date: string, schoolName: string) {
     const message = `Dear Parent, this is to inform you that ${studentName} (${className}) was marked absent from school today (${date}). Please contact the school management for any clarifications. - ${schoolName}`;
-    return this.sendSms(parentPhone, message);
+    return this.sendSms(parentPhone, message, schoolName);
   }
 
   async sendResultApprovedSms(parentPhone: string, studentName: string, className: string, session: string, term: string, schoolName: string, resultUrl?: string) {
     const linkText = resultUrl ? ` Check result: ${resultUrl}` : '';
     const message = `Dear Parent, ${studentName}'s result for ${term} term, ${session} session (${className}) has been approved and is now available on the student portal.${linkText} - ${schoolName}`;
-    return this.sendSms(parentPhone, message);
+    return this.sendSms(parentPhone, message, schoolName);
+  }
+
+  private senderIdForSchool(schoolName?: string): string {
+    const name = (schoolName || '').toLowerCase();
+    if (name.includes('greatkings')) return 'Greatkings';
+    if (name.includes('florieren')) return 'Florieren';
+    return this.senderId;
   }
 }
