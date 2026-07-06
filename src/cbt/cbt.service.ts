@@ -507,28 +507,53 @@ export class CbtService {
   }
 
   async bulkCreate(user: any, body: any) {
-    const { data, test_id } = body;
-    if (!data || !test_id) throw new BadRequestException('Missing required data');
+    const { data, course, class: className, session, term, duration } = body;
+    if (!Array.isArray(data) || !data.length) throw new BadRequestException('Missing questions data');
+    if (!course || !className) throw new BadRequestException('course and class are required');
+
     const staff = await this.prisma.staff.findUnique({ where: { userId: BigInt(user.id) } });
-    
-    let count = 0;
-    for (const item of data) {
-      if (!item.question || !item.answer) continue;
-      await this.prisma.cbtQuestion.create({ 
-        data: { 
-          testId: BigInt(test_id),
-          staffId: staff?.id,
-          question: item.question,
-          optionA: item.option1 || '',
-          optionB: item.option2 || '',
-          optionC: item.option3 || '',
-          optionD: item.option4 || '',
-          answer: item.answer
-        } 
+
+    // Resolve or create the test (same logic as createQuestion)
+    const subject = await this.prisma.subject.findFirst({ where: { name: { contains: course } } });
+    if (!subject) throw new BadRequestException(`Subject "${course}" not found`);
+    const classRoom = await this.prisma.classRoom.findFirst({ where: { name: className } });
+    if (!classRoom) throw new BadRequestException(`Class "${className}" not found`);
+
+    let sessionId: bigint | undefined;
+    let termId: bigint | undefined;
+    if (session) { const s = await this.prisma.academicSession.findFirst({ where: { name: session } }); if (s) sessionId = s.id; }
+    if (term)    { const t = await this.prisma.academicTerm.findFirst({ where: { name: term as any } }); if (t) termId = t.id; }
+
+    let test = await this.prisma.cbtTest.findFirst({
+      where: { subjectId: subject.id, classRoomId: classRoom.id, sessionId: sessionId ?? null, termId: termId ?? null },
+    });
+    if (!test) {
+      test = await this.prisma.cbtTest.create({
+        data: { title: `${course} — ${className}`, subjectId: subject.id, classRoomId: classRoom.id, sessionId, termId, durationMin: duration ? parseInt(duration, 10) : 30 },
       });
-      count++;
+    } else if (duration) {
+      test = await this.prisma.cbtTest.update({ where: { id: test.id }, data: { durationMin: parseInt(duration, 10) } });
     }
-    return this.ok(null, `Successfully imported ${count} questions`);
+
+    // Bulk insert all questions in one transaction
+    const rows = data
+      .filter((item: any) => item.question && item.answer)
+      .map((item: any) => ({
+        testId: test!.id,
+        staffId: staff?.id,
+        subjectId: subject.id,
+        question: item.question,
+        optionA: item.option1 || '',
+        optionB: item.option2 || '',
+        optionC: item.option3 || null,
+        optionD: item.option4 || null,
+        answer: item.answer,
+        sectionLabel: item.sectionLabel || null,
+        sectionOrder: parseInt(String(item.sectionOrder ?? 0), 10) || 0,
+      }));
+
+    const { count } = await this.prisma.cbtQuestion.createMany({ data: rows, skipDuplicates: false });
+    return this.ok({ count }, `Successfully imported ${count} questions`);
   }
 
 
