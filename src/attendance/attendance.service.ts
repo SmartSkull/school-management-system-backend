@@ -671,8 +671,8 @@ export class AttendanceService {
           className: u.student?.classRoom?.name ?? 'N/A',
           date: dateStr,
           schoolName: school?.name ?? 'School',
-        }).catch(() => {});
-        
+        }).catch((e) => this.logger.error(`Absence email failed for ${u.email}: ${e?.message ?? e}`));
+
         // Also send SMS to the parent (user's phone)
         if (u.telephone) {
           this.sms.sendAbsentStudentSms(
@@ -681,7 +681,7 @@ export class AttendanceService {
             u.student?.classRoom?.name ?? 'N/A',
             dateStr,
             school?.name ?? 'School'
-          ).catch(() => {});
+          ).catch((e) => this.logger.error(`Absence SMS failed for ${u.telephone}: ${e?.message ?? e}`));
         }
       }
     }

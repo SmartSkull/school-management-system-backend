@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
+import FormData from 'form-data';
 
 @Injectable()
 export class SmsService {
@@ -23,19 +24,17 @@ export class SmsService {
       // Pick the sender ID that belongs to the school sending the message
       const senderId = this.senderIdForSchool(schoolName);
 
-      // KudiSMS v2 API endpoint (form-data, matches documented curl)
+      // KudiSMS v2 API endpoint (multipart/form-data, matches documented curl)
       const url = 'https://my.kudisms.net/api/sms';
 
-      const payload = new URLSearchParams();
-      payload.append('token', this.kudiToken);
-      payload.append('senderID', senderId);
-      payload.append('recipients', phone);
-      payload.append('message', message);
-      payload.append('gateway', process.env.KUDISMS_SMS_GATEWAY || '2');
+      const form = new FormData();
+      form.append('token', this.kudiToken);
+      form.append('senderID', senderId);
+      form.append('recipients', phone);
+      form.append('message', message);
+      form.append('gateway', process.env.KUDISMS_SMS_GATEWAY || '2');
 
-      const response = await axios.post(url, payload.toString(), {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      });
+      const response = await axios.post(url, form, { headers: form.getHeaders() });
 
       this.logger.log(`SMS sent to ${phone} via KudiSMS: ${JSON.stringify(response.data)}`);
       
