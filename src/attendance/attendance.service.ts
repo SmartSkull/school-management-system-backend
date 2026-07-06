@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { EmailService } from '../common/email.service';
 import { SmsService } from '../common/sms.service';
 import { PrismaService } from '../database/prisma.service';
@@ -21,6 +21,7 @@ function todayDate(): Date {
 
 @Injectable()
 export class AttendanceService {
+  private readonly logger = new Logger(AttendanceService.name);
   constructor(private prisma: PrismaService, private email: EmailService, private sms: SmsService) {}
 
   private userId(user: any): bigint {

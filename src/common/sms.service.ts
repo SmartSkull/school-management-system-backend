@@ -23,17 +23,19 @@ export class SmsService {
       // Pick the sender ID that belongs to the school sending the message
       const senderId = this.senderIdForSchool(schoolName);
 
-      // KudiSMS modern v2 API endpoint
+      // KudiSMS v2 API endpoint (form-data, matches documented curl)
       const url = 'https://my.kudisms.net/api/sms';
-      
-      const payload = {
-        token: this.kudiToken,
-        senderID: senderId,
-        message: message,
-        recipients: phone
-      };
-      
-      const response = await axios.post(url, payload);
+
+      const payload = new URLSearchParams();
+      payload.append('token', this.kudiToken);
+      payload.append('senderID', senderId);
+      payload.append('recipients', phone);
+      payload.append('message', message);
+      payload.append('gateway', process.env.KUDISMS_SMS_GATEWAY || '2');
+
+      const response = await axios.post(url, payload.toString(), {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      });
 
       this.logger.log(`SMS sent to ${phone} via KudiSMS: ${JSON.stringify(response.data)}`);
       

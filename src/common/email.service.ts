@@ -369,21 +369,23 @@ export class EmailService {
       const recipient = process.env.KUDISMS_TEST_TO || to;
       this.logger.log(`Sending email to ${recipient} | subject: "${subject}"`);
 
-      const url = 'https://my.kudisms.net/api/email';
-      const payload = {
-        token: this.kudiToken,
-        sender: this.senderName,
-        from: this.from,
-        subject,
-        message: html,
-        type: 0, // 0 = HTML
-        recipients: recipient,
-      };
+      const url = 'https://my.kudisms.net/api/transactional';
+      const payload = new URLSearchParams();
+      payload.append('token', this.kudiToken);
+      payload.append('senderEmail', this.from);
+      payload.append('senderName', this.senderName);
+      payload.append('senderFrom', this.from);
+      payload.append('transactionName', subject);
+      payload.append('recipient', recipient);
+      payload.append('subject', subject);
+      payload.append('message', html);
 
-      const response = await axios.post(url, payload);
+      const response = await axios.post(url, payload.toString(), {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      });
       this.logger.log(`Email sent via KudiSMS to ${recipient}: ${JSON.stringify(response.data)}`);
 
-      if (response.data && (response.data.status === 'error' || response.data.code === 'error')) {
+      if (response.data && (response.data.status === 'error' || response.data.error)) {
         this.logger.error(`KudiSMS rejected email to ${recipient}: ${JSON.stringify(response.data)}`);
       }
     } catch (err: any) {
@@ -394,17 +396,19 @@ export class EmailService {
   async sendGeneric(opts: { to: string; subject: string; text: string }) {
     try {
       const recipient = process.env.KUDISMS_TEST_TO || opts.to;
-      const url = 'https://my.kudisms.net/api/email';
-      const payload = {
-        token: this.kudiToken,
-        sender: this.senderName,
-        from: this.from,
-        subject: opts.subject,
-        message: opts.text,
-        type: 1, // 1 = plain text
-        recipients: recipient,
-      };
-      await axios.post(url, payload);
+      const url = 'https://my.kudisms.net/api/transactional';
+      const payload = new URLSearchParams();
+      payload.append('token', this.kudiToken);
+      payload.append('senderEmail', this.from);
+      payload.append('senderName', this.senderName);
+      payload.append('senderFrom', this.from);
+      payload.append('transactionName', opts.subject);
+      payload.append('recipient', recipient);
+      payload.append('subject', opts.subject);
+      payload.append('message', opts.text);
+      await axios.post(url, payload.toString(), {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      });
     } catch (e) { this.logger.error('sendGeneric failed', e); }
   }
 }
