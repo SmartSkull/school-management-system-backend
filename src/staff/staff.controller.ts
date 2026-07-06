@@ -27,6 +27,11 @@ export class StaffController {
     return this.svc.updateImage(user, file);
   }
 
+  @Post('profile/change-password')
+  changePassword(@CurrentUser() user: any, @Body() body: any) {
+    return this.svc.changePassword(user, body);
+  }
+
   @Get('students') getStudents(@CurrentUser() user: any, @Query('class') cls: string, @Query('search') search: string) { return this.svc.getStudents(user, cls, search); }
   @Post('students') registerStudent(@CurrentUser() user: any, @Body() body: any) { return this.svc.createStudent(user, body); }
   @Get('students/:id') getStudentDetails(@CurrentUser() user: any, @Param('id') id: string) { return this.svc.getStudentDetails(user, id); }
