@@ -34,7 +34,7 @@ export class SmsService {
       form.append('message', message);
       form.append('gateway', process.env.KUDISMS_SMS_GATEWAY || '2');
 
-      const response = await axios.post(url, form, { headers: form.getHeaders() });
+      const response = await axios.post(url, form, { headers: form.getHeaders(), timeout: 30000 });
 
       this.logger.log(`SMS sent to ${phone} via KudiSMS: ${JSON.stringify(response.data)}`);
       

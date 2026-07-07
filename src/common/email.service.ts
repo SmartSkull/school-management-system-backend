@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
-import FormData from 'form-data';
+import FormData = require('form-data');
 
 @Injectable()
 export class EmailService {
@@ -382,7 +382,7 @@ export class EmailService {
       form.append('templateCode', process.env.KUDISMS_EMAIL_TEMPLATE_CODE || '');
       form.append('html', html);
 
-      const response = await axios.post(url, form, { headers: form.getHeaders() });
+      const response = await axios.post(url, form, { headers: form.getHeaders(), timeout: 30000 });
       this.logger.log(`Email sent via KudiSMS to ${recipient}: ${JSON.stringify(response.data)}`);
 
       if (response.data && (response.data.status === 'error' || response.data.error)) {
@@ -407,7 +407,7 @@ export class EmailService {
       form.append('subject', opts.subject);
       form.append('templateCode', process.env.KUDISMS_EMAIL_TEMPLATE_CODE || '');
       form.append('html', `<p>${opts.text}</p>`);
-      await axios.post(url, form, { headers: form.getHeaders() });
+      await axios.post(url, form, { headers: form.getHeaders(), timeout: 30000 });
     } catch (e) { this.logger.error('sendGeneric failed', e); }
   }
 }
