@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import * as fs from 'fs';
 import { PrismaService } from '../database/prisma.service';
 
@@ -215,6 +215,38 @@ export class CbtService {
       data: { startTime: start, endTime: end },
     });
     return this.ok(null, 'Schedule updated successfully');
+  }
+
+  async updateTest(id: string, body: any) {
+    const course = body.course?.trim();
+    if (!course) {
+      throw new BadRequestException('Course is required');
+    }
+
+    const test = await this.prisma.cbtTest.findUnique({
+      where: { id: BigInt(id) },
+      include: { classRoom: true },
+    });
+    if (!test) throw new NotFoundException('Test not found');
+
+    const subject = await this.prisma.subject.findFirst({ where: { name: course } });
+    if (!subject) {
+      throw new BadRequestException(`Subject "${course}" not found`);
+    }
+
+    const title = `${subject.name}${test.classRoom?.name ? ` — ${test.classRoom.name}` : ''}`;
+
+    await this.prisma.cbtTest.update({
+      where: { id: test.id },
+      data: { subjectId: subject.id, title },
+    });
+
+    await this.prisma.cbtQuestion.updateMany({
+      where: { testId: test.id },
+      data: { subjectId: subject.id },
+    });
+
+    return this.ok(null, 'Test updated successfully');
   }
 
   async createQuestion(user: any, body: any) {

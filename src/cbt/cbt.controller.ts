@@ -1,10 +1,10 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-import { CbtService } from './cbt.service';
-import { JwtAuthGuard, StaffGuard, StudentGuard, AdminGuard } from '../common/guards/auth.guard';
 import { CurrentUser } from '../common/decorators/user.decorator';
+import { AdminGuard, StaffGuard, StudentGuard } from '../common/guards/auth.guard';
+import { CbtService } from './cbt.service';
 
 @Controller()
 export class CbtController {
@@ -41,6 +41,10 @@ export class CbtController {
     @Body('startTime') startTime: string | null,
     @Body('endTime') endTime: string | null,
   ) { return this.svc.updateTestSchedule(id, startTime, endTime); }
+
+  @Put('staff/cbt/tests/:id')
+  @UseGuards(StaffGuard)
+  updateTest(@Param('id') id: string, @Body() body: any) { return this.svc.updateTest(id, body); }
 
   @Post('staff/cbt/questions')
   @UseGuards(StaffGuard)
