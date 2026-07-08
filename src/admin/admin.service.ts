@@ -761,17 +761,22 @@ export class AdminService {
         : Promise.resolve(null),
     ]);
 
-    const numTerms = 1 + (firstTerm ? 1 : 0) + (secondTerm ? 1 : 0);
     const firstBySubject = new Map(firstResults.map(r => [r.subjectId.toString(), r.total_score]));
     const secondBySubject = new Map(secondResults.map(r => [r.subjectId.toString(), r.total_score]));
+    const firstTermCourses = new Set(firstResults.map((r: any) => r.subjectId.toString()));
+    const secondTermCourses = new Set(secondResults.map((r: any) => r.subjectId.toString()));
 
     const enriched = results.map(r => {
       const currentTotal = Number(r.total_score);
       const firstScore = Number(firstBySubject.get(r.subjectId.toString()) ?? 0);
       const secondScore = Number(secondBySubject.get(r.subjectId.toString()) ?? 0);
 
+      let divisor = 1;
+      if (firstTermCourses.has(r.subjectId.toString())) divisor++;
+      if (secondTermCourses.has(r.subjectId.toString())) divisor++;
+
       const cumulative = currentTotal + firstScore + secondScore;
-      const average = numTerms > 0 ? cumulative / numTerms : currentTotal;
+      const average = divisor > 0 ? cumulative / divisor : currentTotal;
 
       let grade = 'F';
       let remark = 'Failed';

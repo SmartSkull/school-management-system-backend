@@ -535,17 +535,22 @@ export class StaffService {
           : Promise.resolve([]),
       ]);
 
-      const numTerms = 1 + (firstTerm ? 1 : 0) + (secondTerm ? 1 : 0);
       const firstBySubject  = new Map((firstResults  as any[]).map(r => [r.subjectId.toString(), r.total_score]));
       const secondBySubject = new Map((secondResults as any[]).map(r => [r.subjectId.toString(), r.total_score]));
+      const firstTermCourses = new Set((firstResults as any[]).map((r: any) => r.subjectId.toString()));
+      const secondTermCourses = new Set((secondResults as any[]).map((r: any) => r.subjectId.toString()));
 
       const results = (rawResults as any[]).map(r => {
         const currentTotal = Number(r.total_score);
         const firstScore   = Number(firstBySubject.get(r.subjectId.toString())  ?? 0);
         const secondScore  = Number(secondBySubject.get(r.subjectId.toString()) ?? 0);
 
+        let divisor = 1;
+        if (firstTermCourses.has(r.subjectId.toString())) divisor++;
+        if (secondTermCourses.has(r.subjectId.toString())) divisor++;
+
         const cumulative = currentTotal + firstScore + secondScore;
-        const average    = numTerms > 0 ? cumulative / numTerms : currentTotal;
+        const average    = divisor > 0 ? cumulative / divisor : currentTotal;
 
         let grade = 'F'; let remark = 'Fail';
         if (average >= 75) { grade = 'A1'; remark = 'Excellent'; }

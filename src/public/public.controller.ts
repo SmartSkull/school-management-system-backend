@@ -72,9 +72,16 @@ export class PublicController {
   }
 
   @Get('public/current-period')
-  async currentPeriod() {
-    const session = await this.prisma.academicSession.findFirst({ where: { isCurrent: true } });
-    const term = await this.prisma.academicTerm.findFirst({ where: { isCurrent: true } });
+  async currentPeriod(@Query('school') school?: string) {
+    const selectedSchool = school
+      ? await this.prisma.school.findUnique({ where: { slug: school }, select: { id: true } })
+      : null;
+    const schoolId = selectedSchool?.id;
+    const where: any = schoolId ? { schoolId } : {};
+    const session = await this.prisma.academicSession.findFirst({ where: { ...where, isCurrent: true } })
+      ?? await this.prisma.academicSession.findFirst({ where, orderBy: { createdAt: 'desc' } });
+    const term = await this.prisma.academicTerm.findFirst({ where: { ...where, isCurrent: true } })
+      ?? await this.prisma.academicTerm.findFirst({ where, orderBy: { createdAt: 'desc' } });
     return { success: true, data: { session: session?.name, term: term?.name } };
   }
 

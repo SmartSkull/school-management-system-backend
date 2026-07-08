@@ -61,23 +61,27 @@ export class StudentService {
     };
   }
 
-  private async getCurrentSession(): Promise<string> {
-    const r = await this.prisma.academicSession.findFirst({ where: { isCurrent: true } })
-      ?? await this.prisma.academicSession.findFirst({ orderBy: { createdAt: 'desc' } });
+  private async getCurrentSession(user?: any): Promise<string> {
+    const schoolId = user?.schoolId ? BigInt(user.schoolId) : undefined;
+    const where = schoolId ? { schoolId } : {};
+    const r = await this.prisma.academicSession.findFirst({ where: { ...where, isCurrent: true } })
+      ?? await this.prisma.academicSession.findFirst({ where, orderBy: { createdAt: 'desc' } });
     return r?.name || '';
   }
 
-  private async getCurrentTerm(): Promise<string> {
-    const r = await this.prisma.academicTerm.findFirst({ where: { isCurrent: true } })
-      ?? await this.prisma.academicTerm.findFirst({ orderBy: { createdAt: 'desc' } });
+  private async getCurrentTerm(user?: any): Promise<string> {
+    const schoolId = user?.schoolId ? BigInt(user.schoolId) : undefined;
+    const where: any = schoolId ? { schoolId } : {};
+    const r = await this.prisma.academicTerm.findFirst({ where: { ...where, isCurrent: true } })
+      ?? await this.prisma.academicTerm.findFirst({ where, orderBy: { createdAt: 'desc' } });
     return r?.name || '';
   }
 
   async dashboard(user: any) {
     const assignmentWhere = await this.studentClassRoomWhere(user);
     const [session, term, unread, assignments] = await Promise.all([
-      this.getCurrentSession(),
-      this.getCurrentTerm(),
+      this.getCurrentSession(user),
+      this.getCurrentTerm(user),
       this.prisma.notification.count({ where: { userId: BigInt(user.id), readAt: null } }),
       this.assignmentsWithStaff(assignmentWhere, 5),
     ]);
@@ -132,8 +136,8 @@ export class StudentService {
 
   async getResults(user: any, q: any) {
     const schoolId = this.schoolId(user);
-    const session = q.session || await this.getCurrentSession();
-    const term = q.term || await this.getCurrentTerm();
+    const session = q.session || await this.getCurrentSession(user);
+    const term = q.term || await this.getCurrentTerm(user);
 
     if (!session || !term) {
       throw new BadRequestException('No active session or term found. Please contact admin.');
@@ -180,7 +184,7 @@ export class StudentService {
       this.prisma.studentTrait.findFirst({ where: { studentId: student.id, sessionId: sessionEntity.id, termId: termEntity.id } }),
     ]);
 
-    const results = await this.enrichWithCumulativeScores(rawResults, student.id.toString(), session, term);
+    const results = await this.enrichWithCumulativeScores(rawResults, student.id.toString(), session, term, this.schoolId(user));
 
     const classSize = await this.prisma.student.count({
       where: {
@@ -218,7 +222,7 @@ export class StudentService {
     });
   }
 
-  private async enrichWithCumulativeScores(results: any[], studentId: string, session: string, term: string): Promise<any[]> {
+  private async enrichWithCumulativeScores(results: any[], studentId: string, session: string, term: string, schoolId?: bigint): Promise<any[]> {
     const termLower = term.toLowerCase();
 
     // For first term, no previous scores needed
@@ -231,9 +235,9 @@ export class StudentService {
     }
 
     // Fetch first term scores keyed by course
-    const firstTermEntity = await this.prisma.academicTerm.findFirst({
-      where: { name: 'FIRST' as any, session: { name: session } },
-    });
+    const firstTermWhere: any = { name: 'FIRST' as any, session: { name: session } };
+    if (schoolId) firstTermWhere.schoolId = schoolId;
+    const firstTermEntity = await this.prisma.academicTerm.findFirst({ where: firstTermWhere });
     const firstTermRows = firstTermEntity
       ? await this.resultsWithTotals({ studentId: BigInt(studentId), sessionId: firstTermEntity.sessionId, termId: firstTermEntity.id })
       : [];
@@ -241,37 +245,32 @@ export class StudentService {
     for (const r of firstTermRows as any[]) {
       firstTermMap[r.course] = parseFloat(r.total_score) || 0;
     }
+    const firstTermCourses = new Set(firstTermRows.map((r: any) => r.course));
 
     // Fetch second term scores keyed by course (only needed for third term)
     const secondTermMap: Record<string, number> = {};
-    if (termLower === 'third') {
-      const secondTermEntity = await this.prisma.academicTerm.findFirst({
-        where: { name: 'SECOND' as any, session: { name: session } },
-      });
-      const secondTermRows = secondTermEntity
-        ? await this.resultsWithTotals({ studentId: BigInt(studentId), sessionId: secondTermEntity.sessionId, termId: secondTermEntity.id })
-        : [];
-      for (const r of secondTermRows as any[]) {
-        secondTermMap[r.course] = parseFloat(r.total_score) || 0;
-      }
+    const secondTermWhere: any = { name: 'SECOND' as any, session: { name: session } };
+    if (schoolId) secondTermWhere.schoolId = schoolId;
+    const secondTermEntity = await this.prisma.academicTerm.findFirst({ where: secondTermWhere });
+    const secondTermRows = termLower === 'third' && secondTermEntity
+      ? await this.resultsWithTotals({ studentId: BigInt(studentId), sessionId: secondTermEntity.sessionId, termId: secondTermEntity.id })
+      : [];
+    for (const r of secondTermRows as any[]) {
+      secondTermMap[r.course] = parseFloat(r.total_score) || 0;
     }
+    const secondTermCourses = termLower === 'third' ? new Set(secondTermRows.map((r: any) => r.course)) : null;
 
     return results.map(r => {
       const current = parseFloat(r.total_score) || 0;
       const first = firstTermMap[r.course] ?? 0;
       const second = secondTermMap[r.course] ?? 0;
 
-      let cumulative: number;
-      let average: number;
+      let divisor = 1;
+      if (firstTermCourses.has(r.course)) divisor++;
+      if (secondTermCourses?.has(r.course)) divisor++;
 
-      if (termLower === 'second') {
-        cumulative = first + current;
-        average = cumulative / 2;
-      } else {
-        // third
-        cumulative = first + second + current;
-        average = cumulative / 3;
-      }
+      const cumulative = first + second + current;
+      const average = divisor > 0 ? cumulative / divisor : 0;
 
       return {
         ...r,
