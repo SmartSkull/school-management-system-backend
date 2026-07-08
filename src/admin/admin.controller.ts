@@ -47,6 +47,9 @@ export class AdminController {
   @Post('students/verify')
   verifyStudentByBody(@Body('student_id') id: string) { return this.svc.verifyStudent(id); }
 
+  @Post('students/unverify')
+  unverifyStudentByBody(@Body('student_id') id: string) { return this.svc.unverifyStudent(id); }
+
   @Post('students/delete')
   deleteStudentByBody(@Body('student_id') id: string) { return this.svc.deleteStudent(id); }
 
@@ -55,6 +58,9 @@ export class AdminController {
 
   @Put('students/:id/verify')
   verifyStudent(@Param('id') id: string) { return this.svc.verifyStudent(id); }
+
+  @Put('students/:id/unverify')
+  unverifyStudent(@Param('id') id: string) { return this.svc.unverifyStudent(id); }
 
   @Put('students/:id')
   updateStudent(@Param('id') id: string, @Body() body: any) { return this.svc.updateStudent(id, body); }

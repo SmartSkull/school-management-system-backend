@@ -240,6 +240,23 @@ export class AdminService {
     return this.ok(null, 'Student verified successfully');
   }
 
+  async unverifyStudent(studentId: string) {
+    const user = await this.prisma.user.update({ 
+      where: { uniqueId: studentId }, 
+      data: { status: 'PENDING' } 
+    });
+    
+    await this.prisma.notification.create({ 
+      data: { 
+        userId: user.id, 
+        title: 'Account Unverified', 
+        message: 'Your account has been unverified. You can no longer access all features.', 
+        readAt: null 
+      } 
+    });
+    return this.ok(null, 'Student unverified successfully');
+  }
+
   async bulkVerifyStudents(ids: string[]) {
     if (!ids?.length) throw new BadRequestException('No students selected');
     for (const id of ids) await this.verifyStudent(id);
