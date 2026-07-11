@@ -562,7 +562,6 @@ export class CbtService {
                   include: { user: { select: { firstName: true, lastName: true } } },
                 },
               },
-              distinct: ['staffId'],
             }
           : false,
       },
