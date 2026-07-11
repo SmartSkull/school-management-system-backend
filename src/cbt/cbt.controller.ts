@@ -70,7 +70,14 @@ export class CbtController {
 
   @Get('staff/cbt/results')
   @UseGuards(StaffGuard)
-  getExamResults(@Query('class') cls: string, @Query('course') course: string) { return this.svc.getExamResults(cls, course); }
+  getExamResults(
+    @CurrentUser() user: any,
+    @Query('class') cls: string,
+    @Query('course') course: string,
+    @Query('session') session: string,
+    @Query('term') term: string,
+    @Query('teacher') teacher: string,
+  ) { return this.svc.getExamResults(user, cls, course, session, term, teacher); }
 
   @Post('staff/cbt/extract-questions')
   @UseGuards(StaffGuard)
