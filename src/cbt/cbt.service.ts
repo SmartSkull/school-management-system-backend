@@ -528,7 +528,6 @@ export class CbtService {
     if (Object.keys(classRoomWhere).length) where.classRoom = classRoomWhere;
     if (Object.keys(subjectWhere).length) where.subject = subjectWhere;
 
-    // Only filter by session/term columns if they exist (after migration)
     let sessionId: bigint | undefined;
     let termId: bigint | undefined;
     try {
@@ -540,79 +539,75 @@ export class CbtService {
         const term = await this.prisma.academicTerm.findFirst({ where: { name: termName as any } });
         if (term) { termId = term.id; where.termId = term.id; }
       }
-    } catch { /* columns not yet migrated, skip */ }
+    } catch { /* columns not yet migrated */ }
 
-    // Teacher filter: accept a teacher name from the frontend and resolve it to a staffId
+    let resolvedTeacherStaffId: bigint | undefined;
     if (teacherId) {
       const parts = String(teacherId).split(' ').filter(Boolean);
       const staffWhere: any = { user: {} };
       if (parts[0]) staffWhere.user.firstName = { contains: parts[0] };
       if (parts.length > 1) staffWhere.user.lastName = { contains: parts.slice(1).join(' ') };
-      const staff = await this.prisma.staff.findFirst({
-        where: staffWhere,
-        select: { id: true },
-      });
-      if (staff) {
-        where.questions = { some: { staffId: staff.id } };
-      }
+      const staff = await this.prisma.staff.findFirst({ where: staffWhere, select: { id: true } });
+      if (staff) resolvedTeacherStaffId = staff.id;
     }
 
     const tests = await this.prisma.cbtTest.findMany({
       where: Object.keys(where).length ? where : undefined,
       include: {
-        classRoom: true,
-        subject: true,
+        classRoom: { include: { classTeacher: { include: { user: true } } } },
+        subject: { include: { teacher: { include: { user: true } } } },
         session: true,
         term: true,
-        questions: teacherId
-          ? {
-              where: { staffId: BigInt(teacherId) },
-              select: {
-                staff: {
-                  include: { user: { select: { firstName: true, lastName: true } } },
-                },
-              },
-            }
-          : false,
       },
     });
 
-    if (!tests.length) return this.ok([]);
+    let filteredTests = tests;
+    if (resolvedTeacherStaffId) {
+      filteredTests = tests.filter(t => {
+        const classTeacherId = (t.classRoom as any)?.classTeacher?.id ?? null;
+        const subjectTeacherId = (t.subject as any)?.teacher?.id ?? null;
+        return classTeacherId === resolvedTeacherStaffId || subjectTeacherId === resolvedTeacherStaffId;
+      });
+    }
 
-    const testIds = tests.map(t => t.id);
+    if (!filteredTests.length) return this.ok([]);
+
+    const testIds = filteredTests.map(t => t.id);
 
     const results = await this.prisma.cbtResult.findMany({
       where: { testId: { in: testIds } },
       include: {
-        test: { include: { classRoom: true, subject: true, session: true, term: true } },
+        test: {
+          include: {
+            classRoom: { include: { classTeacher: { include: { user: true } } } },
+            subject: { include: { teacher: { include: { user: true } } } },
+            session: true,
+            term: true,
+          },
+        },
         student: { include: { user: true } },
       },
       orderBy: { score: 'desc' },
     });
 
-    const testTeachers = new Map<string, string[]>();
-    for (const t of tests) {
-      const rawQuestions = (t as any).questions;
-      const questions = Array.isArray(rawQuestions) ? rawQuestions : [];
-      const names: string[] = questions
-        .filter((q: any) => q.staff)
-        .map((q: any) => `${q.staff.user.firstName} ${q.staff.user.lastName}`.trim())
-        .filter((name: any) => typeof name === 'string' && name);
-      testTeachers.set(t.id.toString(), [...new Set(names)]);
-    }
-
-    return this.ok(results.map((r) => ({
-      ...r,
-      id: r.id.toString(),
-      firstname: r.student.user.firstName,
-      lastname: r.student.user.lastName,
-      test_title: r.test.title,
-      class: r.test.classRoom?.name ?? '—',
-      subject: r.test.subject?.name ?? '—',
-      session: r.test.session?.name ?? '—',
-      term: r.test.term?.name ?? '—',
-      teachers: testTeachers.get(r.testId.toString()) ?? [],
-    })));
+    return this.ok(results.map((r) => {
+      const test = r.test;
+      const classTeacher = (test as any)?.classRoom?.classTeacher?.user ? `${(test as any).classRoom.classTeacher.user.firstName} ${(test as any).classRoom.classTeacher.user.lastName}`.trim() : '';
+      const subjectTeacher = (test as any)?.subject?.teacher?.user ? `${(test as any).subject.teacher.user.firstName} ${(test as any).subject.teacher.user.lastName}`.trim() : '';
+      const teachers = [classTeacher, subjectTeacher].filter(Boolean);
+      return {
+        ...r,
+        id: r.id.toString(),
+        firstname: r.student.user.firstName,
+        lastname: r.student.user.lastName,
+        test_title: test.title,
+        class: test.classRoom?.name ?? '—',
+        subject: test.subject?.name ?? '—',
+        session: test.session?.name ?? '—',
+        term: test.term?.name ?? '—',
+        teachers,
+      };
+    }));
   }
 
   async extractQuestions(file: Express.Multer.File) {
