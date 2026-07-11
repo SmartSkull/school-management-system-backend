@@ -738,6 +738,11 @@ export class CbtService {
     });
   }
 
+  // ─── Admin: get exam results ──────────────────────────────────────────────
+  async adminGetExamResults(user: any, className?: string, subjectName?: string, sessionName?: string, termName?: string, teacherId?: string) {
+    return this.getExamResults(user, className, subjectName, sessionName, termName, teacherId);
+  }
+
   // ─── Desktop App: Import results ──────────────────────────────────────────
   // Receives bulk results + answers from the desktop app after an offline exam.
   // Skips records that already exist (idempotent by testId+studentId / studentId+questionId).

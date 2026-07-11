@@ -126,6 +126,17 @@ export class CbtController {
   @UseGuards(AdminGuard)
   exportTestForDesktop(@Param('id') id: string) { return this.svc.exportTestForDesktop(id); }
 
+  @Get('admin/cbt/results')
+  @UseGuards(AdminGuard)
+  adminGetExamResults(
+    @CurrentUser() user: any,
+    @Query('class') cls: string,
+    @Query('course') course: string,
+    @Query('session') session: string,
+    @Query('term') term: string,
+    @Query('teacher') teacher: string,
+  ) { return this.svc.adminGetExamResults(user, cls, course, session, term, teacher); }
+
   @Post('admin/cbt/results/import')
   @UseGuards(AdminGuard)
   importResultsFromDesktop(@Body() body: any) { return this.svc.importResultsFromDesktop(body); }
