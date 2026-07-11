@@ -542,9 +542,19 @@ export class CbtService {
       }
     } catch { /* columns not yet migrated, skip */ }
 
-    // Teacher filter: restrict to tests where at least one question was authored by this staff
+    // Teacher filter: accept a teacher name from the frontend and resolve it to a staffId
     if (teacherId) {
-      where.questions = { some: { staffId: BigInt(teacherId) } };
+      const parts = String(teacherId).split(' ').filter(Boolean);
+      const staffWhere: any = { user: {} };
+      if (parts[0]) staffWhere.user.firstName = { contains: parts[0] };
+      if (parts.length > 1) staffWhere.user.lastName = { contains: parts.slice(1).join(' ') };
+      const staff = await this.prisma.staff.findFirst({
+        where: staffWhere,
+        select: { id: true },
+      });
+      if (staff) {
+        where.questions = { some: { staffId: staff.id } };
+      }
     }
 
     const tests = await this.prisma.cbtTest.findMany({
