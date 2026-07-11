@@ -582,7 +582,9 @@ export class CbtService {
 
     const testTeachers = new Map<string, string[]>();
     for (const t of tests) {
-      const names: string[] = (t as any).questions
+      const rawQuestions = (t as any).questions;
+      const questions = Array.isArray(rawQuestions) ? rawQuestions : [];
+      const names: string[] = questions
         .filter((q: any) => q.staff)
         .map((q: any) => `${q.staff.user.firstName} ${q.staff.user.lastName}`.trim())
         .filter((name: any) => typeof name === 'string' && name);
