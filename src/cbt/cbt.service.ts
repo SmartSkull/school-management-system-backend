@@ -474,6 +474,11 @@ export class CbtService {
     return this.ok(null, 'Question updated successfully');
   }
 
+  async deleteResult(id: string) {
+    await this.prisma.cbtResult.delete({ where: { id: BigInt(id) } });
+    return this.ok(null, 'Result deleted successfully');
+  }
+
   async bulkDeleteQuestions(ids: string[]) {
     if (!ids?.length) throw new BadRequestException('No IDs provided');
     const bigIds = ids.map(id => BigInt(id));
@@ -735,7 +740,7 @@ export class CbtService {
 
   // ─── Desktop App: Import results ──────────────────────────────────────────
   // Receives bulk results + answers from the desktop app after an offline exam.
-  // Only inserts records that don't already exist (idempotent).
+  // Skips records that already exist (idempotent by testId+studentId / studentId+questionId).
   async importResultsFromDesktop(body: any) {
     const { results, answers } = body;
 
@@ -743,60 +748,68 @@ export class CbtService {
       throw new BadRequestException('Invalid payload: results and answers must be arrays');
     }
 
-    let resultsInserted = 0;
     let answersInserted = 0;
+    let resultsInserted = 0;
 
-    // Insert answers first (CbtAnswer per student per question)
-    for (const a of answers) {
-      try {
-        const existing = await this.prisma.cbtAnswer.findUnique({
-          where: {
-            studentId_questionId: {
-              studentId: BigInt(a.studentId),
-              questionId: BigInt(a.questionId),
-            },
-          },
+    if (answers.length) {
+      const wantedPairs = answers.map(a => ({
+        studentId: BigInt(a.studentId),
+        questionId: BigInt(a.questionId),
+      }));
+
+      const existingPairs = new Set(
+        (await this.prisma.cbtAnswer.findMany({
+          where: { OR: wantedPairs.map(p => ({ studentId: p.studentId, questionId: p.questionId })) },
+          select: { studentId: true, questionId: true },
+        })).map(e => `${e.studentId}:${e.questionId}`),
+      );
+
+      const missingAnswers = answers.filter(a => {
+        const key = `${BigInt(a.studentId)}:${BigInt(a.questionId)}`;
+        return !existingPairs.has(key);
+      });
+
+      if (missingAnswers.length) {
+        await this.prisma.cbtAnswer.createMany({
+          data: missingAnswers.map(a => ({
+            studentId: BigInt(a.studentId),
+            questionId: BigInt(a.questionId),
+            selected: a.selectedAnswer,
+          })),
         });
-        if (!existing) {
-          await this.prisma.cbtAnswer.create({
-            data: {
-              studentId: BigInt(a.studentId),
-              questionId: BigInt(a.questionId),
-              selected: a.selectedAnswer,
-            },
-          });
-          answersInserted++;
-        }
-      } catch {
-        // Skip individual failures — continue with remaining records
+        answersInserted = missingAnswers.length;
       }
     }
 
-    // Insert results (CbtResult per student per test)
-    for (const r of results) {
-      try {
-        const existing = await this.prisma.cbtResult.findUnique({
-          where: {
-            testId_studentId: {
-              testId: BigInt(r.testId),
-              studentId: BigInt(r.studentId),
-            },
-          },
+    if (results.length) {
+      const wantedPairs = results.map(r => ({
+        testId: BigInt(r.testId),
+        studentId: BigInt(r.studentId),
+      }));
+
+      const existingPairs = new Set(
+        (await this.prisma.cbtResult.findMany({
+          where: { OR: wantedPairs.map(p => ({ testId: p.testId, studentId: p.studentId })) },
+          select: { testId: true, studentId: true },
+        })).map(e => `${e.testId}:${e.studentId}`),
+      );
+
+      const missingResults = results.filter(r => {
+        const key = `${BigInt(r.testId)}:${BigInt(r.studentId)}`;
+        return !existingPairs.has(key);
+      });
+
+      if (missingResults.length) {
+        await this.prisma.cbtResult.createMany({
+          data: missingResults.map(r => ({
+            testId: BigInt(r.testId),
+            studentId: BigInt(r.studentId),
+            score: r.score,
+            percentage: r.percentage,
+            submittedAt: r.submittedAt ? new Date(r.submittedAt) : new Date(),
+          })),
         });
-        if (!existing) {
-          await this.prisma.cbtResult.create({
-            data: {
-              testId: BigInt(r.testId),
-              studentId: BigInt(r.studentId),
-              score: r.score,
-              percentage: r.percentage,
-              submittedAt: r.submittedAt ? new Date(r.submittedAt) : new Date(),
-            },
-          });
-          resultsInserted++;
-        }
-      } catch {
-        // Skip individual failures — continue with remaining records
+        resultsInserted = missingResults.length;
       }
     }
 
