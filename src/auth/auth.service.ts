@@ -164,6 +164,17 @@ export class AuthService {
     };
   }
 
+  async savePushToken(userId: number | bigint, token: string) {
+    if (!token || !token.startsWith('ExponentPushToken[')) {
+      return { success: false, message: 'Invalid push token' };
+    }
+    await this.prisma.user.update({
+      where: { id: BigInt(userId) },
+      data: { pushToken: token },
+    });
+    return { success: true, message: 'Push token saved' };
+  }
+
   private async resolveSchoolId(slug?: string) {
     if (!slug) return undefined;
     const school = await this.prisma.school.findUnique({ where: { slug }, select: { id: true, status: true } });

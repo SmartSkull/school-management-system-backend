@@ -1,9 +1,9 @@
 import { BadRequestException, ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { EmailService } from '../common/email.service';
 import { SmsService } from '../common/sms.service';
+import { NotificationService } from '../common/notification.service';
 import { PrismaService } from '../database/prisma.service';
 
-// Haversine distance in metres
 function distanceMetres(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6371000;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -22,7 +22,7 @@ function todayDate(): Date {
 @Injectable()
 export class AttendanceService {
   private readonly logger = new Logger(AttendanceService.name);
-  constructor(private prisma: PrismaService, private email: EmailService, private sms: SmsService) {}
+  constructor(private prisma: PrismaService, private email: EmailService, private sms: SmsService, private notificationService: NotificationService) {}
 
   private userId(user: any): bigint {
     return BigInt(user.authUserId ?? user.userId ?? user.user?.id ?? user.id);
@@ -348,6 +348,20 @@ export class AttendanceService {
     const lateLabel = lateMinutes > 0
       ? lateMinutes < 60 ? `${lateMinutes} min late` : `${Math.floor(lateMinutes / 60)}h ${lateMinutes % 60 ? `${lateMinutes % 60}m ` : ''}late`
       : '';
+
+    const studentUser = await this.prisma.user.findFirst({
+      where: { uniqueId: studentId, role: 'STUDENT' },
+      select: { id: true },
+    });
+
+    if (studentUser) {
+      this.notificationService.notify(
+        studentUser.id,
+        'Attendance Recorded',
+        `You clocked in${lateLabel ? ` (${lateLabel})` : ''}.`,
+      );
+    }
+
     return { success: true, message: `Clocked in${lateLabel ? ` (${lateLabel})` : ''}`, data: this.serializeStudentRecord(record) };
   }
 
@@ -379,6 +393,20 @@ export class AttendanceService {
       where: { id: record.id },
       data: { clockOut: new Date() },
     });
+
+    const studentUser = await this.prisma.user.findFirst({
+      where: { uniqueId: record.studentId, role: 'STUDENT' },
+      select: { id: true },
+    });
+
+    if (studentUser) {
+      this.notificationService.notify(
+        studentUser.id,
+        'Attendance Recorded',
+        'You have clocked out.',
+      );
+    }
+
     return { success: true, message: 'Clocked out successfully', data: this.serializeStudentRecord(updated) };
   }
 
@@ -517,6 +545,23 @@ export class AttendanceService {
         data: absent.map((s) => ({ studentId: s.uniqueId, date: dayDate, status: 'ABSENT' as const, lateMinutes: 0 })),
         skipDuplicates: true,
       });
+
+      const users = await this.prisma.user.findMany({
+        where: { uniqueId: { in: absent.map(s => s.uniqueId) }, role: 'STUDENT' },
+        select: { id: true, uniqueId: true },
+      });
+
+      const userMap = new Map(users.map(u => [u.uniqueId, u.id]));
+      for (const s of absent) {
+        const uid = userMap.get(s.uniqueId);
+        if (uid) {
+          this.notificationService.notify(
+            uid,
+            'Marked Absent',
+            `You were marked absent on ${dayDate.toISOString().slice(0, 10)}.`,
+          );
+        }
+      }
     }
     return { success: true, message: `${absent.length} students marked absent` };
   }

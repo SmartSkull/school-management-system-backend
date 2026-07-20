@@ -110,6 +110,7 @@ model User {
   telephone    String?       @db.VarChar(50)
   password     String        @db.VarChar(255)
   image        String?       @db.VarChar(255)
+  pushToken    String?       @db.VarChar(500)
   status       AccountStatus @default(ACTIVE)
   verifiedAt   DateTime?
   lastLoginAt  DateTime?

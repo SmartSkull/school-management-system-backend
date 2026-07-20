@@ -55,4 +55,15 @@ export class AuthController {
   logout() {
     return { success: true, message: 'Logged out successfully' };
   }
+
+  /** Save / update the Expo push token for the authenticated user */
+  @Post('push-token')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(200)
+  savePushToken(
+    @CurrentUser() user: any,
+    @Body('token') token: string,
+  ) {
+    return this.auth.savePushToken(user.id, token);
+  }
 }

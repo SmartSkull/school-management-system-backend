@@ -3,11 +3,12 @@ import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '../database/prisma.service';
 import { EmailService } from '../common/email.service';
 import { SmsService } from '../common/sms.service';
+import { NotificationService } from '../common/notification.service';
 import { uploadToCloudinary } from '../common/cloudinary';
 
 @Injectable()
 export class AdminService {
-  constructor(private prisma: PrismaService, private emailService: EmailService, private smsService: SmsService) {}
+  constructor(private prisma: PrismaService, private emailService: EmailService, private smsService: SmsService, private notificationService: NotificationService) {}
 
   private ok(data: any = null, message = 'Success') {
     return { success: true, data, message };
@@ -229,14 +230,11 @@ export class AdminService {
       data: { status: 'ACTIVE' } 
     });
     
-    await this.prisma.notification.create({ 
-      data: { 
-        userId: user.id, 
-        title: 'Account Verified', 
-        message: 'Your account has been verified. You can now access all features.', 
-        readAt: null 
-      } 
-    });
+    await this.notificationService.notify(
+      user.id,
+      'Account Verified',
+      'Your account has been verified. You can now access all features.',
+    );
     return this.ok(null, 'Student verified successfully');
   }
 
@@ -246,14 +244,11 @@ export class AdminService {
       data: { status: 'PENDING' } 
     });
     
-    await this.prisma.notification.create({ 
-      data: { 
-        userId: user.id, 
-        title: 'Account Unverified', 
-        message: 'Your account has been unverified. You can no longer access all features.', 
-        readAt: null 
-      } 
-    });
+    await this.notificationService.notify(
+      user.id,
+      'Account Unverified',
+      'Your account has been unverified. You can no longer access all features.',
+    );
     return this.ok(null, 'Student unverified successfully');
   }
 
@@ -850,14 +845,11 @@ export class AdminService {
       data: { approvedAt: new Date() }
     });
 
-    await this.prisma.notification.create({ 
-      data: { 
-        userId: studentUser.id, 
-        title: 'Results Approved', 
-        message: `Your result for ${term} term, ${session} session has been approved.`, 
-        readAt: null 
-      } 
-    });
+    await this.notificationService.notify(
+      studentUser.id,
+      'Results Approved',
+      `Your result for ${term} term, ${session} session has been approved.`,
+    );
     if (updated.count > 0) {
       const studentName = `${studentUser.firstName} ${studentUser.lastName}`.trim();
       const className = studentUser.student.classRoom?.name ?? 'N/A';

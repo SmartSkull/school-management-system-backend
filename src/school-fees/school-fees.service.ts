@@ -1,10 +1,11 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import * as https from 'https';
 import { PrismaService } from '../database/prisma.service';
+import { NotificationService } from '../common/notification.service';
 
 @Injectable()
 export class SchoolFeesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private notificationService: NotificationService) {}
 
   private ok(data: any = null, message = 'Success') {
     return { success: true, data: this.prisma.normalizeValue(data), message };
@@ -176,13 +177,11 @@ export class SchoolFeesService {
         data: { status: 'SUCCESS', paidAt: new Date() },
       });
 
-      await this.prisma.notification.create({
-        data: {
-          userId: payment.student.userId,
-          title: 'School Fees Payment Successful',
-          message: `Your school fees payment of ₦${payment.amount} has been confirmed.`,
-        },
-      });
+      await this.notificationService.notify(
+        payment.student.userId,
+        'School Fees Payment Successful',
+        `Your school fees payment of ₦${payment.amount} has been confirmed.`,
+      );
 
       return this.ok({
         status: 'SUCCESS',
