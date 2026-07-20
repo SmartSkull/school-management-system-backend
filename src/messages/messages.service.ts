@@ -1,11 +1,12 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { NotificationService } from '../common/notification.service';
+import { MessagesGateway } from './messages.gateway';
 import { uploadToCloudinary } from '../common/cloudinary';
 
 @Injectable()
 export class MessagesService {
-  constructor(private prisma: PrismaService, private notificationService: NotificationService) {}
+  constructor(private prisma: PrismaService, private notificationService: NotificationService, private gateway: MessagesGateway) {}
 
   private ok(data: any = null, message = 'Success') {
     return { success: true, data, message };
@@ -131,6 +132,22 @@ export class MessagesService {
       'New Message',
       `${user.firstName || user.firstname || 'Someone'} sent you a message`,
     );
+
+    this.gateway.broadcastNewMessage(String(receiver.id), {
+      id: msg.id.toString(),
+      senderId: String(user.id),
+      receiverId: String(receiver.id),
+      senderUniqueId: user.uniqueId,
+      receiverUniqueId: receiver.uniqueId,
+      message: msg.body,
+      body: msg.body,
+      file_url: msg.fileUrl ?? null,
+      isMe: false,
+      deleted: false,
+      edited: false,
+      createdAt: msg.createdAt,
+      readAt: null,
+    });
 
     return this.ok({ id: msg.id.toString() }, 'Message sent');
   }
