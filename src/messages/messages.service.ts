@@ -1,5 +1,6 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
+import { uploadToCloudinary } from '../common/cloudinary';
 
 @Injectable()
 export class MessagesService {
@@ -99,6 +100,7 @@ export class MessagesService {
         receiverId: m.receiverId.toString(), 
         message: m.deletedAt ? '' : m.body,
         body: m.deletedAt ? '' : m.body,
+        file_url: m.deletedAt ? null : (m.fileUrl ?? null),
         isMe: m.senderId === userId,
         deleted: !!m.deletedAt,
         edited: !!m.editedAt,
@@ -112,6 +114,7 @@ export class MessagesService {
   async sendMessage(user: any, body: any) {
     const to = body.to || body.receiver_id;
     const message = body.message;
+    const fileUrl = body.file_url || null;
     if (!to || !message) throw new BadRequestException('to and message are required');
     
     const receiver = await this.prisma.user.findUnique({ where: { uniqueId: to } });
@@ -119,7 +122,7 @@ export class MessagesService {
     if (this.schoolId(user) && receiver.schoolId !== this.schoolId(user)) throw new NotFoundException('Receiver not found');
 
     const msg = await this.prisma.message.create({
-      data: { senderId: BigInt(user.id), receiverId: receiver.id, body: message },
+      data: { senderId: BigInt(user.id), receiverId: receiver.id, body: message, fileUrl },
     });
     return this.ok({ id: msg.id.toString() }, 'Message sent');
   }
@@ -166,8 +169,10 @@ export class MessagesService {
 
   async uploadAttachment(file: Express.Multer.File) {
     if (!file) throw new BadRequestException('No file uploaded');
-    const type = file.mimetype.startsWith('image/') ? 'image' : file.mimetype.startsWith('video/') ? 'video' : 'file';
-    return this.ok({ filename: file.filename, original_name: file.originalname, type, size: file.size, url: `/uploads/messages/${file.filename}` }, 'File uploaded successfully');
+    const mime = file.mimetype;
+    const type = mime.startsWith('image/') ? 'image' : mime.startsWith('video/') ? 'video' : mime.startsWith('audio/') ? 'audio' : 'file';
+    const url = await uploadToCloudinary(file, 'florieren/messages');
+    return this.ok({ url, type, original_name: file.originalname, size: file.size }, 'File uploaded successfully');
   }
 
   async getUsers(user: any, search?: string, role?: string, className?: string) {

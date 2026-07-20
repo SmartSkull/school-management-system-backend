@@ -506,6 +506,7 @@ model Message {
   senderId   BigInt
   receiverId BigInt
   body       String   @db.Text
+  fileUrl    String?  @db.VarChar(1024)
   readAt     DateTime?
   deletedAt  DateTime?
   editedAt   DateTime?

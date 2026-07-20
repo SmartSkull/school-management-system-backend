@@ -7,12 +7,28 @@ cloudinary.config({
 });
 
 export async function uploadToCloudinary(file: Express.Multer.File, folder = 'florieren'): Promise<string> {
-  const isPdf = file.mimetype === 'application/pdf' || file.originalname?.toLowerCase().endsWith('.pdf');
-  const resource_type = isPdf ? 'raw' : 'auto';
+  const mime = file.mimetype ?? '';
+  const isPdf = mime === 'application/pdf' || file.originalname?.toLowerCase().endsWith('.pdf');
+  const isVideo = mime.startsWith('video/');
+  const isAudio = mime.startsWith('audio/');
+
+  // Cloudinary resource_type:
+  //  'image'  → images
+  //  'video'  → video AND audio files
+  //  'raw'    → PDFs and other binary files
+  //  'auto'   → let Cloudinary detect (works for most, but explicit is safer)
+  const resource_type: 'image' | 'video' | 'raw' | 'auto' =
+    isPdf ? 'raw' :
+    isVideo || isAudio ? 'video' :
+    'auto';
+
   return new Promise((resolve, reject) => {
-    cloudinary.uploader.upload_stream({ folder, resource_type, type: 'upload', access_mode: 'public' }, (err, result) => {
-      if (err || !result) return reject(err);
-      resolve(result.secure_url);
-    }).end(file.buffer);
+    cloudinary.uploader.upload_stream(
+      { folder, resource_type, type: 'upload', access_mode: 'public' },
+      (err, result) => {
+        if (err || !result) return reject(err);
+        resolve(result.secure_url);
+      },
+    ).end(file.buffer);
   });
 }
