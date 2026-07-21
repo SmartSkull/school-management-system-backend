@@ -11,6 +11,7 @@ export class AuthService {
   async studentLogin(name: string, password: string, schoolSlug?: string) {
     if (!name || !password) throw new UnauthorizedException('Invalid credentials');
     const schoolId = await this.resolveSchoolId(schoolSlug);
+    const defaultPassword = await this.getDefaultPassword(schoolId);
 
     const nameTrimmed = name.trim();
     const parts = nameTrimmed.split(' ');
@@ -53,7 +54,7 @@ export class AuthService {
       const fullName = `${row.firstName} ${row.lastName}`.toLowerCase();
       const uniqueId = row.uniqueId?.toLowerCase();
       if (fullName !== nameLower && uniqueId !== nameLower) continue;
-      const passwordMatches = await this.verifyStudentPassword(password, row);
+      const passwordMatches = await this.verifyStudentPassword(password, row, defaultPassword);
       if (passwordMatches) { user = row; break; }
     }
 
@@ -61,18 +62,19 @@ export class AuthService {
     return this.buildTokenResponse(user, 'student', user.uniqueId);
   }
 
-  private async verifyStudentPassword(input: string, row: any): Promise<boolean> {
+  private async verifyStudentPassword(input: string, row: any, defaultPassword: string): Promise<boolean> {
     if (input.toLowerCase() === row.lastName.toLowerCase()) return true;
     if (row.password) {
       try { if (await bcrypt.compare(input, row.password)) return true; } catch {}
       if (input === row.password) return true;
     }
-    if (input === 'florieren' || input === 'greatkings') return true;
+    if (input === defaultPassword) return true;
     return false;
   }
 
   async staffLogin(staffId: string, password: string, schoolSlug?: string) {
     const schoolId = await this.resolveSchoolId(schoolSlug);
+    const defaultPassword = await this.getDefaultPassword(schoolId);
     const user = await this.prisma.user.findFirst({
       where: {
         role: 'STAFF',
@@ -81,7 +83,7 @@ export class AuthService {
       },
     });
     if (!user) throw new UnauthorizedException('Invalid credentials');
-    const valid = await this.verifyPassword(password, user.password, 'florieren');
+    const valid = await this.verifyPassword(password, user.password, defaultPassword);
     if (!valid) throw new UnauthorizedException('Invalid credentials');
     const driverRecord = await this.prisma.transportDriver.findFirst({ where: { userId: user.id }, select: { id: true } });
     return this.buildTokenResponse(user, 'staff', user.uniqueId, !!driverRecord);
@@ -89,6 +91,7 @@ export class AuthService {
 
   async adminLogin(adminId: string, password: string, schoolSlug?: string) {
     const schoolId = await this.resolveSchoolId(schoolSlug);
+    const defaultPassword = await this.getDefaultPassword(schoolId);
     const user = await this.prisma.user.findFirst({
       where: {
         role: 'ADMIN',
@@ -97,7 +100,7 @@ export class AuthService {
       },
     });
     if (!user) throw new UnauthorizedException('Invalid credentials');
-    const valid = await this.verifyPassword(password, user.password, 'florieren');
+    const valid = await this.verifyPassword(password, user.password, defaultPassword);
     if (!valid) throw new UnauthorizedException('Invalid credentials');
     return this.buildTokenResponse(user, 'admin', user.uniqueId);
   }
@@ -181,6 +184,19 @@ export class AuthService {
     if (!school) throw new UnauthorizedException('Invalid school');
     if (school.status !== 'ACTIVE') throw new ForbiddenException('School is yet to be approved');
     return school.id;
+  }
+
+  private async getDefaultPassword(schoolId: bigint | undefined): Promise<string> {
+    if (!schoolId) return 'florieren';
+    const school = await this.prisma.school.findUnique({
+      where: { id: schoolId },
+      select: { name: true, slug: true },
+    });
+    if (!school) return 'florieren';
+    const key = `${school.name} ${school.slug}`.toLowerCase();
+    if (key.includes('greatkings')) return 'greatkings';
+    if (key.includes('florieren')) return 'florieren';
+    return 'florieren';
   }
 
   private normalizeValue(value: any): any {
