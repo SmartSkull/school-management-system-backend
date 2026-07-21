@@ -56,9 +56,9 @@ export class CbtController {
     return this.svc.getQuestions(user, cls, course, session, term);
   }
 
-  @Delete('staff/cbt/questions/bulk')
+  @Post('staff/cbt/questions/bulk')
   @UseGuards(StaffGuard)
-  bulkDeleteQuestions(@Query('ids') ids: string) { return this.svc.bulkDeleteQuestions(ids); }
+  bulkDeleteQuestions(@Body('ids') ids: string) { return this.svc.bulkDeleteQuestions(ids); }
 
   @Delete('staff/cbt/questions/:id')
   @UseGuards(StaffGuard)
