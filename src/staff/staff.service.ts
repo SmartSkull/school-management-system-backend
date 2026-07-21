@@ -518,10 +518,26 @@ export class StaffService {
     const lines = csvText.split(/\r?\n/).filter(l => l.trim());
     if (lines.length < 2) throw new BadRequestException('CSV file is empty or has no data rows');
 
-    const headerLine = lines[0].toLowerCase();
-    const idIdx = headerLine.split(',').findIndex(h => h.trim() === 'student_id');
-    const caIdx = headerLine.split(',').findIndex(h => h.trim().startsWith('test_score'));
-    const examIdx = headerLine.split(',').findIndex(h => h.trim().startsWith('exam_score'));
+    const parseCsvLine = (line: string): string[] => {
+      const result: string[] = [];
+      let current = '';
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"') {
+          if (inQuotes && line[i + 1] === '"') { current += '"'; i++; }
+          else { inQuotes = !inQuotes; }
+        } else if (char === ',' && !inQuotes) { result.push(current); current = ''; }
+        else { current += char; }
+      }
+      result.push(current);
+      return result;
+    };
+
+    const headerCols = parseCsvLine(lines[0]).map(h => h.trim().toLowerCase());
+    const idIdx = headerCols.findIndex(h => h === 'student_id');
+    const caIdx = headerCols.findIndex(h => h.startsWith('test_score'));
+    const examIdx = headerCols.findIndex(h => h.startsWith('exam_score'));
     if (idIdx === -1 || caIdx === -1 || examIdx === -1) {
       throw new BadRequestException('Invalid CSV template. Header must include: student_id, test_score, exam_score');
     }
@@ -540,7 +556,7 @@ export class StaffService {
     let matched = 0;
     let skipped = 0;
     for (let i = 1; i < lines.length; i++) {
-      const cols = lines[i].match(/(".*?"|[^,]+|(?<=,)(?=,)|(?<=,)$|^(?=,))/g) ?? [];
+      const cols = parseCsvLine(lines[i]);
       const clean = (v: string | undefined) => (v ?? '').replace(/^"|"$/g, '').trim().replace(/^\t+/, '').toUpperCase();
       const studentId = clean(cols[idIdx]);
       if (!studentId) continue;
