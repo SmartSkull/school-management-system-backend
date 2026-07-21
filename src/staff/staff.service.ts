@@ -777,6 +777,32 @@ export class StaffService {
     return this.ok({ count }, `Successfully deleted ${count} result(s)`);
   }
 
+  async bulkDeleteResults(user: any, body: any) {
+    const { course, session, term, student_ids } = body;
+    const schoolId = this.schoolId(user);
+    const sessionWhere: any = { name: session };
+    if (schoolId) sessionWhere.schoolId = schoolId;
+    const sessionEntity = await this.prisma.academicSession.findFirst({ where: sessionWhere });
+    const termWhere: any = { name: term.toUpperCase() as any, sessionId: sessionEntity?.id };
+    if (schoolId) termWhere.schoolId = schoolId;
+    const termEntity = await this.prisma.academicTerm.findFirst({ where: termWhere });
+    const subject = await this.prisma.subject.findFirst({ where: { name: course } });
+
+    if (!Array.isArray(student_ids) || !student_ids.length) throw new BadRequestException('student_ids must be a non-empty array');
+    
+    let count = 0;
+    for (const id of student_ids) {
+      const student = await this.prisma.student.findFirst({ where: { user: { uniqueId: id, ...(schoolId ? { schoolId } : {}) } } });
+      if (!student) continue;
+      
+      const affected = await this.prisma.result.deleteMany({ 
+        where: { studentId: student.id, subjectId: subject?.id, sessionId: sessionEntity?.id, termId: termEntity?.id } 
+      });
+      if (affected.count) count++;
+    }
+    return this.ok({ count }, `Successfully deleted ${count} result(s)`);
+  }
+
   async getAttendance(user: any, q: any) {
     const schoolId = this.schoolId(user);
     const session = q.session || await this.getCurrentSession(user);
