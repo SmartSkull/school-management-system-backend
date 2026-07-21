@@ -40,6 +40,11 @@ export class StaffController {
   @Get('results') getResults(@CurrentUser() user: any, @Query() q: any) { return this.svc.getResults(user, q); }
   @Delete('results') deleteResult(@CurrentUser() user: any, @Body() body: any) { return this.svc.deleteResult(user, body); }
   @Post('results/delete') deleteResultByBody(@CurrentUser() user: any, @Body() body: any) { return this.svc.deleteResult(user, body); }
+  @Post('results/upload-csv')
+  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
+  uploadResultsCsv(@CurrentUser() user: any, @Body() body: any, @UploadedFile() file: Express.Multer.File) {
+    return this.svc.uploadResultsCsv(user, body, file);
+  }
 
   @Get('attendance') getAttendance(@CurrentUser() user: any, @Query() q: any) { return this.svc.getAttendance(user, q); }
   @Post('attendance') updateAttendance(@CurrentUser() user: any, @Body() body: any) { return this.svc.updateAttendance(user, body); }

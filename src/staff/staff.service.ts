@@ -492,6 +492,91 @@ export class StaffService {
     return this.ok(null, 'Result upload format error');
   }
 
+  async uploadResultsCsv(user: any, body: any, file: Express.Multer.File) {
+    const schoolId = this.schoolId(user);
+    const session = body.session || await this.getCurrentSession(user);
+    const term = body.term || await this.getCurrentTerm(user);
+    const className = body.class;
+    const course = body.course;
+
+    const sessionWhere: any = { name: session };
+    if (schoolId) sessionWhere.schoolId = schoolId;
+    const sessionEntity = await this.prisma.academicSession.findFirst({ where: sessionWhere });
+    const termWhere: any = { name: term as any, sessionId: sessionEntity?.id };
+    if (schoolId) termWhere.schoolId = schoolId;
+    const termEntity = await this.prisma.academicTerm.findFirst({ where: termWhere });
+    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
+    const subject = await this.prisma.subject.findFirst({ where: { name: course } });
+
+    if (!sessionEntity || !termEntity || !staff || !subject) {
+      throw new BadRequestException('Session, Term, Staff, Subject, or Class not found');
+    }
+
+    if (!file?.buffer) throw new BadRequestException('CSV file is required');
+
+    const csvText = file.buffer.toString('utf-8').replace(/^\uFEFF/, '');
+    const lines = csvText.split(/\r?\n/).filter(l => l.trim());
+    if (lines.length < 2) throw new BadRequestException('CSV file is empty or has no data rows');
+
+    const headerLine = lines[0].toLowerCase();
+    const idIdx = headerLine.split(',').findIndex(h => h.trim() === 'student_id');
+    const caIdx = headerLine.split(',').findIndex(h => h.trim().startsWith('test_score'));
+    const examIdx = headerLine.split(',').findIndex(h => h.trim().startsWith('exam_score'));
+    if (idIdx === -1 || caIdx === -1 || examIdx === -1) {
+      throw new BadRequestException('Invalid CSV template. Header must include: student_id, test_score, exam_score');
+    }
+
+    const classWhere: any = { name: className };
+    if (schoolId) classWhere.schoolId = schoolId;
+    const classRoom = await this.prisma.classRoom.findFirst({ where: classWhere });
+    if (!classRoom) throw new BadRequestException('Class not found');
+
+    const students = await this.prisma.user.findMany({
+      where: { role: 'STUDENT', schoolId, student: { classRoomId: classRoom.id } },
+      include: { student: true },
+    });
+    const studentMap = new Map(students.map(s => [s.uniqueId.toUpperCase(), s]));
+
+    let matched = 0;
+    let skipped = 0;
+    for (let i = 1; i < lines.length; i++) {
+      const cols = lines[i].match(/(".*?"|[^,]+|(?<=,)(?=,)|(?<=,)$|^(?=,))/g) ?? [];
+      const clean = (v: string | undefined) => (v ?? '').replace(/^"|"$/g, '').trim().replace(/^\t+/, '').toUpperCase();
+      const studentId = clean(cols[idIdx]);
+      if (!studentId) continue;
+      const student = studentMap.get(studentId);
+      if (!student) { skipped++; continue; }
+
+      const testScore = parseFloat(clean(cols[caIdx])) || 0;
+      const examScore = parseFloat(clean(cols[examIdx])) || 0;
+      const totalScore = testScore + examScore;
+      const grade = computeGrade(totalScore);
+      const remark = computeRemark(grade);
+
+      await this.prisma.result.upsert({
+        where: {
+          studentId_subjectId_sessionId_termId: {
+            studentId: student.student!.id,
+            subjectId: subject.id,
+            sessionId: sessionEntity.id,
+            termId: termEntity.id,
+          }
+        },
+        update: { testScore, examScore, totalScore, grade, remark, teacherId: staff.id },
+        create: {
+          studentId: student.student!.id,
+          subjectId: subject.id,
+          sessionId: sessionEntity.id,
+          termId: termEntity.id,
+          testScore, examScore, totalScore, grade, remark, teacherId: staff.id,
+        }
+      });
+      matched++;
+    }
+
+    return this.ok({ matched, skipped }, `Uploaded ${matched} result(s)${skipped ? `, ${skipped} student(s) skipped` : ''}`);
+  }
+
 
 
   async getResults(user: any, q: any) {
