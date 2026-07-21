@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException, Inject, forwardRef } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, ForbiddenException, Inject, forwardRef } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { EmailService } from '../common/email.service';
 import { TransportGateway } from './transport.gateway';
@@ -925,5 +925,145 @@ export class TransportService {
       bus: p.assignment.bus.plateNumber,
       route: p.assignment.bus.route?.name ?? null,
     })));
+  }
+
+  // ── Route Group Chat ───────────────────────────────────────────────────────
+
+  async getRouteChat(user: any, routeId: string) {
+    const route = await this.prisma.transportRoute.findUnique({ where: { id: BigInt(routeId) } });
+    if (!route) throw new NotFoundException('Route not found');
+    const schoolId = this.sid(user);
+    if (schoolId && route.schoolId !== schoolId) throw new ForbiddenException('Access denied');
+
+    const messages = await this.prisma.transportRouteChat.findMany({
+      where: { routeId: BigInt(routeId) },
+      include: { user: { select: { id: true, firstName: true, lastName: true, image: true, uniqueId: true } } },
+      orderBy: { createdAt: 'asc' },
+    });
+    return this.ok(messages.map((m: any) => ({
+      id: String(m.id),
+      routeId: String(m.routeId),
+      userId: String(m.userId),
+      user: m.user,
+      message: m.message,
+      type: m.type,
+      voiceUrl: m.voiceUrl,
+      createdAt: m.createdAt,
+    })));
+  }
+
+  async sendRouteChatMessage(user: any, body: { routeId: string; message: string; type?: string; voiceUrl?: string }) {
+    const route = await this.prisma.transportRoute.findUnique({ where: { id: BigInt(body.routeId) } });
+    if (!route) throw new NotFoundException('Route not found');
+    const schoolId = this.sid(user);
+    if (schoolId && route.schoolId !== schoolId) throw new ForbiddenException('Access denied');
+
+    const msg = await this.prisma.transportRouteChat.create({
+      data: {
+        routeId: BigInt(body.routeId),
+        userId: BigInt(user.id),
+        message: body.message,
+        type: body.type || 'text',
+        voiceUrl: body.voiceUrl || null,
+      },
+      include: { user: { select: { id: true, firstName: true, lastName: true, image: true, uniqueId: true } } },
+    });
+
+    const payload = {
+      id: String(msg.id),
+      routeId: String(msg.routeId),
+      userId: String(msg.userId),
+      user: msg.user,
+      message: msg.message,
+      type: msg.type,
+      voiceUrl: msg.voiceUrl,
+      createdAt: msg.createdAt,
+    };
+
+    this.gateway.broadcastRouteChat(String(body.routeId), payload);
+    return this.ok(payload, 'Message sent');
+  }
+
+  // ── Admin Broadcasts ──────────────────────────────────────────────────────
+
+  async createBroadcast(user: any, body: { routeId: string; message: string; expiresAt?: string }) {
+    const route = await this.prisma.transportRoute.findUnique({ where: { id: BigInt(body.routeId) } });
+    if (!route) throw new NotFoundException('Route not found');
+    const schoolId = this.sid(user);
+    if (schoolId && route.schoolId !== schoolId) throw new ForbiddenException('Access denied');
+
+    const broadcast = await this.prisma.transportBroadcast.create({
+      data: {
+        routeId: BigInt(body.routeId),
+        adminId: BigInt(user.id),
+        message: body.message,
+        expiresAt: body.expiresAt ? new Date(body.expiresAt) : null,
+      },
+    });
+
+    this.gateway.broadcastRouteBroadcast(String(body.routeId), {
+      id: String(broadcast.id),
+      routeId: String(broadcast.routeId),
+      adminId: String(broadcast.adminId),
+      message: broadcast.message,
+      expiresAt: broadcast.expiresAt,
+      createdAt: broadcast.createdAt,
+    });
+
+    return this.ok({ id: String(broadcast.id), message: broadcast.message, createdAt: broadcast.createdAt }, 'Broadcast sent');
+  }
+
+  async getRouteBroadcasts(user: any, routeId: string) {
+    const route = await this.prisma.transportRoute.findUnique({ where: { id: BigInt(routeId) } });
+    if (!route) throw new NotFoundException('Route not found');
+    const schoolId = this.sid(user);
+    if (schoolId && route.schoolId !== schoolId) throw new ForbiddenException('Access denied');
+
+    const broadcasts = await this.prisma.transportBroadcast.findMany({
+      where: { routeId: BigInt(routeId) },
+      include: { admin: { select: { firstName: true, lastName: true } } },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return this.ok(broadcasts.map((b: any) => ({
+      id: String(b.id),
+      routeId: String(b.routeId),
+      adminId: String(b.adminId),
+      admin: b.admin,
+      message: b.message,
+      expiresAt: b.expiresAt,
+      createdAt: b.createdAt,
+    })));
+  }
+
+  async deleteBroadcast(user: any, broadcastId: string) {
+    const broadcast = await this.prisma.transportBroadcast.findUnique({ where: { id: BigInt(broadcastId) } });
+    if (!broadcast) throw new NotFoundException('Broadcast not found');
+    const route = await this.prisma.transportRoute.findUnique({ where: { id: broadcast.routeId } });
+    if (!route) throw new NotFoundException('Route not found');
+    const schoolId = this.sid(user);
+    if (schoolId && route.schoolId !== schoolId) throw new ForbiddenException('Access denied');
+    if (String(broadcast.adminId) !== String(user.id)) throw new ForbiddenException('Only the admin who created this broadcast can delete it');
+
+    await this.prisma.transportBroadcast.delete({ where: { id: BigInt(broadcastId) } });
+    return this.ok(null, 'Broadcast deleted');
+  }
+
+  // ── Parent Tracking Link ──────────────────────────────────────────────────
+
+  async generateParentTrackingLink(user: any, studentUniqueId: string) {
+    const assignment = await this.prisma.transportAssignment.findFirst({
+      where: { student: { user: { uniqueId: studentUniqueId } } },
+      include: { bus: { include: { route: true } } },
+    });
+    if (!assignment) throw new NotFoundException('No bus assignment found for this student');
+    const bus = assignment.bus;
+    if (!bus) throw new NotFoundException('No bus assigned');
+    const schoolId = this.sid(user);
+    if (schoolId && bus.schoolId !== schoolId) throw new ForbiddenException('Access denied');
+
+    const token = crypto.randomBytes(24).toString('hex');
+    const trackingUrl = `${process.env.APP_URL || 'https://www.smartcampus.com.ng'}/parent/track/${token}`;
+    return this.ok({ trackingUrl, busId: String(bus.id), plateNumber: bus.plateNumber, routeName: bus.route?.name });
   }
 }

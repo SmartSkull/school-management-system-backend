@@ -61,6 +61,12 @@ export class TransportGateway implements OnGatewayDisconnect {
     client.join(`watch:${data.busId}`);
   }
 
+  // Join route chat room
+  @SubscribeMessage('route:join')
+  handleRouteChatJoin(@MessageBody() data: { routeId: string }, @ConnectedSocket() client: Socket) {
+    client.join(`route-chat:${data.routeId}`);
+  }
+
   // Broadcast to all watchers (called from service after DB update)
   broadcastLocation(busId: string, payload: any) {
     this.server.to(`watch:${busId}`).emit('bus:location', payload);
@@ -68,5 +74,13 @@ export class TransportGateway implements OnGatewayDisconnect {
 
   broadcastPickup(busId: string, studentUniqueId: string, pickedUp: boolean, pickedUpAt: string | null) {
     this.server.to(`watch:${busId}`).emit('student:pickedup', { busId, studentUniqueId, pickedUp, pickedUpAt });
+  }
+
+  broadcastRouteChat(routeId: string, payload: any) {
+    this.server.to(`route-chat:${routeId}`).emit('route:chat', payload);
+  }
+
+  broadcastRouteBroadcast(routeId: string, payload: any) {
+    this.server.to(`route-chat:${routeId}`).emit('route:broadcast', payload);
   }
 }

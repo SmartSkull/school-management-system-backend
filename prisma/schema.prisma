@@ -128,6 +128,8 @@ model User {
   receivedMessages Message[] @relation("ReceivedMessages")
   clockAttendances StudentAttendance[]
   transportDriver  TransportDriver?
+  routeChats       TransportRouteChat[]
+  broadcasts       TransportBroadcast[]
 }
 
 model Student {
@@ -420,7 +422,7 @@ model LibraryResource {
 
 model SchoolFeeConfig {
   id          BigInt   @id @default(autoincrement())
-  classRoomId BigInt
+  classRoomId BigInt?
   sessionId   BigInt
   termId      BigInt
   amount      Decimal  @db.Decimal(10, 2)
@@ -428,7 +430,7 @@ model SchoolFeeConfig {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  classRoom   ClassRoom @relation(fields: [classRoomId], references: [id])
+  classRoom   ClassRoom? @relation(fields: [classRoomId], references: [id])
   session     AcademicSession @relation(fields: [sessionId], references: [id])
   term        AcademicTerm @relation(fields: [termId], references: [id])
 
@@ -1015,6 +1017,8 @@ model TransportRoute {
 
   school      School?  @relation(fields: [schoolId], references: [id])
   buses       TransportBus[]
+  chats       TransportRouteChat[]
+  broadcasts  TransportBroadcast[]
 }
 
 model TransportDriver {
@@ -1111,4 +1115,34 @@ model TransportBusFeePayment {
 
   assignment   TransportAssignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
   student      Student             @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+model TransportRouteChat {
+  id        BigInt   @id @default(autoincrement())
+  routeId   BigInt
+  userId    BigInt
+  message   String   @db.Text
+  type      String   @default("text") @db.VarChar(20) // text | voice
+  voiceUrl  String?  @db.VarChar(255)
+  createdAt DateTime @default(now())
+
+  route TransportRoute @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  user  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([routeId])
+  @@index([userId])
+}
+
+model TransportBroadcast {
+  id        BigInt   @id @default(autoincrement())
+  routeId   BigInt
+  adminId   BigInt
+  message   String   @db.Text
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+
+  route TransportRoute @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  admin User           @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([routeId])
 }

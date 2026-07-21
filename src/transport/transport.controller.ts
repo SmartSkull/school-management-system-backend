@@ -40,7 +40,15 @@ export class TransportController {
   @Get('analytics') getAnalytics(@Request() req: any) { return this.service.getAnalytics(req.user); }
 
   @Put('students/:uniqueId/parent-location') setParentLocation(@Param('uniqueId') id: string, @Body() body: any) { return this.service.setParentLocation(id, body); }
-  @Get('students/:uniqueId/parent-location') getParentLocation(@Param('uniqueId') id: string) { return this.service.getParentLocation(id); }}
+  @Get('students/:uniqueId/parent-location') getParentLocation(@Param('uniqueId') id: string) { return this.service.getParentLocation(id); }
+  @Get('parent/tracking-link/:studentUniqueId') getParentTrackingLink(@Param('studentUniqueId') studentUniqueId: string, @Request() req: any) { return this.service.generateParentTrackingLink(req.user, studentUniqueId); }
+
+  @Get('routes/:id/chat') getRouteChat(@Param('id') id: string, @Request() req: any) { return this.service.getRouteChat(req.user, id); }
+  @Post('routes/:id/chat') sendRouteChat(@Param('id') id: string, @Body() body: any, @Request() req: any) { return this.service.sendRouteChatMessage(req.user, { ...body, routeId: id }); }
+  @Post('routes/:id/broadcast') createBroadcast(@Param('id') id: string, @Body() body: any, @Request() req: any) { return this.service.createBroadcast(req.user, { ...body, routeId: id }); }
+  @Get('routes/:id/broadcasts') getBroadcasts(@Param('id') id: string, @Request() req: any) { return this.service.getRouteBroadcasts(req.user, id); }
+  @Delete('broadcasts/:id') deleteBroadcast(@Param('id') id: string, @Request() req: any) { return this.service.deleteBroadcast(req.user, id); }
+}
 
 // Public driver endpoints (no admin auth — token-based)
 import { Controller as Ctrl, Get as G, Post as P, Body as B, Param as Pm, UseGuards as UG, Request as Req } from '@nestjs/common';
@@ -70,9 +78,9 @@ export class StudentTransportController {
   @G('history') getTripHistory(@Req() req: any) { return this.service.getStudentTripHistory(req.user.uniqueId); }
   @P('geocode') geocode(@B() body: { address: string }) { return this.service.geocodeStudentAddress(body.address); }
   @P('sos') sos(@Req() req: any, @B() body: { lat: number; lng: number }) { return this.service.sendSosAlert(req.user.uniqueId, body.lat, body.lng); }
-  @G('bus-fee') getBusFeeStatus(@Req() req: any) { return this.service.getStudentBusFeeStatus(req.user.uniqueId); }
-  @P('bus-fee/initialize') initBusFee(@Req() req: any) { return this.service.initializeBusFeePayment(req.user.uniqueId); }
-  @P('bus-fee/verify/:reference') verifyBusFee(@Pm('reference') ref: string) { return this.service.verifyBusFeePayment(ref); }
+  @G('routes/:id/chat') getRouteChat(@Pm('id') id: string, @Req() req: any) { return this.service.getRouteChat(req.user, id); }
+  @P('routes/:id/chat') sendRouteChat(@Pm('id') id: string, @B() body: any, @Req() req: any) { return this.service.sendRouteChatMessage(req.user, { ...body, routeId: id }); }
+  @G('routes/:id/broadcasts') getBroadcasts(@Pm('id') id: string, @Req() req: any) { return this.service.getRouteBroadcasts(req.user, id); }
 }
 
 // Staff transport view (read-only)
@@ -84,6 +92,8 @@ export class StaffTransportController {
   constructor(private service: TransportService) {}
   @G2('overview') getOverview(@Req2() req: any) { return this.service.getStaffTransportOverview(req.user); }
   @G2('driver-dashboard') getDriverDashboard(@Req2() req: any) { return this.service.getDriverDashboard(req.user.uniqueId); }
+  @G2('routes/:id/chat') getRouteChat(@Pm('id') id: string, @Req2() req: any) { return this.service.getRouteChat(req.user, id); }
+  @G2('routes/:id/broadcasts') getBroadcasts(@Pm('id') id: string, @Req2() req: any) { return this.service.getRouteBroadcasts(req.user, id); }
 }
 
 // Public bus fee callback (Paystack GET redirect — no auth)
