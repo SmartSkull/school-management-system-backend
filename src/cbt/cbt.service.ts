@@ -479,9 +479,10 @@ export class CbtService {
     return this.ok(null, 'Result deleted successfully');
   }
 
-  async bulkDeleteQuestions(ids: string[]) {
-    if (!ids?.length) throw new BadRequestException('No IDs provided');
-    const bigIds = ids.map(id => BigInt(id));
+  async bulkDeleteQuestions(ids: string) {
+    const idArray = (ids || '').split(',').map(id => id.trim()).filter(Boolean);
+    if (!idArray.length) throw new BadRequestException('No IDs provided');
+    const bigIds = idArray.map(id => BigInt(id));
     const { count } = await this.prisma.cbtQuestion.deleteMany({ where: { id: { in: bigIds } } });
     return this.ok(null, `Deleted ${count} question${count !== 1 ? 's' : ''} successfully`);
   }
