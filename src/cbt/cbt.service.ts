@@ -483,12 +483,17 @@ export class CbtService {
     const idArray = Array.isArray(ids) ? ids : (ids || '').split(',').map(id => id.trim()).filter(Boolean);
     if (!idArray.length) throw new BadRequestException('No IDs provided');
     const bigIds = idArray.map(id => BigInt(id));
+    if (bigIds.length > 0) {
+      await this.prisma.cbtAnswer.deleteMany({ where: { questionId: { in: bigIds } } });
+    }
     const { count } = await this.prisma.cbtQuestion.deleteMany({ where: { id: { in: bigIds } } });
     return this.ok(null, `Deleted ${count} question${count !== 1 ? 's' : ''} successfully`);
   }
 
   async deleteQuestion(id: string) {
-    await this.prisma.cbtQuestion.delete({ where: { id: BigInt(id) } });
+    const qId = BigInt(id);
+    await this.prisma.cbtAnswer.deleteMany({ where: { questionId: qId } });
+    await this.prisma.cbtQuestion.delete({ where: { id: qId } });
     return this.ok(null, 'Question deleted successfully');
   }
 
