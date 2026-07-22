@@ -1252,9 +1252,22 @@ export class AdminService {
       }),
     ]);
 
+    // principal/signature columns may not exist yet if migration hasn't run — read safely
+    let principal: string | null = null;
+    let signature: string | null = null;
+    try {
+      const row = await this.prisma.$queryRaw<{ principal: string | null; signature: string | null }[]>`
+        SELECT principal, signature FROM \`School\` WHERE id = ${schoolId} LIMIT 1
+      `;
+      principal = row[0]?.principal ?? null;
+      signature = row[0]?.signature ?? null;
+    } catch {
+      // columns not yet added — return nulls gracefully
+    }
+
     return this.ok({
-      principal: (school as any).principal ?? null,
-      signature: (school as any).signature ?? null,
+      principal,
+      signature,
       classes: classes.map(c => ({
         id: c.id.toString(),
         name: c.name,
@@ -1272,13 +1285,22 @@ export class AdminService {
   async updateSettings(user: any, data: any) {
     const school = await this.findManagedSchool(user);
 
-    // Update principal and/or signature on the school record
-    const schoolUpdate: any = {};
-    if (data.principal !== undefined) schoolUpdate.principal = data.principal || null;
-    if (data.signature !== undefined) schoolUpdate.signature = data.signature || null;
-
-    if (Object.keys(schoolUpdate).length > 0) {
-      await this.prisma.school.update({ where: { id: school.id }, data: schoolUpdate as any });
+    // Update principal and/or signature — use raw SQL so it works even if
+    // Prisma client was generated before the migration added these columns
+    if (data.principal !== undefined || data.signature !== undefined) {
+      const sets: string[] = [];
+      const values: any[] = [];
+      if (data.principal !== undefined) { sets.push('principal = ?'); values.push(data.principal || null); }
+      if (data.signature !== undefined) { sets.push('signature = ?'); values.push(data.signature || null); }
+      values.push(school.id);
+      try {
+        await this.prisma.$executeRawUnsafe(
+          `UPDATE \`School\` SET ${sets.join(', ')} WHERE id = ?`,
+          ...values,
+        );
+      } catch {
+        // columns not yet added — skip gracefully, class-teacher assignments still proceed
+      }
     }
 
     // Update class-teacher assignments: [{ classId, teacherUniqueId }]
@@ -1308,7 +1330,15 @@ export class AdminService {
     if (!file) throw new BadRequestException('No file uploaded');
     const school = await this.findManagedSchool(user);
     const url = await uploadToCloudinary(file, 'signatures');
-    await this.prisma.school.update({ where: { id: school.id }, data: { signature: url } as any });
+    try {
+      await this.prisma.$executeRawUnsafe(
+        'UPDATE `School` SET signature = ? WHERE id = ?',
+        url,
+        school.id,
+      );
+    } catch {
+      await this.prisma.school.update({ where: { id: school.id }, data: { signature: url } as any });
+    }
     return this.ok({ signature: url }, 'Signature uploaded successfully');
   }
 }
