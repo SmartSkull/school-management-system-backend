@@ -332,14 +332,17 @@ export class CbtService {
 
   async getQuestions(user: any | null, className: string, subjectName: string, sessionName?: string, termName?: string) {
     // Resolve the staff record so we can filter by the logged-in staff's own questions.
-    // When called from the admin endpoint (user is null) no staff filter is applied.
-    const staffUserId = user ? BigInt(user.authUserId ?? user.userId ?? user.id) : null;
+    // When called from the admin endpoint no staff filter is applied, but schoolId still is.
+    const isAdmin = user?.role === 'admin' || user?.isAdmin;
+    const schoolId = user?.schoolId ? BigInt(user.schoolId) : undefined;
+    const staffUserId = (user && !isAdmin) ? BigInt(user.authUserId ?? user.userId ?? user.id) : null;
     const staff = staffUserId
       ? await this.prisma.staff.findFirst({ where: { userId: staffUserId } })
       : null;
 
     const where: any = {};
-    if (className) where.classRoom = { name: className };
+    if (schoolId) where.classRoom = { ...(className ? { name: className } : {}), schoolId };
+    else if (className) where.classRoom = { name: className };
     if (subjectName) where.subject = { name: subjectName };
 
     // Only filter by session/term if columns exist (after migration)
@@ -408,9 +411,12 @@ export class CbtService {
   }
 
   /** Admin-only: returns a summary of all CbtTests with question count, uploader names and schedule */
-  async adminGetTests(q: any) {
+  async adminGetTests(user: any, q: any) {
+    const schoolId = user?.schoolId ? BigInt(user.schoolId) : undefined;
+
     const where: any = {};
-    if (q.class) where.classRoom = { name: q.class };
+    if (schoolId) where.classRoom = { ...(q.class ? { name: q.class } : {}), schoolId };
+    else if (q.class) where.classRoom = { name: q.class };
     if (q.course) where.subject = { name: { contains: q.course } };
 
     const tests = await this.prisma.cbtTest.findMany({
@@ -525,11 +531,10 @@ export class CbtService {
   }
 
   async getExamResults(user: any, className?: string, subjectName?: string, sessionName?: string, termName?: string, teacherId?: string) {
-    const schoolId = user?.schoolId;
-    const isAdmin = user?.role === 'admin';
+    const schoolId = user?.schoolId ? BigInt(user.schoolId) : undefined;
 
     const classRoomWhere: any = {};
-    if (!isAdmin && schoolId) classRoomWhere.schoolId = schoolId;
+    if (schoolId) classRoomWhere.schoolId = schoolId;
     if (className) classRoomWhere.name = className;
 
     const subjectWhere: any = {};

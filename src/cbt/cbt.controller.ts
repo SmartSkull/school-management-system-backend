@@ -106,11 +106,11 @@ export class CbtController {
 
   @Get('admin/cbt/questions')
   @UseGuards(AdminGuard)
-  adminGetQuestions(@Query('class') cls: string, @Query('course') course: string) { return this.svc.getQuestions(null, cls, course); }
+  adminGetQuestions(@CurrentUser() user: any, @Query('class') cls: string, @Query('course') course: string) { return this.svc.getQuestions(user, cls, course); }
 
   @Get('admin/cbt/tests')
   @UseGuards(AdminGuard)
-  adminGetTests(@Query() q: any) { return this.svc.adminGetTests(q); }
+  adminGetTests(@CurrentUser() user: any, @Query() q: any) { return this.svc.adminGetTests(user, q); }
 
   @Delete('admin/cbt/questions/:id')
   @UseGuards(AdminGuard)
