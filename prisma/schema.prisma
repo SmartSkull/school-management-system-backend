@@ -78,6 +78,8 @@ model School {
   primaryColor   String        @default("#1a73e8") @db.VarChar(20)
   secondaryColor String        @default("#ffffff") @db.VarChar(20)
   accentColor    String        @default("#84cc16") @db.VarChar(20)
+  principal      String?       @db.VarChar(150)
+  signature      String?       @db.VarChar(500)
   status         AccountStatus @default(PENDING)
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt

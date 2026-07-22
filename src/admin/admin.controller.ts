@@ -34,6 +34,13 @@ export class AdminController {
   @UseInterceptors(FileInterceptor('logo', { storage: memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } }))
   uploadLogo(@CurrentUser() user: any, @UploadedFile() logo: Express.Multer.File) { return this.svc.uploadLogo(user, logo); }
 
+  // Settings (principal, signature, class-teacher assignments)
+  @Get('settings') getSettings(@CurrentUser() user: any) { return this.svc.getSettings(user); }
+  @Put('settings') updateSettings(@CurrentUser() user: any, @Body() body: any) { return this.svc.updateSettings(user, body); }
+  @Post('settings/upload-signature')
+  @UseInterceptors(FileInterceptor('signature', { storage: memoryStorage(), limits: { fileSize: 2 * 1024 * 1024 } }))
+  uploadSignature(@CurrentUser() user: any, @UploadedFile() file: Express.Multer.File) { return this.svc.uploadSignature(user, file); }
+
   // Students
   @Get('students')
   getStudents(@CurrentUser() user: any, @Query() q: any) { return this.svc.getStudents(user, q); }

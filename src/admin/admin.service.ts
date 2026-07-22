@@ -1234,4 +1234,81 @@ export class AdminService {
 
     return this.ok(results);
   }
+
+  // ── Settings (principal, signature, class-teacher) ─────────────────────────
+  async getSettings(user: any) {
+    const school = await this.findManagedSchool(user);
+    const schoolId = school.id;
+
+    const [classes, staffList] = await Promise.all([
+      this.prisma.classRoom.findMany({
+        where: { schoolId },
+        orderBy: { name: 'asc' },
+        include: { classTeacher: { include: { user: { select: { firstName: true, lastName: true, uniqueId: true } } } } },
+      }),
+      this.prisma.staff.findMany({
+        where: { user: { schoolId } },
+        include: { user: { select: { firstName: true, lastName: true, uniqueId: true, image: true } } },
+      }),
+    ]);
+
+    return this.ok({
+      principal: (school as any).principal ?? null,
+      signature: (school as any).signature ?? null,
+      classes: classes.map(c => ({
+        id: c.id.toString(),
+        name: c.name,
+        teacherUniqueId: c.classTeacher?.user.uniqueId ?? null,
+        teacherName: c.classTeacher ? `${c.classTeacher.user.firstName} ${c.classTeacher.user.lastName}` : null,
+      })),
+      staff: staffList.map(s => ({
+        uniqueId: s.user.uniqueId,
+        name: `${s.user.firstName} ${s.user.lastName}`,
+        image: s.user.image ?? null,
+      })),
+    });
+  }
+
+  async updateSettings(user: any, data: any) {
+    const school = await this.findManagedSchool(user);
+
+    // Update principal and/or signature on the school record
+    const schoolUpdate: any = {};
+    if (data.principal !== undefined) schoolUpdate.principal = data.principal || null;
+    if (data.signature !== undefined) schoolUpdate.signature = data.signature || null;
+
+    if (Object.keys(schoolUpdate).length > 0) {
+      await this.prisma.school.update({ where: { id: school.id }, data: schoolUpdate as any });
+    }
+
+    // Update class-teacher assignments: [{ classId, teacherUniqueId }]
+    if (Array.isArray(data.classTeachers)) {
+      for (const assignment of data.classTeachers) {
+        const classRoom = await this.prisma.classRoom.findFirst({ where: { id: BigInt(assignment.classId), schoolId: school.id } });
+        if (!classRoom) continue;
+
+        if (!assignment.teacherUniqueId) {
+          // Remove teacher assignment
+          await this.prisma.classRoom.update({ where: { id: classRoom.id }, data: { classTeacherId: null } });
+        } else {
+          const staff = await this.prisma.staff.findFirst({
+            where: { user: { uniqueId: assignment.teacherUniqueId, schoolId: school.id } },
+          });
+          if (staff) {
+            await this.prisma.classRoom.update({ where: { id: classRoom.id }, data: { classTeacherId: staff.id } });
+          }
+        }
+      }
+    }
+
+    return this.ok(null, 'Settings saved successfully');
+  }
+
+  async uploadSignature(user: any, file: Express.Multer.File) {
+    if (!file) throw new BadRequestException('No file uploaded');
+    const school = await this.findManagedSchool(user);
+    const url = await uploadToCloudinary(file, 'signatures');
+    await this.prisma.school.update({ where: { id: school.id }, data: { signature: url } as any });
+    return this.ok({ signature: url }, 'Signature uploaded successfully');
+  }
 }
