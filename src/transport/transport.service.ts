@@ -595,6 +595,59 @@ export class TransportService {
     return this.ok(coords);
   }
 
+  async reportLeftWithoutMe(studentUniqueId: string, body: { lat?: number; lng?: number; timestamp?: string; busId?: string; plateNumber?: string }) {
+    const student = await this.prisma.student.findFirst({
+      where: { user: { uniqueId: studentUniqueId } },
+      include: { user: true, classRoom: true },
+    });
+    if (!student) throw new NotFoundException('Student not found');
+
+    const assignment = await this.prisma.transportAssignment.findFirst({
+      where: { studentId: student.id },
+      include: { bus: { include: { route: true } } },
+    });
+
+    const mapsUrl = body.lat && body.lng ? `\nLocation: https://www.google.com/maps?q=${body.lat},${body.lng}` : '';
+    const plate = body.plateNumber || (assignment?.bus as any)?.plateNumber || 'Unknown';
+    const msgBody =
+      `🚌 Bus Left Without Me — ${student.user.firstName} ${student.user.lastName} ` +
+      `(Class: ${(student.classRoom as any)?.name ?? 'N/A'}) was not picked up by bus ${plate}.` +
+      `${mapsUrl}\nReported at: ${body.timestamp ?? new Date().toISOString()}`;
+
+    // Notify school admin
+    const admin = await this.prisma.user.findFirst({
+      where: { schoolId: student.user.schoolId ?? undefined, role: 'ADMIN' },
+    });
+    if (admin) {
+      await this.prisma.message.create({
+        data: { senderId: student.user.id, receiverId: admin.id, body: msgBody },
+      });
+    }
+
+    // Notify driver if linked
+    const driverUser = assignment?.bus
+      ? await this.prisma.user.findFirst({
+          where: { transportDriver: { buses: { some: { id: (assignment.bus as any).id } } } },
+        })
+      : null;
+    if (driverUser?.email) {
+      await this.email.sendGeneric({ to: driverUser.email, subject: '🚌 Student Left Without Me Report', text: msgBody });
+    }
+
+    // Broadcast over socket so admin dashboard can react in real time
+    if (assignment?.bus) {
+      this.gateway.server?.to(`bus:${(assignment.bus as any).id}`).emit('student:leftWithoutMe', {
+        studentUniqueId,
+        name: `${student.user.firstName} ${student.user.lastName}`,
+        lat: body.lat,
+        lng: body.lng,
+        timestamp: body.timestamp ?? new Date().toISOString(),
+      });
+    }
+
+    return this.ok(null, 'Report submitted. Admin and driver have been notified.');
+  }
+
   async sendSosAlert(studentUniqueId: string, lat: number, lng: number) {
     const student = await this.prisma.student.findFirst({
       where: { user: { uniqueId: studentUniqueId } },
