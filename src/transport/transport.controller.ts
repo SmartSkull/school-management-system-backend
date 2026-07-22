@@ -82,7 +82,7 @@ export class StudentTransportController {
   @P('routes/:id/chat') sendRouteChat(@Pm('id') id: string, @B() body: any, @Req() req: any) { return this.service.sendRouteChatMessage(req.user, { ...body, routeId: id }); }
   @G('routes/:id/broadcasts') getBroadcasts(@Pm('id') id: string, @Req() req: any) { return this.service.getRouteBroadcasts(req.user, id); }
   @G('parent/tracking-link') getParentTrackingLink(@Req() req: any) { return this.service.generateParentTrackingLink(req.user, req.user.uniqueId); }
-}}
+}
 
 // Staff transport view (read-only)
 import { Controller as C2, Get as G2, UseGuards as UG2, Request as Req2 } from '@nestjs/common';
