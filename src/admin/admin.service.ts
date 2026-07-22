@@ -740,7 +740,7 @@ export class AdminService {
         : Promise.resolve(null),
     ]);
 
-    const [results, firstResults, secondResults, attendance, trait, principal, classWithTeacher] = await Promise.all([
+    const [results, firstResults, secondResults, attendance, trait, school, classWithTeacher] = await Promise.all([
       this.resultsWithTotals({ studentId: user.student.id, sessionId: sessionEntity.id, termId: termEntity.id }),
       needFirst && firstTerm
         ? this.resultsWithTotals({ studentId: user.student.id, sessionId: sessionEntity.id, termId: firstTerm.id })
@@ -750,7 +750,7 @@ export class AdminService {
         : Promise.resolve([]),
       this.prisma.attendance.findFirst({ where: { studentId: user.student.id, sessionId: sessionEntity.id, termId: termEntity.id } }),
       this.prisma.studentTrait.findFirst({ where: { studentId: user.student.id, sessionId: sessionEntity.id, termId: termEntity.id } }),
-      this.prisma.user.findFirst({ where: { role: 'ADMIN', ...(schoolId ? { schoolId } : {}) }, select: { firstName: true, lastName: true, image: true } }),
+      this.findManagedSchool(currentUser).catch(() => null),
       user.student.classRoomId
         ? this.prisma.classRoom.findUnique({ where: { id: user.student.classRoomId }, include: { classTeacher: { include: { user: true } } } })
         : Promise.resolve(null),
@@ -807,7 +807,7 @@ export class AdminService {
       term,
       class: user.student.classRoom?.name,
       teacher: classTeacher ? { name: `${classTeacher.user.firstName} ${classTeacher.user.lastName}`, image: classTeacher.user.image } : null,
-      principal: principal ? { name: `${principal.firstName} ${principal.lastName}`, image: principal.image } : null,
+      principal: (school as any)?.principal ? { name: (school as any).principal, image: null } : null,
       trait: trait ? {
         punctuality: trait.punctuality, perseverance: trait.perseverance, responsibility: trait.responsibility,
         diligence: trait.diligence, selfControl: trait.selfControl, honesty: trait.honesty,

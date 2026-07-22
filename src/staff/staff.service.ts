@@ -682,8 +682,8 @@ export class StaffService {
       }) : null;
       const classTeacher = classWithTeacher?.classTeacher ?? null;
 
-      // Get principal
-      const principal = await this.prisma.user.findFirst({ where: { role: 'ADMIN', ...(schoolId ? { schoolId } : {}) }, select: { firstName: true, lastName: true, image: true } });
+      // Get principal from school settings
+      const school = schoolId ? await this.prisma.school.findUnique({ where: { id: schoolId }, select: { principal: true } as any }).catch(() => null) : null;
 
       // Get attendance
       const [attendance, trait] = await Promise.all([
@@ -705,7 +705,7 @@ export class StaffService {
         } : null,
         class: studentRecord?.classRoom?.name,
         teacher: classTeacher ? { name: `${classTeacher.user.firstName} ${classTeacher.user.lastName}`, image: classTeacher.user.image } : null,
-        principal: principal ? { name: `${principal.firstName} ${principal.lastName}`, image: principal.image } : null,
+        principal: (school as any)?.principal ? { name: (school as any).principal, image: null } : null,
         attendance,
         trait: trait ? {
           punctuality: trait.punctuality, perseverance: trait.perseverance, responsibility: trait.responsibility,
