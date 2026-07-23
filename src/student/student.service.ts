@@ -154,7 +154,10 @@ export class StudentService {
       throw new BadRequestException('Session or Term not found.');
     }
 
-    const student = await this.prisma.student.findUnique({ where: { userId: BigInt(user.id) } });
+    const student = await this.prisma.student.findUnique({
+      where: { userId: BigInt(user.id) },
+      include: { classRoom: { select: { name: true } } },
+    });
     if (!student) throw new NotFoundException('Student record not found.');
 
     const resultExists = await this.prisma.result.findFirst({
@@ -223,7 +226,7 @@ export class StudentService {
         student_id: user.uniqueId,
         firstname: user.firstName,
         lastname: user.lastName,
-        class: user.class,
+        class: (student as any).classRoom?.name ?? user.class ?? null,
         image: user.image,
       },
     });
