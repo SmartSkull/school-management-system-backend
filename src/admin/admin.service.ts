@@ -750,8 +750,7 @@ export class AdminService {
         : Promise.resolve([]),
       this.prisma.attendance.findFirst({ where: { studentId: user.student.id, sessionId: sessionEntity.id, termId: termEntity.id } }),
       this.prisma.studentTrait.findFirst({ where: { studentId: user.student.id, sessionId: sessionEntity.id, termId: termEntity.id } }),
-      this.findManagedSchool(currentUser).catch(() => null),
-      user.student.classRoomId
+      this.findManagedSchool(currentUser).catch(() => null),      user.student.classRoomId
         ? this.prisma.classRoom.findUnique({ where: { id: user.student.classRoomId }, include: { classTeacher: { include: { user: true } } } })
         : Promise.resolve(null),
     ]);
@@ -808,6 +807,7 @@ export class AdminService {
       class: user.student.classRoom?.name,
       teacher: classTeacher ? { name: `${classTeacher.user.firstName} ${classTeacher.user.lastName}`, image: classTeacher.user.image } : null,
       principal: (school as any)?.principal ? { name: (school as any).principal, image: null } : null,
+      signature: (school as any)?.signature ?? null,
       trait: trait ? {
         punctuality: trait.punctuality, perseverance: trait.perseverance, responsibility: trait.responsibility,
         diligence: trait.diligence, selfControl: trait.selfControl, honesty: trait.honesty,

@@ -170,15 +170,22 @@ export class StudentService {
       throw new NotFoundException(`Results for ${term} term, ${session} session have not been approved yet. Please check back later.`);
     }
 
+    const studentClass = user.student?.classRoom?.name ?? user.class ?? null;
+
     const [rawResults, attendance, teacher, schoolRow, trait] = await Promise.all([
       this.resultsWithTotals({ studentId: student.id, sessionId: sessionEntity.id, termId: termEntity.id }),
       this.prisma.attendance.findFirst({ where: { studentId: student.id, sessionId: sessionEntity.id, termId: termEntity.id } }),
-      this.prisma.staff.findFirst({ 
-        where: { classRooms: { some: { name: user.class, ...(this.schoolId(user) ? { schoolId: this.schoolId(user) } : {}) } }, user: { ...(this.schoolId(user) ? { schoolId: this.schoolId(user) } : {}) } },
-        include: { user: { select: { firstName: true, lastName: true, image: true } } } 
-      }),
+      studentClass
+        ? this.prisma.staff.findFirst({
+            where: {
+              classRooms: { some: { name: studentClass, ...(this.schoolId(user) ? { schoolId: this.schoolId(user) } : {}) } },
+              ...(this.schoolId(user) ? { user: { schoolId: this.schoolId(user) } } : {}),
+            },
+            include: { user: { select: { firstName: true, lastName: true, image: true } } },
+          })
+        : Promise.resolve(null),
       this.schoolId(user)
-        ? this.prisma.school.findUnique({ where: { id: this.schoolId(user) }, select: { principal: true } as any }).catch(() => null)
+        ? this.prisma.school.findUnique({ where: { id: this.schoolId(user) }, select: { principal: true, signature: true } as any }).catch(() => null)
         : Promise.resolve(null),
       this.prisma.studentTrait.findFirst({ where: { studentId: student.id, sessionId: sessionEntity.id, termId: termEntity.id } }),
     ]);
@@ -211,6 +218,7 @@ export class StudentService {
       term,
       teacher: teacher ? { name: `${teacher.user.firstName} ${teacher.user.lastName}`, image: teacher.user.image } : null,
       principal: (schoolRow as any)?.principal ? { name: (schoolRow as any).principal, image: null } : null,
+      signature: (schoolRow as any)?.signature ?? null,
       student: {
         student_id: user.uniqueId,
         firstname: user.firstName,
