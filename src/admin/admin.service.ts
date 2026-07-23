@@ -604,18 +604,20 @@ export class AdminService {
   async getCourses(user: any) {
     const schoolId = this.schoolId(user);
     const subjects = await this.prisma.subject.findMany({
-      where: schoolId
-        ? {
-            OR: [
-              { classRoom: { schoolId } },  // subjects assigned to a class in this school
-              { classRoomId: null },         // subjects not yet assigned to any class
-            ],
-          }
-        : {},
+      where: schoolId ? { classRoom: { schoolId } } : {},
       orderBy: { name: 'asc' },
       include: { classRoom: true, teacher: { include: { user: true } } }
     });
-    return this.ok(subjects.map(s => ({
+
+    // Deduplicate by course name — keep one row per unique subject name
+    const seen = new Set<string>();
+    const unique = subjects.filter(s => {
+      if (seen.has(s.name)) return false;
+      seen.add(s.name);
+      return true;
+    });
+
+    return this.ok(unique.map(s => ({
       course_id: s.id.toString(),
       course: s.name,
       class: s.classRoom?.name ?? null,
