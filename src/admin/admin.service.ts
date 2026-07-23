@@ -625,18 +625,44 @@ export class AdminService {
     })));
   }
 
-  async createCourse(data: any) {
-    await this.prisma.subject.create({ data: { name: data.course } });
+  async createCourse(user: any, data: any) {
+    const schoolId = this.schoolId(user);
+    // Look up the classRoom by name scoped to this school
+    let classRoomId: bigint | undefined;
+    if (data.class) {
+      const room = await this.prisma.classRoom.findFirst({
+        where: { name: data.class, ...(schoolId ? { schoolId } : {}) },
+      });
+      if (!room) throw new BadRequestException(`Class "${data.class}" not found`);
+      classRoomId = room.id;
+    } else if (schoolId) {
+      // No class selected — still need to scope to this school.
+      // Create without a classRoom but store schoolId via a dummy approach:
+      // Actually we cannot store schoolId on Subject directly; require a class.
+      throw new BadRequestException('Please select a class for the course');
+    }
+    await this.prisma.subject.create({ data: { name: data.course, classRoomId } });
     return this.ok(null, 'Course created successfully');
   }
 
-  async updateCourse(oldName: string, data: any) {
-    await this.prisma.subject.updateMany({ where: { name: oldName }, data: { name: data.course } });
+  async updateCourse(id: string, data: any) {
+    const subjectId = BigInt(id);
+    const updateData: any = { name: data.course };
+    if (data.class !== undefined) {
+      if (data.class) {
+        const room = await this.prisma.classRoom.findFirst({ where: { name: data.class } });
+        if (!room) throw new BadRequestException(`Class "${data.class}" not found`);
+        updateData.classRoomId = room.id;
+      } else {
+        updateData.classRoomId = null;
+      }
+    }
+    await this.prisma.subject.update({ where: { id: subjectId }, data: updateData });
     return this.ok(null, 'Course updated successfully');
   }
 
-  async deleteCourse(name: string) {
-    await this.prisma.subject.deleteMany({ where: { name } });
+  async deleteCourse(id: string) {
+    await this.prisma.subject.delete({ where: { id: BigInt(id) } });
     return this.ok(null, 'Course deleted successfully');
   }
 

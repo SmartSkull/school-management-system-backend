@@ -126,9 +126,9 @@ export class AdminController {
 
   // Courses
   @Get('courses') getCourses(@CurrentUser() user: any) { return this.svc.getCourses(user); }
-  @Post('courses') createCourse(@Body() body: any) { return this.svc.createCourse(body); }
-  @Put('courses/:course') updateCourse(@Param('course') c: string, @Body() body: any) { return this.svc.updateCourse(c, body); }
-  @Delete('courses/:course') deleteCourse(@Param('course') c: string) { return this.svc.deleteCourse(c); }
+  @Post('courses') createCourse(@CurrentUser() user: any, @Body() body: any) { return this.svc.createCourse(user, body); }
+  @Put('courses/:id') updateCourse(@Param('id') id: string, @Body() body: any) { return this.svc.updateCourse(id, body); }
+  @Delete('courses/:id') deleteCourse(@Param('id') id: string) { return this.svc.deleteCourse(id); }
 
   // Results
   @Get('results') getResults(@CurrentUser() user: any, @Query() q: any) { return this.svc.getResults(user, q); }
