@@ -603,15 +603,23 @@ export class AdminService {
 
   async getCourses(user: any) {
     const schoolId = this.schoolId(user);
-    const subjects = await this.prisma.subject.findMany({ 
-      where: schoolId ? { classRoom: { schoolId } } : {},
+    const subjects = await this.prisma.subject.findMany({
+      where: schoolId
+        ? {
+            OR: [
+              { classRoom: { schoolId } },  // subjects assigned to a class in this school
+              { classRoomId: null },         // subjects not yet assigned to any class
+            ],
+          }
+        : {},
       orderBy: { name: 'asc' },
-      include: { teacher: { include: { user: true } } }
+      include: { classRoom: true, teacher: { include: { user: true } } }
     });
-    return this.ok(subjects.map(s => ({ 
-      course_id: s.id.toString(), 
-      course: s.name, 
-      teacher: s.teacher ? `${s.teacher.user.firstName} ${s.teacher.user.lastName}` : '' 
+    return this.ok(subjects.map(s => ({
+      course_id: s.id.toString(),
+      course: s.name,
+      class: s.classRoom?.name ?? null,
+      teacher: s.teacher ? `${s.teacher.user.firstName} ${s.teacher.user.lastName}` : '',
     })));
   }
 
