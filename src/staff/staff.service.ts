@@ -685,6 +685,15 @@ export class StaffService {
       // Get principal from school settings
       const school = schoolId ? await this.prisma.school.findUnique({ where: { id: schoolId }, select: { principal: true, signature: true } as any }).catch(() => null) : null;
 
+      // Resolve principal image from the staff table using the saved name
+      const principalName: string | null = (school as any)?.principal ?? null;
+      const principalStaff = principalName && schoolId
+        ? await this.prisma.staff.findMany({
+            where: { user: { schoolId } },
+            include: { user: { select: { firstName: true, lastName: true, image: true } } },
+          }).then(all => all.find(s => `${s.user.firstName} ${s.user.lastName}` === principalName) ?? null)
+        : null;
+
       // Get attendance
       const [attendance, trait] = await Promise.all([
         this.prisma.attendance.findFirst({
@@ -705,7 +714,7 @@ export class StaffService {
         } : null,
         class: studentRecord?.classRoom?.name,
         teacher: classTeacher ? { name: `${classTeacher.user.firstName} ${classTeacher.user.lastName}`, image: classTeacher.user.image } : null,
-        principal: (school as any)?.principal ? { name: (school as any).principal, image: null } : null,
+        principal: principalName ? { name: principalName, image: principalStaff?.user.image ?? null } : null,
         signature: (school as any)?.signature ?? null,
         attendance,
         trait: trait ? {

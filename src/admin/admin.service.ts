@@ -793,6 +793,15 @@ export class AdminService {
 
     const classTeacher = classWithTeacher?.classTeacher ?? null;
 
+    // Resolve principal image from the staff table using the saved name
+    const principalName: string | null = (school as any)?.principal ?? null;
+    const principalStaff = principalName && schoolId
+      ? await this.prisma.staff.findMany({
+          where: { user: { schoolId: BigInt(schoolId) } },
+          include: { user: { select: { firstName: true, lastName: true, image: true } } },
+        }).then(all => all.find(s => `${s.user.firstName} ${s.user.lastName}` === principalName) ?? null)
+      : null;
+
     return this.ok({
       student: {
         firstName: user.firstName,
@@ -806,7 +815,7 @@ export class AdminService {
       term,
       class: user.student.classRoom?.name,
       teacher: classTeacher ? { name: `${classTeacher.user.firstName} ${classTeacher.user.lastName}`, image: classTeacher.user.image } : null,
-      principal: (school as any)?.principal ? { name: (school as any).principal, image: null } : null,
+      principal: principalName ? { name: principalName, image: principalStaff?.user.image ?? null } : null,
       signature: (school as any)?.signature ?? null,
       trait: trait ? {
         punctuality: trait.punctuality, perseverance: trait.perseverance, responsibility: trait.responsibility,

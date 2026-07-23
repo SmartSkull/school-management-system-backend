@@ -193,6 +193,15 @@ export class StudentService {
       this.prisma.studentTrait.findFirst({ where: { studentId: student.id, sessionId: sessionEntity.id, termId: termEntity.id } }),
     ]);
 
+    // Resolve principal image from the staff table using the saved name
+    const principalName: string | null = (schoolRow as any)?.principal ?? null;
+    const principalStaff = principalName && this.schoolId(user)
+      ? await this.prisma.staff.findMany({
+          where: { user: { schoolId: this.schoolId(user) } },
+          include: { user: { select: { firstName: true, lastName: true, image: true } } },
+        }).then(all => all.find(s => `${s.user.firstName} ${s.user.lastName}` === principalName) ?? null)
+      : null;
+
     const results = await this.enrichWithCumulativeScores(rawResults, student.id.toString(), session, term, this.schoolId(user));
 
     const classSize = await this.prisma.student.count({
@@ -220,7 +229,7 @@ export class StudentService {
       session,
       term,
       teacher: teacher ? { name: `${teacher.user.firstName} ${teacher.user.lastName}`, image: teacher.user.image } : null,
-      principal: (schoolRow as any)?.principal ? { name: (schoolRow as any).principal, image: null } : null,
+      principal: principalName ? { name: principalName, image: principalStaff?.user.image ?? null } : null,
       signature: (schoolRow as any)?.signature ?? null,
       student: {
         student_id: user.uniqueId,
