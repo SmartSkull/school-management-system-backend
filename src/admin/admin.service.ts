@@ -261,7 +261,18 @@ export class AdminService {
   async deleteStudent(studentId: string) {
     const user = await this.prisma.user.findUnique({ where: { uniqueId: studentId } });
     if (!user) throw new NotFoundException('Student not found');
-    await this.prisma.user.delete({ where: { id: user.id } });
+    try {
+      await this.prisma.user.delete({ where: { id: user.id } });
+    } catch (err: any) {
+      if (err?.code === 'P2003' || err?.code === 'P2014' || err?.message?.includes('Foreign key')) {
+        await this.prisma.user.update({
+          where: { id: user.id },
+          data: { status: 'INACTIVE' as any, email: null },
+        });
+        return this.ok(null, 'Student deactivated (has related records, cannot be fully deleted)');
+      }
+      throw err;
+    }
     return this.ok(null, 'Student deleted successfully');
   }
 
@@ -383,7 +394,21 @@ export class AdminService {
   }
 
   async deleteStaff(staffId: string) {
-    await this.prisma.user.delete({ where: { id: BigInt(staffId) } });
+    const id = BigInt(staffId);
+    try {
+      await this.prisma.user.delete({ where: { id } });
+    } catch (err: any) {
+      // Foreign key constraint — related records exist (messages, notifications, etc.)
+      // Fall back to deactivating the account instead of hard delete
+      if (err?.code === 'P2003' || err?.code === 'P2014' || err?.message?.includes('Foreign key')) {
+        await this.prisma.user.update({
+          where: { id },
+          data: { status: 'INACTIVE' as any, email: null },
+        });
+        return this.ok(null, 'Staff deactivated (has related records, cannot be fully deleted)');
+      }
+      throw err;
+    }
     return this.ok(null, 'Staff deleted successfully');
   }
 
