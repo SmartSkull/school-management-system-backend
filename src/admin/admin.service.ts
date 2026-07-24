@@ -309,37 +309,62 @@ export class AdminService {
   }
 
   async createStaff(user: any, data: any) {
+    // Validate required fields
+    if (!data.firstname?.trim()) throw new BadRequestException('First name is required');
+    if (!data.lastname?.trim()) throw new BadRequestException('Last name is required');
+    if (!data.email?.trim()) throw new BadRequestException('Email is required');
+    if (!data.password?.trim()) throw new BadRequestException('Password is required');
+
     const schoolId = this.schoolId(user);
+
+    // Check for duplicate email within the same school
+    const emailWhere: any = { email: data.email.trim() };
+    if (schoolId) emailWhere.schoolId = schoolId;
+    const existing = await this.prisma.user.findFirst({ where: emailWhere });
+    if (existing) throw new BadRequestException('A user with this email already exists');
+
     const uniqueId = await this.generateStaffId(schoolId);
     const school = schoolId ? await this.prisma.school.findUnique({ where: { id: schoolId }, select: { website: true } }) : null;
-    await this.prisma.user.create({ 
-      data: {
-        uniqueId: uniqueId,
-        schoolId,
-        role: (data.role?.toUpperCase() === 'ADMIN' ? 'ADMIN' : 'STAFF') as any,
-        firstName: data.firstname || '',
-        lastName: data.lastname || '',
-        email: data.email || '',
-        telephone: data.telephone || '',
-        password: await bcrypt.hash(data.password || 'greatkings', 10),
-        image: 'image.png',
-        status: 'ACTIVE',
-        staff: {
-          create: {
-            staffNo: uniqueId,
-            staffRole: data.role && data.role.toUpperCase() !== 'ADMIN' ? data.role.toLowerCase() : null,
-          }
-        }
+
+    try {
+      await this.prisma.user.create({
+        data: {
+          uniqueId,
+          schoolId,
+          role: (data.role?.toUpperCase() === 'ADMIN' ? 'ADMIN' : 'STAFF') as any,
+          firstName: data.firstname.trim(),
+          lastName: data.lastname.trim(),
+          email: data.email.trim(),
+          telephone: data.telephone?.trim() || '',
+          password: await bcrypt.hash(data.password || 'greatkings', 10),
+          image: 'image.png',
+          status: 'ACTIVE',
+          staff: {
+            create: {
+              staffNo: uniqueId,
+              staffRole: data.role && data.role.toUpperCase() !== 'ADMIN' ? data.role.toLowerCase() : null,
+            },
+          },
+        },
+      });
+    } catch (err: any) {
+      // Prisma unique constraint error code
+      if (err?.code === 'P2002') {
+        const field = err?.meta?.target?.[0] ?? 'field';
+        throw new BadRequestException(`A staff member with this ${field} already exists`);
       }
-    });
+      throw err;
+    }
+
     this.emailService.sendStaffCreated({
-      firstName: data.firstname || '',
-      lastName: data.lastname || '',
-      email: data.email || '',
+      firstName: data.firstname.trim(),
+      lastName: data.lastname.trim(),
+      email: data.email.trim(),
       uniqueId,
       password: data.password || 'greatkings',
       website: this.normalizeWebsiteUrl(school?.website),
     });
+
     return this.ok({ unique_id: uniqueId }, 'Staff created successfully');
   }
 
@@ -1140,9 +1165,9 @@ export class AdminService {
       orderBy: { createdAt: 'desc' }, 
       select: { uniqueId: true } 
     });
-    const num = last ? parseInt(last.uniqueId.replace(/\D/g, '').slice(-4) || '0') + 1 : 1;
-    return `${prefix}S${year}${String(num).padStart(4, '0')}`;
-  }
+    const parsed = last ? parseInt(last.uniqueId.replace(/\D/g, '').slice(-4) || '0') : 0;
+    const num = (isNaN(parsed) ? 0 : parsed) + 1;
+    return `${prefix}S${year}${String(num).padStart(4, '0')}`;  }
 
   private async schoolPrefix(schoolId?: bigint): Promise<string> {
     if (!schoolId) return 'SCH';
