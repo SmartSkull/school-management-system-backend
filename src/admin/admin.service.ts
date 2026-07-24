@@ -317,12 +317,6 @@ export class AdminService {
 
     const schoolId = this.schoolId(user);
 
-    // Check for duplicate email within the same school
-    const emailWhere: any = { email: data.email.trim() };
-    if (schoolId) emailWhere.schoolId = schoolId;
-    const existing = await this.prisma.user.findFirst({ where: emailWhere });
-    if (existing) throw new BadRequestException('A user with this email already exists');
-
     const uniqueId = await this.generateStaffId(schoolId);
     const school = schoolId ? await this.prisma.school.findUnique({ where: { id: schoolId }, select: { website: true } }) : null;
 
@@ -1160,14 +1154,30 @@ export class AdminService {
   private async generateStaffId(schoolId?: bigint): Promise<string> {
     const year = new Date().getFullYear().toString().slice(-2);
     const prefix = await this.schoolPrefix(schoolId);
-    const last = await this.prisma.user.findFirst({ 
-      where: { role: 'STAFF', ...(schoolId ? { schoolId } : {}) }, 
-      orderBy: { createdAt: 'desc' }, 
-      select: { uniqueId: true } 
+
+    // Fetch all existing staff uniqueIds with this prefix to find the highest sequence number
+    const allStaff = await this.prisma.user.findMany({
+      where: { role: 'STAFF', ...(schoolId ? { schoolId } : {}) },
+      select: { uniqueId: true },
     });
-    const parsed = last ? parseInt(last.uniqueId.replace(/\D/g, '').slice(-4) || '0') : 0;
-    const num = (isNaN(parsed) ? 0 : parsed) + 1;
-    return `${prefix}S${year}${String(num).padStart(4, '0')}`;  }
+
+    let maxNum = 0;
+    for (const s of allStaff) {
+      const digits = s.uniqueId.replace(/\D/g, '');
+      const n = parseInt(digits.slice(-4) || '0');
+      if (!isNaN(n) && n > maxNum) maxNum = n;
+    }
+
+    // Increment and ensure the generated ID doesn't already exist globally (across all schools)
+    let num = maxNum + 1;
+    let candidate = `${prefix}S${year}${String(num).padStart(4, '0')}`;
+    while (await this.prisma.user.findFirst({ where: { uniqueId: candidate }, select: { id: true } })) {
+      num++;
+      candidate = `${prefix}S${year}${String(num).padStart(4, '0')}`;
+    }
+
+    return candidate;
+  }
 
   private async schoolPrefix(schoolId?: bigint): Promise<string> {
     if (!schoolId) return 'SCH';
