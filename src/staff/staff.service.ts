@@ -435,21 +435,25 @@ export class StaffService {
 
   async uploadResult(user: any, body: any) {
     const schoolId = this.schoolId(user);
-    const session = await this.getCurrentSession(user);
-    const term = await this.getCurrentTerm(user);
-    
+    // Prefer session/term from request body so staff upload goes to the correct term
+    const session = body.session || await this.getCurrentSession(user);
+    const term = (body.term || await this.getCurrentTerm(user)).toUpperCase();
+
     const sessionWhere: any = { name: session };
     if (schoolId) sessionWhere.schoolId = schoolId;
     const sessionEntity = await this.prisma.academicSession.findFirst({ where: sessionWhere });
-    const termWhere: any = { name: term as any, sessionId: sessionEntity?.id };
+    if (!sessionEntity) throw new BadRequestException(`Session "${session}" not found`);
+
+    const termWhere: any = { name: term as any, sessionId: sessionEntity.id };
     if (schoolId) termWhere.schoolId = schoolId;
     const termEntity = await this.prisma.academicTerm.findFirst({ where: termWhere });
+    if (!termEntity) throw new BadRequestException(`Term "${term}" not found for session "${session}"`);
 
     const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
     const subject = await this.resolveSubject(body.course);
 
-    if (!sessionEntity || !termEntity || !staff || !subject) {
-      throw new BadRequestException('Session, Term, Staff, or Subject not found');
+    if (!staff || !subject) {
+      throw new BadRequestException('Staff profile or Subject not found');
     }
 
     if (Array.isArray(body.results)) {
@@ -609,12 +613,16 @@ export class StaffService {
   async getResults(user: any, q: any) {
     const schoolId = this.schoolId(user);
     const session = q.session || await this.getCurrentSession(user);
-    const term = q.term || await this.getCurrentTerm(user);
-    
+    const term = (q.term || await this.getCurrentTerm(user)).toUpperCase();
+
     const sessionWhere: any = { name: session };
     if (schoolId) sessionWhere.schoolId = schoolId;
     const sessionEntity = await this.prisma.academicSession.findFirst({ where: sessionWhere });
-    const termWhere: any = { name: term as any, sessionId: sessionEntity?.id };
+
+    // If session not found for this school, return empty
+    if (!sessionEntity) return this.ok([], 'No results found');
+
+    const termWhere: any = { name: term as any, sessionId: sessionEntity.id };
     if (schoolId) termWhere.schoolId = schoolId;
     const termEntity = await this.prisma.academicTerm.findFirst({ where: termWhere });
 
@@ -624,26 +632,25 @@ export class StaffService {
         include: { user: true, classRoom: true }
       });
 
-      const termUpper = term.toUpperCase();
-      const needFirst  = termUpper === 'SECOND' || termUpper === 'THIRD';
-      const needSecond = termUpper === 'THIRD';
+      const needFirst  = term === 'SECOND' || term === 'THIRD';
+      const needSecond = term === 'THIRD';
 
       const [firstTerm, secondTerm] = await Promise.all([
         needFirst
-          ? this.prisma.academicTerm.findFirst({ where: { name: 'FIRST' as any, sessionId: sessionEntity?.id, ...(schoolId ? { schoolId: BigInt(schoolId) } : {}) } })
+          ? this.prisma.academicTerm.findFirst({ where: { name: 'FIRST' as any, sessionId: sessionEntity.id, ...(schoolId ? { schoolId } : {}) } })
           : Promise.resolve(null),
         needSecond
-          ? this.prisma.academicTerm.findFirst({ where: { name: 'SECOND' as any, sessionId: sessionEntity?.id, ...(schoolId ? { schoolId: BigInt(schoolId) } : {}) } })
+          ? this.prisma.academicTerm.findFirst({ where: { name: 'SECOND' as any, sessionId: sessionEntity.id, ...(schoolId ? { schoolId } : {}) } })
           : Promise.resolve(null),
       ]);
 
       const [rawResults, firstResults, secondResults] = await Promise.all([
-        this.resultsWithTotals({ studentId: studentRecord?.id, sessionId: sessionEntity?.id, termId: termEntity?.id }),
+        this.resultsWithTotals({ studentId: studentRecord?.id, sessionId: sessionEntity.id, termId: termEntity?.id }),
         needFirst && firstTerm
-          ? this.resultsWithTotals({ studentId: studentRecord?.id, sessionId: sessionEntity?.id, termId: firstTerm.id })
+          ? this.resultsWithTotals({ studentId: studentRecord?.id, sessionId: sessionEntity.id, termId: firstTerm.id })
           : Promise.resolve([]),
         needSecond && secondTerm
-          ? this.resultsWithTotals({ studentId: studentRecord?.id, sessionId: sessionEntity?.id, termId: secondTerm.id })
+          ? this.resultsWithTotals({ studentId: studentRecord?.id, sessionId: sessionEntity.id, termId: secondTerm.id })
           : Promise.resolve([]),
       ]);
 
@@ -708,10 +715,10 @@ export class StaffService {
       // Get attendance
       const [attendance, trait] = await Promise.all([
         this.prisma.attendance.findFirst({
-          where: { studentId: studentRecord?.id, sessionId: sessionEntity?.id, termId: termEntity?.id }
+          where: { studentId: studentRecord?.id, sessionId: sessionEntity.id, termId: termEntity?.id }
         }),
         studentRecord ? this.prisma.studentTrait.findFirst({
-          where: { studentId: studentRecord.id, sessionId: sessionEntity?.id, termId: termEntity?.id }
+          where: { studentId: studentRecord.id, sessionId: sessionEntity.id, termId: termEntity?.id }
         }) : Promise.resolve(null),
       ]);
 

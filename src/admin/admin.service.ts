@@ -767,14 +767,14 @@ export class AdminService {
   async getStudentResults(currentUser: any, studentId: string, q: any) {
     const schoolId = this.schoolId(currentUser);
     const session = q.session || await this.getCurrentSession(currentUser);
-    const term = q.term || await this.getCurrentTerm(currentUser);
-    
+    const term = (q.term || await this.getCurrentTerm(currentUser)).toUpperCase();
+
     const sessionWhere: any = { name: session };
     if (schoolId) sessionWhere.schoolId = schoolId;
     const sessionEntity = await this.prisma.academicSession.findFirst({ where: sessionWhere });
-    const termWhere: any = { name: term.toUpperCase() as any, sessionId: sessionEntity?.id };
+    const termWhere: any = { name: term as any, sessionId: sessionEntity?.id };
     if (schoolId) termWhere.schoolId = schoolId;
-    const termEntity = await this.prisma.academicTerm.findFirst({ where: termWhere });
+    const termEntity = sessionEntity ? await this.prisma.academicTerm.findFirst({ where: termWhere }) : null;
     const user = await this.prisma.user.findUnique({
       where: { uniqueId: studentId, ...(schoolId ? { schoolId } : {}) },
       include: { student: { include: { classRoom: true } } },
@@ -782,16 +782,15 @@ export class AdminService {
 
     if (!user || !user.student || !sessionEntity || !termEntity) throw new NotFoundException('Student or Session/Term not found');
 
-    const termUpper = term.toUpperCase();
-    const needFirst = termUpper === 'SECOND' || termUpper === 'THIRD';
-    const needSecond = termUpper === 'THIRD';
+    const needFirst = term === 'SECOND' || term === 'THIRD';
+    const needSecond = term === 'THIRD';
 
     const [firstTerm, secondTerm] = await Promise.all([
       needFirst
-        ? this.prisma.academicTerm.findFirst({ where: { name: 'FIRST', sessionId: sessionEntity.id, ...(schoolId ? { schoolId: BigInt(schoolId) } : {}) } })
+        ? this.prisma.academicTerm.findFirst({ where: { name: 'FIRST' as any, sessionId: sessionEntity.id, ...(schoolId ? { schoolId } : {}) } })
         : Promise.resolve(null),
       needSecond
-        ? this.prisma.academicTerm.findFirst({ where: { name: 'SECOND', sessionId: sessionEntity.id, ...(schoolId ? { schoolId: BigInt(schoolId) } : {}) } })
+        ? this.prisma.academicTerm.findFirst({ where: { name: 'SECOND' as any, sessionId: sessionEntity.id, ...(schoolId ? { schoolId } : {}) } })
         : Promise.resolve(null),
     ]);
 
