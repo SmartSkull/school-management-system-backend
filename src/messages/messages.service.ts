@@ -1,4 +1,5 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { NotificationService } from '../common/notification.service';
 import { MessagesGateway } from './messages.gateway';
@@ -13,11 +14,27 @@ export class MessagesService {
   }
 
   private schoolId(user: any): bigint | undefined {
-    return user?.schoolId ? BigInt(user.schoolId) : undefined;
+    // For staff, schoolId may be on the nested user object
+    const sid = user?.schoolId ?? user?.user?.schoolId;
+    return sid ? BigInt(sid) : undefined;
+  }
+
+  /** Returns the real User.id regardless of whether the request came from a
+   *  student (req.user IS the User row) or staff (req.user IS the Staff row,
+   *  real user id is in authUserId / user.userId). */
+  private userId(user: any): bigint {
+    // authUserId is set by JwtAuthGuard: user.userId (staff) ?? user.id (student/admin)
+    const id = user?.authUserId ?? user?.userId ?? user?.id;
+    return BigInt(id);
+  }
+
+  /** The user's uniqueId string (e.g. STF001, STU042) for socket room keys. */
+  private uniqueId(user: any): string {
+    return user?.uniqueId ?? user?.user?.uniqueId ?? String(user?.authUserId ?? user?.id);
   }
 
   async getConversations(user: any) {
-    const userId = BigInt(user.id);
+    const userId = this.userId(user);
     const schoolId = this.schoolId(user);
 
     // Get latest message per conversation partner (MySQL compatible)
@@ -72,7 +89,7 @@ export class MessagesService {
 
   async getMessages(user: any, otherUniqueId: string) {
     if (!otherUniqueId) throw new BadRequestException('with parameter is required');
-    const userId = BigInt(user.id);
+    const userId = this.userId(user);
     const otherUser = await this.prisma.user.findUnique({ 
       where: { uniqueId: otherUniqueId },
       select: { id: true, schoolId: true, lastLoginAt: true }
@@ -124,20 +141,21 @@ export class MessagesService {
     if (this.schoolId(user) && receiver.schoolId !== this.schoolId(user)) throw new NotFoundException('Receiver not found');
 
     const msg = await this.prisma.message.create({
-      data: { senderId: BigInt(user.id), receiverId: receiver.id, body: message, fileUrl },
+      data: { senderId: this.userId(user), receiverId: receiver.id, body: message, fileUrl },
     });
 
+    const senderName = user?.firstName ?? user?.user?.firstName ?? user?.firstname ?? 'Someone';
     this.notificationService.notify(
       receiver.id,
       'New Message',
-      `${user.firstName || user.firstname || 'Someone'} sent you a message`,
+      `${senderName} sent you a message`,
     );
 
     this.gateway.broadcastNewMessage(String(receiver.id), {
       id: msg.id.toString(),
-      senderId: String(user.id),
+      senderId: String(this.userId(user)),
       receiverId: String(receiver.id),
-      senderUniqueId: user.uniqueId,
+      senderUniqueId: this.uniqueId(user),
       receiverUniqueId: receiver.uniqueId,
       message: msg.body,
       body: msg.body,
@@ -154,7 +172,7 @@ export class MessagesService {
 
   async getUnreadCount(user: any) {
     const count = await this.prisma.message.count({ 
-      where: { receiverId: BigInt(user.id), readAt: null } 
+      where: { receiverId: this.userId(user), readAt: null } 
     });
     return this.ok({ count });
   }
@@ -162,7 +180,7 @@ export class MessagesService {
   async editMessage(user: any, messageId: string, body: string) {
     const msg = await this.prisma.message.findUnique({ where: { id: BigInt(messageId) } });
     if (!msg) throw new NotFoundException('Message not found');
-    if (msg.senderId !== BigInt(user.id)) throw new BadRequestException('Not your message');
+    if (msg.senderId !== this.userId(user)) throw new BadRequestException('Not your message');
     await this.prisma.message.update({ where: { id: BigInt(messageId) }, data: { body, editedAt: new Date() } });
     return this.ok(null, 'Message updated');
   }
@@ -170,13 +188,13 @@ export class MessagesService {
   async deleteMessage(user: any, messageId: string) {
     const msg = await this.prisma.message.findUnique({ where: { id: BigInt(messageId) } });
     if (!msg) throw new NotFoundException('Message not found');
-    if (msg.senderId !== BigInt(user.id)) throw new BadRequestException('Not your message');
+    if (msg.senderId !== this.userId(user)) throw new BadRequestException('Not your message');
     await this.prisma.message.update({ where: { id: BigInt(messageId) }, data: { body: '', deletedAt: new Date() } });
     return this.ok(null, 'Message deleted');
   }
 
   async deleteConversation(user: any, otherUniqueId: string) {
-    const userId = BigInt(user.id);
+    const userId = this.userId(user);
     const otherUser = await this.prisma.user.findUnique({ where: { uniqueId: otherUniqueId } });
     if (!otherUser) throw new NotFoundException('User not found');
     if (this.schoolId(user) && otherUser.schoolId !== this.schoolId(user)) throw new NotFoundException('User not found');
