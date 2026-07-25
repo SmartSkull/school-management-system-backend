@@ -129,9 +129,10 @@ model User {
   sentMessages Message[]     @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
   clockAttendances StudentAttendance[]
-  transportDriver  TransportDriver?
-  routeChats       TransportRouteChat[]
-  broadcasts       TransportBroadcast[]
+  transportDriver      TransportDriver?
+  routeChats           TransportRouteChat[]
+  broadcasts           TransportBroadcast[]
+  webPushSubscriptions WebPushSubscription[]
 }
 
 model Student {
@@ -1147,4 +1148,19 @@ model TransportBroadcast {
   admin User           @relation(fields: [adminId], references: [id], onDelete: Cascade)
 
   @@index([routeId])
+}
+
+model WebPushSubscription {
+  id        BigInt   @id @default(autoincrement())
+  userId    BigInt
+  endpoint  String   @db.VarChar(500)
+  p256dh    String   @db.VarChar(255)
+  auth      String   @db.VarChar(100)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, endpoint])
+  @@index([userId])
 }

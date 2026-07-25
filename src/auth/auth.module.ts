@@ -4,6 +4,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard, StudentGuard, StaffGuard, AdminGuard } from '../common/guards/auth.guard';
 import { EmailService } from '../common/email.service';
+import { WebPushService } from '../common/web-push.service';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { EmailService } from '../common/email.service';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, EmailService, JwtAuthGuard, StudentGuard, StaffGuard, AdminGuard],
+  providers: [AuthService, EmailService, JwtAuthGuard, StudentGuard, StaffGuard, AdminGuard, WebPushService],
   exports: [JwtModule, JwtAuthGuard, StudentGuard, StaffGuard, AdminGuard],
 })
 export class AuthModule {}

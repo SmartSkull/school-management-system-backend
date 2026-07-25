@@ -2,10 +2,11 @@ import { Controller, Post, Get, Body, UseGuards, HttpCode } from '@nestjs/common
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from '../common/guards/auth.guard';
 import { CurrentUser } from '../common/decorators/user.decorator';
+import { WebPushService } from '../common/web-push.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private auth: AuthService) {}
+  constructor(private auth: AuthService, private webPush: WebPushService) {}
 
   @Post('student/login')
   @HttpCode(200)
@@ -65,5 +66,23 @@ export class AuthController {
     @Body('token') token: string,
   ) {
     return this.auth.savePushToken(user.id, token);
+  }
+
+  /** Save a browser Web Push subscription for the authenticated user */
+  @Post('web-push-subscription')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(200)
+  async saveWebPushSubscription(
+    @CurrentUser() user: any,
+    @Body() body: { endpoint: string; keys: { p256dh: string; auth: string } },
+  ) {
+    await this.webPush.saveSubscription(BigInt(user.id), body);
+    return { success: true, message: 'Push subscription saved' };
+  }
+
+  /** Expose VAPID public key so the frontend can subscribe */
+  @Get('web-push-key')
+  getVapidPublicKey() {
+    return { success: true, data: { publicKey: process.env.VAPID_PUBLIC_KEY ?? '' } };
   }
 }

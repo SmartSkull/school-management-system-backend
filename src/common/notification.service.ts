@@ -1,17 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { PushService } from './push.service';
+import { WebPushService } from './web-push.service';
 
 @Injectable()
 export class NotificationService {
   constructor(
     private prisma: PrismaService,
     private push: PushService,
+    private webPush: WebPushService,
   ) {}
 
   /**
-   * Create a DB notification and immediately fire an Expo push notification
-   * to the user's registered device (if they have a pushToken).
+   * Create a DB notification and fire both Expo (mobile) and Web push
+   * notifications to the user's registered devices.
    */
   async notify(
     userId: bigint | number,
@@ -32,9 +34,13 @@ export class NotificationService {
       select: { pushToken: true },
     });
 
+    // Expo mobile push (fire-and-forget)
     if (user?.pushToken) {
-      await this.push.sendOne(user.pushToken, title, message);
+      this.push.sendOne(user.pushToken, title, message).catch(() => {});
     }
+
+    // Web push (fire-and-forget)
+    this.webPush.sendToUser(uid, title, message).catch(() => {});
   }
 
   /**
@@ -47,12 +53,14 @@ export class NotificationService {
     message: string,
     data?: Record<string, any>,
   ) {
+    const uid = BigInt(userId);
     const user = await this.prisma.user.findUnique({
-      where: { id: BigInt(userId) },
+      where: { id: uid },
       select: { pushToken: true },
     });
     if (user?.pushToken) {
-      await this.push.sendOne(user.pushToken, title, message, data);
+      this.push.sendOne(user.pushToken, title, message, data).catch(() => {});
     }
+    this.webPush.sendToUser(uid, title, message, data).catch(() => {});
   }
 }

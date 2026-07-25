@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { EmailService } from './common/email.service';
 import { SmsService } from './common/sms.service';
 import { PushService } from './common/push.service';
+import { WebPushService } from './common/web-push.service';
 import { NotificationService } from './common/notification.service';
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './auth/auth.module';
@@ -49,7 +50,7 @@ import { TransportModule } from './transport/transport.module';
     BooksModule,
     TransportModule,
   ],
-  providers: [EmailService, SmsService, PushService, NotificationService],
-  exports: [EmailService, SmsService, PushService, NotificationService],
+  providers: [EmailService, SmsService, PushService, WebPushService, NotificationService],
+  exports: [EmailService, SmsService, PushService, WebPushService, NotificationService],
 })
 export class AppModule {}
