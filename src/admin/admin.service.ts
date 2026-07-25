@@ -229,12 +229,24 @@ export class AdminService {
       where: { uniqueId: studentId }, 
       data: { status: 'ACTIVE' } 
     });
-    
+
+    const school = user.schoolId
+      ? await this.prisma.school.findUnique({ where: { id: user.schoolId }, select: { website: true } }).catch(() => null)
+      : null;
+
     await this.notificationService.notify(
       user.id,
       'Account Verified',
       'Your account has been verified. You can now access all features.',
     );
+
+    this.emailService.sendAccountVerified({
+      email: user.email,
+      firstName: user.firstName,
+      role: 'student',
+      website: school?.website ?? undefined,
+    }).catch(() => {});
+
     return this.ok(null, 'Student verified successfully');
   }
 
@@ -243,12 +255,19 @@ export class AdminService {
       where: { uniqueId: studentId }, 
       data: { status: 'PENDING' } 
     });
-    
+
     await this.notificationService.notify(
       user.id,
       'Account Unverified',
       'Your account has been unverified. You can no longer access all features.',
     );
+
+    this.emailService.sendAccountUnverified({
+      email: user.email,
+      firstName: user.firstName,
+      role: 'student',
+    }).catch(() => {});
+
     return this.ok(null, 'Student unverified successfully');
   }
 
@@ -390,21 +409,42 @@ export class AdminService {
 
   async verifyStaff(staffId: string) {
     const user = await this.prisma.user.update({ where: { id: BigInt(staffId) }, data: { status: 'ACTIVE' } });
+
+    const school = user.schoolId
+      ? await this.prisma.school.findUnique({ where: { id: user.schoolId }, select: { website: true } }).catch(() => null)
+      : null;
+
     await this.notificationService.notify(
       user.id,
       'Account Verified',
       'Your account has been verified. You can now access all features.',
     );
+
+    this.emailService.sendAccountVerified({
+      email: user.email,
+      firstName: user.firstName,
+      role: 'staff',
+      website: school?.website ?? undefined,
+    }).catch(() => {});
+
     return this.ok(null, 'Staff verified successfully');
   }
 
   async unverifyStaff(staffId: string) {
     const user = await this.prisma.user.update({ where: { id: BigInt(staffId) }, data: { status: 'PENDING' } });
+
     await this.notificationService.notify(
       user.id,
       'Account Unverified',
       'Your account verification has been revoked by the admin.',
     );
+
+    this.emailService.sendAccountUnverified({
+      email: user.email,
+      firstName: user.firstName,
+      role: 'staff',
+    }).catch(() => {});
+
     return this.ok(null, 'Staff unverified successfully');
   }
 

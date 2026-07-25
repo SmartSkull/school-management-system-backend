@@ -393,6 +393,55 @@ export class EmailService {
     }
   }
 
+  async sendAccountVerified(opts: { email: string; firstName: string; role: 'student' | 'staff'; website?: string }) {
+    if (!opts.email) return;
+    const color = '#16a34a';
+    const portalLabel = opts.role === 'staff' ? 'Staff Portal' : 'Student Portal';
+    const html = layout(color, `
+      <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#111827">Account Verified ✅</h1>
+      <p style="margin:0 0 24px;color:#6b7280;font-size:15px">Hello ${opts.firstName}, your account has been verified by the admin.</p>
+
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:24px;margin-bottom:24px">
+        <p style="margin:0;color:#166534;font-size:15px;line-height:1.6">
+          🎉 You now have full access to all features of the school platform. Log in to get started.
+        </p>
+      </div>
+
+      ${opts.website ? `
+        <div style="text-align:center;margin:0 0 24px">
+          <a href="${opts.website}" style="display:inline-block;background:${color};color:#ffffff;text-decoration:none;font-weight:700;border-radius:10px;padding:12px 22px">Open ${portalLabel}</a>
+        </div>
+      ` : ''}
+
+      <p style="margin:0;color:#6b7280;font-size:14px">If you have any questions, please contact your school administrator.</p>
+    `);
+    await this.send(opts.email, 'Your Account Has Been Verified', html);
+  }
+
+  async sendAccountUnverified(opts: { email: string; firstName: string; role: 'student' | 'staff' }) {
+    if (!opts.email) return;
+    const color = '#dc2626';
+    const html = layout(color, `
+      <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#111827">Account Verification Revoked</h1>
+      <p style="margin:0 0 24px;color:#6b7280;font-size:15px">Hello ${opts.firstName}, this is a notice regarding your account.</p>
+
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:24px;margin-bottom:24px">
+        <p style="margin:0;color:#991b1b;font-size:15px;line-height:1.6">
+          ⚠️ Your account verification has been revoked by the admin. Your access to the platform has been temporarily suspended.
+        </p>
+      </div>
+
+      <div style="background:#fef3c7;border-left:4px solid #f59e0b;border-radius:4px;padding:16px;margin-bottom:24px">
+        <p style="margin:0;color:#92400e;font-size:14px">
+          If you believe this was done in error, please contact your school administrator directly for assistance.
+        </p>
+      </div>
+
+      <p style="margin:0;color:#6b7280;font-size:14px">This is an automated notification. Do not reply to this email.</p>
+    `);
+    await this.send(opts.email, 'Your Account Verification Has Been Revoked', html);
+  }
+
   async sendGeneric(opts: { to: string; subject: string; text: string }) {
     try {
       const recipient = process.env.KUDISMS_TEST_TO || opts.to;
