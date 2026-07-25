@@ -642,7 +642,7 @@ export class CbtService {
       if (staff) resolvedTeacherStaffId = staff.id;
     }
 
-    const tests = await this.prisma.cbtTest.findMany({
+    let tests = await this.prisma.cbtTest.findMany({
       where: Object.keys(where).length ? where : undefined,
       include: {
         classRoom: { include: { classTeacher: { include: { user: true } } } },
@@ -651,6 +651,24 @@ export class CbtService {
         term: true,
       },
     });
+
+    // If schoolId filter produced no results, retry without it so manually-created
+    // tests (which may have been created in a different schoolId resolution path) are included.
+    if (!tests.length && schoolId && !className) {
+      const fallbackWhere: any = {};
+      if (Object.keys(subjectWhere).length) fallbackWhere.subject = subjectWhere;
+      if (sessionId) fallbackWhere.sessionId = sessionId;
+      if (termId) fallbackWhere.termId = termId;
+      tests = await this.prisma.cbtTest.findMany({
+        where: Object.keys(fallbackWhere).length ? fallbackWhere : undefined,
+        include: {
+          classRoom: { include: { classTeacher: { include: { user: true } } } },
+          subject: { include: { teacher: { include: { user: true } } } },
+          session: true,
+          term: true,
+        },
+      });
+    }
 
     let filteredTests = tests;
     if (resolvedTeacherStaffId) {
@@ -665,8 +683,14 @@ export class CbtService {
 
     const testIds = filteredTests.map(t => t.id);
 
+    // Scope results to the school by filtering through student -> user -> schoolId
+    const resultWhere: any = { testId: { in: testIds } };
+    if (schoolId) {
+      resultWhere.student = { user: { schoolId } };
+    }
+
     const results = await this.prisma.cbtResult.findMany({
-      where: { testId: { in: testIds } },
+      where: resultWhere,
       include: {
         test: {
           include: {
