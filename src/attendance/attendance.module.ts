@@ -6,11 +6,12 @@ import { JwtAuthGuard, StaffGuard, AdminGuard, StudentGuard } from '../common/gu
 import { EmailService } from '../common/email.service';
 import { SmsService } from '../common/sms.service';
 import { PushService } from '../common/push.service';
+import { WebPushService } from '../common/web-push.service';
 import { NotificationService } from '../common/notification.service';
 
 @Module({
   imports: [AuthModule],
   controllers: [AttendanceController],
-  providers: [AttendanceService, JwtAuthGuard, StaffGuard, AdminGuard, StudentGuard, EmailService, SmsService, PushService, NotificationService],
+  providers: [AttendanceService, JwtAuthGuard, StaffGuard, AdminGuard, StudentGuard, EmailService, SmsService, PushService, WebPushService, NotificationService],
 })
 export class AttendanceModule {}

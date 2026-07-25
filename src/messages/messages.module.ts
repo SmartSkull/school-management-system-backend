@@ -5,11 +5,12 @@ import { MessagesGateway } from './messages.gateway';
 import { AuthModule } from '../auth/auth.module';
 import { JwtAuthGuard } from '../common/guards/auth.guard';
 import { PushService } from '../common/push.service';
+import { WebPushService } from '../common/web-push.service';
 import { NotificationService } from '../common/notification.service';
 
 @Module({
   imports: [AuthModule],
   controllers: [MessagesController],
-  providers: [MessagesService, MessagesGateway, JwtAuthGuard, PushService, NotificationService],
+  providers: [MessagesService, MessagesGateway, JwtAuthGuard, PushService, WebPushService, NotificationService],
 })
 export class MessagesModule {}
