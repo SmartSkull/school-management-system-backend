@@ -336,6 +336,7 @@ export class PublicController {
     const users = await this.prisma.user.findMany({
       where: { 
         role: 'STUDENT',
+        status: 'ACTIVE',
         ...(selectedSchool ? { schoolId: selectedSchool.id } : {}),
         OR: [{ firstName: { contains: q } }, { lastName: { contains: q } }] 
       },
@@ -360,6 +361,7 @@ export class PublicController {
     const users = await this.prisma.user.findMany({
       where: {
         role: 'STAFF',
+        status: 'ACTIVE',
         ...(selectedSchool ? { schoolId: selectedSchool.id } : {}),
         OR: [
           { firstName: { contains: q } },

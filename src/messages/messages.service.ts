@@ -201,7 +201,7 @@ export class MessagesService {
   }
 
   async getUsers(user: any, search?: string, role?: string, className?: string) {
-    const where: any = {};
+    const where: any = { status: 'ACTIVE' };
     const schoolId = this.schoolId(user);
     if (schoolId) where.schoolId = schoolId;
     if (search) where.OR = [

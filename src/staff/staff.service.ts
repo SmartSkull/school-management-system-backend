@@ -129,7 +129,7 @@ export class StaffService {
 
     const [studentCount, assignments, libraryItems] = await Promise.all([
       this.prisma.user.count({ 
-        where: { role: 'STUDENT', ...(schoolId ? { schoolId } : {}), student: { classRoomId } } 
+        where: { role: 'STUDENT', status: 'ACTIVE', ...(schoolId ? { schoolId } : {}), student: { classRoomId } } 
       }),
       this.prisma.assignment.findMany({ 
         where: { staffId: staff?.id }, 
@@ -563,7 +563,7 @@ export class StaffService {
     if (!classRoom) throw new BadRequestException('Class not found');
 
     const students = await this.prisma.user.findMany({
-      where: { role: 'STUDENT', schoolId, student: { classRoomId: classRoom.id } },
+      where: { role: 'STUDENT', status: 'ACTIVE', schoolId, student: { classRoomId: classRoom.id } },
       include: { student: true },
     });
     const studentMap = new Map(students.map(s => [s.uniqueId.toUpperCase(), s]));
@@ -747,7 +747,7 @@ export class StaffService {
 
     const cls = q.class || user.class;
     const students = await this.prisma.user.findMany({ 
-      where: { role: 'STUDENT', ...(schoolId ? { schoolId } : {}), student: { classRoom: { name: cls, ...(schoolId ? { schoolId } : {}) } } },
+      where: { role: 'STUDENT', status: 'ACTIVE', ...(schoolId ? { schoolId } : {}), student: { classRoom: { name: cls, ...(schoolId ? { schoolId } : {}) } } },
       include: { student: true }
     });
     
@@ -855,7 +855,7 @@ export class StaffService {
     if (q.class) {
       const schoolId = this.schoolId(user);
       const students = await this.prisma.user.findMany({ 
-        where: { role: 'STUDENT', ...(schoolId ? { schoolId } : {}), student: { classRoom: { name: q.class, ...(schoolId ? { schoolId } : {}) } } },
+        where: { role: 'STUDENT', status: 'ACTIVE', ...(schoolId ? { schoolId } : {}), student: { classRoom: { name: q.class, ...(schoolId ? { schoolId } : {}) } } },
         include: { student: true }
       });
       const studentIds = students.map(s => s.student?.id).filter(Boolean) as bigint[];
@@ -1411,7 +1411,7 @@ export class StaffService {
     if (!sessionEntity || !termEntity) throw new BadRequestException('Session or Term not found');
 
     const students = await this.prisma.student.findMany({
-      where: { classRoom: { name: q.class, ...(schoolId ? { schoolId } : {}) } },
+      where: { classRoom: { name: q.class, ...(schoolId ? { schoolId } : {}) }, user: { status: 'ACTIVE' } },
       include: { user: true, traits: { where: { sessionId: sessionEntity.id, termId: termEntity.id } } },
     });
 

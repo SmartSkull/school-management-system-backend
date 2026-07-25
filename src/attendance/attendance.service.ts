@@ -632,7 +632,7 @@ export class AttendanceService {
 
     // Get student IDs in this class
     const students = await this.prisma.user.findMany({
-      where: { schoolId: BigInt(schoolId), role: 'STUDENT', student: { classRoomId } },
+      where: { schoolId: BigInt(schoolId), role: 'STUDENT', status: 'ACTIVE', student: { classRoomId } },
       select: { uniqueId: true },
     });
     const studentIds = students.map(s => s.uniqueId);
@@ -679,7 +679,7 @@ export class AttendanceService {
     const uniqueIds = body.students.map(s => s.uniqueId);
 
     const users = await this.prisma.user.findMany({
-      where: { uniqueId: { in: uniqueIds }, schoolId: BigInt(schoolId), role: 'STUDENT' },
+      where: { uniqueId: { in: uniqueIds }, schoolId: BigInt(schoolId), role: 'STUDENT', status: 'ACTIVE' },
       select: {
         uniqueId: true,
         firstName: true,
@@ -767,7 +767,7 @@ export class AttendanceService {
     if (!resolvedClass) return { success: true, data: [] };
 
     const students = await this.prisma.user.findMany({
-      where: { schoolId: BigInt(schoolId), role: 'STUDENT', student: { classRoom: { name: resolvedClass } } },
+      where: { schoolId: BigInt(schoolId), role: 'STUDENT', status: 'ACTIVE', student: { classRoom: { name: resolvedClass } } },
       select: { uniqueId: true, firstName: true, lastName: true, image: true, student: { select: { id: true } } },
     });
 
