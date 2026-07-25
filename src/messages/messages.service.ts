@@ -125,6 +125,7 @@ export class MessagesService {
         createdAt: m.createdAt,
         readAt: m.readAt,
       })),
+      partner_id: otherUser.id.toString(),
       partner_last_login_at: otherUser.lastLoginAt,
     });
   }
