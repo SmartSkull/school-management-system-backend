@@ -485,6 +485,81 @@ export class CbtService {
     return this.ok(null, 'Result deleted successfully');
   }
 
+  async manualSaveResults(user: any, body: any) {
+    const { class: className, course, session, term, results } = body;
+    if (!className || !course || !session || !term || !Array.isArray(results) || !results.length) {
+      throw new BadRequestException('class, course, session, term and results[] are required');
+    }
+
+    const staffUserId = BigInt(user.authUserId ?? user.userId ?? user.id);
+    const staff = await this.prisma.staff.findFirst({ where: { userId: staffUserId } });
+    const schoolId = user?.schoolId ? BigInt(user.schoolId) : undefined;
+
+    const subject = await this.prisma.subject.findFirst({ where: { name: course } });
+    if (!subject) throw new BadRequestException(`Subject "${course}" not found`);
+
+    const classRoom = await this.prisma.classRoom.findFirst({
+      where: { name: className, ...(schoolId ? { schoolId } : {}) },
+    });
+    if (!classRoom) throw new BadRequestException(`Class "${className}" not found`);
+
+    // Resolve or create the CbtTest for this class/subject/session/term combo
+    let sessionId: bigint | undefined;
+    let termId: bigint | undefined;
+    const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
+    if (sessionEntity) sessionId = sessionEntity.id;
+    const termEntity = sessionId
+      ? await this.prisma.academicTerm.findFirst({ where: { name: term as any, sessionId } })
+      : null;
+    if (termEntity) termId = termEntity.id;
+
+    let test = await this.prisma.cbtTest.findFirst({
+      where: {
+        subjectId: subject.id,
+        classRoomId: classRoom.id,
+        sessionId: sessionId ?? null,
+        termId: termId ?? null,
+      },
+    });
+    if (!test) {
+      test = await this.prisma.cbtTest.create({
+        data: {
+          title: `${course} — ${className}`,
+          subjectId: subject.id,
+          classRoomId: classRoom.id,
+          sessionId,
+          termId,
+          durationMin: 0,
+        },
+      });
+    }
+
+    let saved = 0;
+    let skipped = 0;
+    for (const r of results) {
+      if (!r.studentUniqueId) { skipped++; continue; }
+
+      const studentUser = await this.prisma.user.findFirst({
+        where: { uniqueId: r.studentUniqueId, ...(schoolId ? { schoolId } : {}) },
+        include: { student: true },
+      });
+      if (!studentUser?.student) { skipped++; continue; }
+
+      const totalQuestions = Number(r.totalQuestions) || 0;
+      const score = Math.max(0, Math.min(Number(r.score) || 0, totalQuestions || Number(r.score) || 0));
+      const percentage = totalQuestions > 0 ? (score / totalQuestions) * 100 : Number(r.score) || 0;
+
+      await this.prisma.cbtResult.upsert({
+        where: { testId_studentId: { testId: test.id, studentId: studentUser.student.id } },
+        create: { testId: test.id, studentId: studentUser.student.id, score, percentage },
+        update: { score, percentage },
+      });
+      saved++;
+    }
+
+    return this.ok({ saved, skipped }, `Saved ${saved} result${saved !== 1 ? 's' : ''}${skipped ? `, ${skipped} skipped` : ''}`);
+  }
+
   async bulkDeleteQuestions(ids: string | string[]) {
     const idArray = Array.isArray(ids) ? ids : (ids || '').split(',').map(id => id.trim()).filter(Boolean);
     if (!idArray.length) throw new BadRequestException('No IDs provided');

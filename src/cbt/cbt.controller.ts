@@ -83,6 +83,10 @@ export class CbtController {
   @UseGuards(StaffGuard)
   deleteResult(@Param('id') id: string) { return this.svc.deleteResult(id); }
 
+  @Post('staff/cbt/results/manual')
+  @UseGuards(StaffGuard)
+  manualSaveResults(@CurrentUser() user: any, @Body() body: any) { return this.svc.manualSaveResults(user, body); }
+
   @Post('staff/cbt/extract-questions')
   @UseGuards(StaffGuard)
   @UseInterceptors(FileInterceptor('file', { storage: diskStorage({ destination: './uploads', filename: (_, f, cb) => cb(null, `${Date.now()}${extname(f.originalname)}`) }) }))
