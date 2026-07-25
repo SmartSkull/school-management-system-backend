@@ -13,9 +13,12 @@ export class MessagesService {
   }
 
   private schoolId(user: any): bigint | undefined {
-    // For staff, schoolId may be on the nested user object
+    // For staff, req.user is the Staff record spread with the guard's computed fields.
+    // schoolId may be: directly on user (set by guard), on the nested user.user (User row),
+    // or missing entirely (super-admin with no school). Handle all cases.
     const sid = user?.schoolId ?? user?.user?.schoolId;
-    return sid ? BigInt(sid) : undefined;
+    if (!sid) return undefined;
+    try { return BigInt(sid); } catch { return undefined; }
   }
 
   /** Returns the real User.id regardless of whether the request came from a

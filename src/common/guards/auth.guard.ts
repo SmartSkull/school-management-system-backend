@@ -27,8 +27,12 @@ export class JwtAuthGuard implements CanActivate {
     req.user = {
       ...user,
       role: payload.role,
-      schoolId: user.schoolId ?? user.user?.schoolId ?? (payload.schoolId ? BigInt(payload.schoolId) : undefined),
-      authUserId: user.userId ?? user.id,
+      // For staff, user is the Staff record — schoolId lives on the nested User row.
+      // For student/admin, user IS the User row so user.schoolId is direct.
+      schoolId: user?.schoolId ?? user?.user?.schoolId ?? (payload.schoolId ? BigInt(payload.schoolId) : undefined),
+      authUserId: user?.userId ?? user?.id,
+      // Expose uniqueId from nested user for staff so downstream services can read it
+      uniqueId: user?.uniqueId ?? user?.user?.uniqueId,
     };
     return true;
   }

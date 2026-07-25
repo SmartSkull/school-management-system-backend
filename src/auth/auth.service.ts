@@ -141,7 +141,19 @@ export class AuthService {
     } catch {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
-    const token = this.jwt.sign({ id: payload.id, role: payload.role });
+
+    // Re-fetch the user to get current schoolId (not stored in refresh token)
+    const user = await this.prisma.user.findFirst({
+      where: { uniqueId: payload.id },
+      select: { schoolId: true, email: true },
+    });
+
+    const token = this.jwt.sign({
+      id: payload.id,
+      role: payload.role,
+      email: user?.email,
+      schoolId: user?.schoolId?.toString(),
+    });
     const newRefresh = this.jwt.sign(
       { id: payload.id, role: payload.role },
       { secret: process.env.JWT_SECRET + '_refresh', expiresIn: process.env.JWT_REFRESH_EXPIRY || '7d' },
