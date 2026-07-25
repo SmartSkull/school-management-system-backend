@@ -389,8 +389,23 @@ export class AdminService {
   }
 
   async verifyStaff(staffId: string) {
-    await this.prisma.user.update({ where: { id: BigInt(staffId) }, data: { status: 'ACTIVE' } });
+    const user = await this.prisma.user.update({ where: { id: BigInt(staffId) }, data: { status: 'ACTIVE' } });
+    await this.notificationService.notify(
+      user.id,
+      'Account Verified',
+      'Your account has been verified. You can now access all features.',
+    );
     return this.ok(null, 'Staff verified successfully');
+  }
+
+  async unverifyStaff(staffId: string) {
+    const user = await this.prisma.user.update({ where: { id: BigInt(staffId) }, data: { status: 'PENDING' } });
+    await this.notificationService.notify(
+      user.id,
+      'Account Unverified',
+      'Your account verification has been revoked by the admin.',
+    );
+    return this.ok(null, 'Staff unverified successfully');
   }
 
   async deleteStaff(staffId: string) {

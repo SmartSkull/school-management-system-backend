@@ -83,6 +83,9 @@ export class AdminController {
   @Post('staff/verify')
   verifyStaffByBody(@Body('staff_id') id: string) { return this.svc.verifyStaff(id); }
 
+  @Post('staff/unverify')
+  unverifyStaffByBody(@Body('staff_id') id: string) { return this.svc.unverifyStaff(id); }
+
   @Post('staff/delete')
   deleteStaffByBody(@Body('staff_id') id: string) { return this.svc.deleteStaff(id); }
 
@@ -94,6 +97,8 @@ export class AdminController {
   @Delete('staff/:id') deleteStaff(@Param('id') id: string) { return this.svc.deleteStaff(id); }
 
   @Post('staff/:id/verify') verifyStaff(@Param('id') id: string) { return this.svc.verifyStaff(id); }
+
+  @Post('staff/:id/unverify') unverifyStaff(@Param('id') id: string) { return this.svc.unverifyStaff(id); }
 
   // Sessions
   @Get('sessions') getSessions(@CurrentUser() user: any) { return this.svc.getSessions(user); }
