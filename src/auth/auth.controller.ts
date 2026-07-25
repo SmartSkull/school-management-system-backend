@@ -76,7 +76,9 @@ export class AuthController {
     @CurrentUser() user: any,
     @Body() body: { endpoint: string; keys: { p256dh: string; auth: string } },
   ) {
-    await this.webPush.saveSubscription(BigInt(user.id), body);
+    // authUserId is always the User table PK regardless of role (staff resolves via Staff record)
+    const userId = BigInt(user.authUserId ?? user.id);
+    await this.webPush.saveSubscription(userId, body);
     return { success: true, message: 'Push subscription saved' };
   }
 
