@@ -104,6 +104,7 @@ export class AuthService {
     if (!user) throw new UnauthorizedException('Invalid credentials');
     const valid = await this.verifyPassword(password, user.password, defaultPassword);
     if (!valid) throw new UnauthorizedException('Invalid credentials');
+    if (user.status === 'PENDING') throw new ForbiddenException('Your account is pending verification. Please contact the platform administrator.');
     return this.buildTokenResponse(user, 'admin', user.uniqueId);
   }
 
