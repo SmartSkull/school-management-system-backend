@@ -3,11 +3,10 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '../database/prisma.service';
 import { EmailService } from '../common/email.service';
-import { WebPushService } from '../common/web-push.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService, private jwt: JwtService, private emailService: EmailService, private webPush: WebPushService) {}
+  constructor(private prisma: PrismaService, private jwt: JwtService, private emailService: EmailService) {}
 
   async studentLogin(name: string, password: string, schoolSlug?: string) {
     if (!name || !password) throw new UnauthorizedException('Invalid credentials');
@@ -155,14 +154,6 @@ export class AuthService {
 
   private buildTokenResponse(user: any, role: string, id: string, isDriver = false) {
     this.prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } }).catch(() => {});
-
-    // Fire a login notification to all browser subscriptions (fire-and-forget)
-    const firstName = user.firstName || user.firstname || 'User';
-    this.webPush.sendToUser(
-      BigInt(user.id),
-      'Login Successful',
-      `Welcome back, ${firstName}! You've signed in to Smart Campus.`,
-    ).catch(() => {});
 
     const token = this.jwt.sign({ id, role, email: user.email, schoolId: user.schoolId?.toString() });
     const refresh_token = this.jwt.sign(
