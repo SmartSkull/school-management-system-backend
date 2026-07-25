@@ -59,6 +59,7 @@ export class AuthService {
     }
 
     if (!user) throw new UnauthorizedException('Invalid credentials');
+    if (user.status === 'PENDING') throw new ForbiddenException('Your account is pending verification by the admin. Please wait for approval before logging in.');
     return this.buildTokenResponse(user, 'student', user.uniqueId);
   }
 
@@ -85,6 +86,7 @@ export class AuthService {
     if (!user) throw new UnauthorizedException('Invalid credentials');
     const valid = await this.verifyPassword(password, user.password, defaultPassword);
     if (!valid) throw new UnauthorizedException('Invalid credentials');
+    if (user.status === 'PENDING') throw new ForbiddenException('Your account is pending verification by the admin. Please wait for approval before logging in.');
     const driverRecord = await this.prisma.transportDriver.findFirst({ where: { userId: user.id }, select: { id: true } });
     return this.buildTokenResponse(user, 'staff', user.uniqueId, !!driverRecord);
   }
