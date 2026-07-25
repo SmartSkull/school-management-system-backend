@@ -169,9 +169,23 @@ export class AuthService {
   }
 
   async savePushToken(userId: number | bigint, token: string) {
-    if (!token || !token.startsWith('ExponentPushToken[')) {
+    // Empty string = clear the token (called on logout)
+    if (!token) {
+      await this.prisma.user.update({
+        where: { id: BigInt(userId) },
+        data: { pushToken: null },
+      });
+      return { success: true, message: 'Push token cleared' };
+    }
+    if (!token.startsWith('ExponentPushToken[')) {
       return { success: false, message: 'Invalid push token' };
     }
+    // Remove this token from any other user who previously owned it
+    // (handles shared device: student B logging in after student A)
+    await this.prisma.user.updateMany({
+      where: { pushToken: token, NOT: { id: BigInt(userId) } },
+      data: { pushToken: null },
+    });
     await this.prisma.user.update({
       where: { id: BigInt(userId) },
       data: { pushToken: token },
