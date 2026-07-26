@@ -298,7 +298,7 @@ export class AdminService {
   async getStaff(user: any, q: any) {
     const page = Math.max(1, parseInt(q.page) || 1);
     const perPage = Math.min(parseInt(q.per_page) || 20, 50);
-    const where: any = { role: { in: ['STAFF', 'ADMIN'] }, status: 'ACTIVE' };
+    const where: any = { role: { in: ['STAFF', 'ADMIN'] } };
     const schoolId = this.schoolId(user);
     if (schoolId) where.schoolId = schoolId;
 
