@@ -300,11 +300,15 @@ export class SchoolFeesService {
     return this.ok(null, 'School fees config deleted successfully.');
   }
 
-  async getAllPayments(q: any) {
+  async getAllPayments(user: any, q: any) {
     const page = Math.max(1, parseInt(q.page) || 1);
     const perPage = Math.min(parseInt(q.per_page) || 20, 100);
+    const schoolId = user?.schoolId ? BigInt(user.schoolId) : undefined;
     const where: any = {};
-    
+
+    // Filter by school via student → user → schoolId
+    if (schoolId) where.student = { user: { schoolId } };
+
     if (q.status) where.status = q.status;
     if (q.session) {
       const session = await this.prisma.academicSession.findFirst({ where: { name: q.session } });
@@ -343,8 +347,12 @@ export class SchoolFeesService {
     };
   }
 
-  async getPaymentsSummary(q: any) {
+  async getPaymentsSummary(user: any, q: any) {
+    const schoolId = user?.schoolId ? BigInt(user.schoolId) : undefined;
     const where: any = { status: 'SUCCESS' };
+
+    // Scope payments to this school via student → user
+    if (schoolId) where.student = { user: { schoolId } };
 
     if (q.session) {
       const sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: q.session } });
@@ -356,7 +364,10 @@ export class SchoolFeesService {
     }
 
     const [students, payments] = await Promise.all([
-      this.prisma.student.findMany({ include: { classRoom: true } }),
+      this.prisma.student.findMany({
+        where: schoolId ? { user: { schoolId } } : {},
+        include: { classRoom: true },
+      }),
       this.prisma.schoolFeePayment.findMany({ where }),
     ]);
 

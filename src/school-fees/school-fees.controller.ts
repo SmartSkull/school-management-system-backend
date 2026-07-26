@@ -72,13 +72,13 @@ export class AdminSchoolFeesController {
   }
 
   @Get('payments')
-  getAllPayments(@Query() q: any) {
-    return this.svc.getAllPayments(q);
+  getAllPayments(@CurrentUser() user: any, @Query() q: any) {
+    return this.svc.getAllPayments(user, q);
   }
 
   @Get('payments/summary')
-  getSummary(@Query() q: any) {
-    return this.svc.getPaymentsSummary(q);
+  getSummary(@CurrentUser() user: any, @Query() q: any) {
+    return this.svc.getPaymentsSummary(user, q);
   }
 
   @Get('payments/:student_id')
