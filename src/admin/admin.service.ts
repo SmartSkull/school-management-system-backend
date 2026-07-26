@@ -301,7 +301,9 @@ export class AdminService {
     const where: any = { role: { in: ['STAFF', 'ADMIN'] } };
     const schoolId = this.schoolId(user);
     if (schoolId) where.schoolId = schoolId;
-    
+    // When verified=1 is passed (e.g. from dropdowns), only return active/verified staff
+    if (q.verified === '1') where.status = 'ACTIVE';
+
     if (q.search) {
       where.OR = [
         { firstName: { contains: q.search } },
@@ -1365,7 +1367,7 @@ export class AdminService {
   async getStaffPerformance(user: any) {
     const schoolId = this.schoolId(user);
     const staffList = await this.prisma.staff.findMany({
-      where: schoolId ? { user: { schoolId } } : {},
+      where: schoolId ? { user: { schoolId, status: 'ACTIVE' } } : { user: { status: 'ACTIVE' } },
       include: { user: { select: { firstName: true, lastName: true, uniqueId: true } } },
     });
 
@@ -1406,7 +1408,7 @@ export class AdminService {
         include: { classTeacher: { include: { user: { select: { firstName: true, lastName: true, uniqueId: true } } } } },
       }),
       this.prisma.staff.findMany({
-        where: { user: { schoolId } },
+        where: { user: { schoolId, status: 'ACTIVE' } },
         include: { user: { select: { firstName: true, lastName: true, uniqueId: true, image: true } } },
       }),
     ]);
