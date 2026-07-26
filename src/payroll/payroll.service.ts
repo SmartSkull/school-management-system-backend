@@ -48,7 +48,7 @@ export class PayrollService {
   async getSalarySetups(user: any) {
     const schoolId = this.schoolId(user);
     const staff = await this.prisma.staff.findMany({
-      where: { user: { schoolId } },
+      where: { user: { schoolId, status: 'ACTIVE' } },
       include: { user: true, salarySetup: true },
       orderBy: { user: { firstName: 'asc' } },
     });

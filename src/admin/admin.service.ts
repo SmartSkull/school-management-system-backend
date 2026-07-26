@@ -298,11 +298,9 @@ export class AdminService {
   async getStaff(user: any, q: any) {
     const page = Math.max(1, parseInt(q.page) || 1);
     const perPage = Math.min(parseInt(q.per_page) || 20, 50);
-    const where: any = { role: { in: ['STAFF', 'ADMIN'] } };
+    const where: any = { role: { in: ['STAFF', 'ADMIN'] }, status: 'ACTIVE' };
     const schoolId = this.schoolId(user);
     if (schoolId) where.schoolId = schoolId;
-    // When verified=1 is passed (e.g. from dropdowns), only return active/verified staff
-    if (q.verified === '1') where.status = 'ACTIVE';
 
     if (q.search) {
       where.OR = [
