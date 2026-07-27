@@ -906,13 +906,17 @@ export class AdminService {
       const cumulative = currentTotal + firstScore + secondScore;
       const average = divisor > 0 ? cumulative / divisor : currentTotal;
 
-      let grade = 'F';
-      let remark = 'Failed';
-      if (average >= 75) { grade = 'A'; remark = 'Excellent'; }
-      else if (average >= 65) { grade = 'B'; remark = 'Very Good'; }
-      else if (average >= 55) { grade = 'C'; remark = 'Good'; }
-      else if (average >= 45) { grade = 'D'; remark = 'Pass'; }
-      else { grade = 'F'; remark = 'Fail'; }
+      let grade = 'F9';
+      let remark = 'Fail';
+      if (average >= 75) { grade = 'A1'; remark = 'Excellent'; }
+      else if (average >= 70) { grade = 'B2'; remark = 'Very Good'; }
+      else if (average >= 65) { grade = 'B3'; remark = 'Good'; }
+      else if (average >= 60) { grade = 'C4'; remark = 'Credit'; }
+      else if (average >= 55) { grade = 'C5'; remark = 'Credit'; }
+      else if (average >= 50) { grade = 'C6'; remark = 'Credit'; }
+      else if (average >= 45) { grade = 'D7'; remark = 'Pass'; }
+      else if (average >= 40) { grade = 'E8'; remark = 'Pass'; }
+      else { grade = 'F9'; remark = 'Fail'; }
 
       return {
         ...r,
