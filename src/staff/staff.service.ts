@@ -195,21 +195,23 @@ export class StaffService {
       };
     }));
 
-    const gradeBuckets = { A: 0, B: 0, C: 0, D: 0, F: 0 };
+    const gradeBuckets = { A1: 0, B: 0, C: 0, D: 0, E8: 0, F9: 0 };
     for (const [, { sum, count }] of studentTotals) {
       const avg = count > 0 ? sum / count : 0;
-      if (avg >= 90) gradeBuckets.A++;
-      else if (avg >= 80) gradeBuckets.B++;
-      else if (avg >= 70) gradeBuckets.C++;
-      else if (avg >= 60) gradeBuckets.D++;
-      else gradeBuckets.F++;
+      if (avg >= 75) gradeBuckets.A1++;
+      else if (avg >= 65) gradeBuckets.B++;
+      else if (avg >= 50) gradeBuckets.C++;
+      else if (avg >= 45) gradeBuckets.D++;
+      else if (avg >= 40) gradeBuckets.E8++;
+      else gradeBuckets.F9++;
     }
     const performanceDistribution = [
-      { grade: 'A (90-100)', count: gradeBuckets.A },
-      { grade: 'B (80-89)', count: gradeBuckets.B },
-      { grade: 'C (70-79)', count: gradeBuckets.C },
-      { grade: 'D (60-69)', count: gradeBuckets.D },
-      { grade: 'F (<60)',   count: gradeBuckets.F },
+      { grade: 'A1 (75-100)', count: gradeBuckets.A1 },
+      { grade: 'B (65-74)',   count: gradeBuckets.B },
+      { grade: 'C (50-64)',   count: gradeBuckets.C },
+      { grade: 'D7 (45-49)', count: gradeBuckets.D },
+      { grade: 'E8 (40-44)', count: gradeBuckets.E8 },
+      { grade: 'F9 (0-39)',  count: gradeBuckets.F9 },
     ];
 
     // --- Chart 2: Assignments by subject (last 5) ---
