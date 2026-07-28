@@ -1,0 +1,47 @@
+Error: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'SET @ids = (
+      SELECT GROUP_CONCAT(id) FROM User
+      WHERE schoolId = 9 AN' at line 3
+    at [90mC:\xampp\htdocs\florieren\nestjs-backend\[39mdelete-staff.js:10:32
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)[39m {
+  code: [32m'ER_PARSE_ERROR'[39m,
+  errno: [33m1064[39m,
+  sqlState: [32m'42000'[39m,
+  sqlMessage: [32m"You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'SET @ids = (\n"[39m +
+    [32m'      SELECT GROUP_CONCAT(id) FROM User\n'[39m +
+    [32m"      WHERE schoolId = 9 AN' at line 3"[39m,
+  sql: [32m'\n'[39m +
+    [32m'    SET FOREIGN_KEY_CHECKS = 0;\n'[39m +
+    [32m'\n'[39m +
+    [32m'    SET @ids = (\n'[39m +
+    [32m'      SELECT GROUP_CONCAT(id) FROM User\n'[39m +
+    [32m"      WHERE schoolId = 9 AND role IN ('STAFF','ADMIN')\n"[39m +
+    [32m'      AND (\n'[39m +
+    [32m"        (LOWER(firstName) LIKE '%sonia%' OR LOWER(lastName) LIKE '%taiwo%') OR\n"[39m +
+    [32m"        (LOWER(firstName) LIKE '%ekenedirichukwu%' OR LOWER(lastName) LIKE '%arodiogbu%') OR\n"[39m +
+    [32m"        (LOWER(firstName) LIKE '%unuakemolen%' OR LOWER(lastName) LIKE '%oyakhire%') OR\n"[39m +
+    [32m"        (LOWER(firstName) LIKE '%akande%' OR LOWER(lastName) LIKE '%busayomi%') OR\n"[39m +
+    [32m"        (LOWER(firstName) LIKE '%oluwakemisola%' OR LOWER(lastName) LIKE '%fashonu%') OR\n"[39m +
+    [32m"        (LOWER(firstName) LIKE '%shogoye%' OR LOWER(lastName) LIKE '%olufunke%') OR\n"[39m +
+    [32m"        (LOWER(firstName) LIKE '%adisa%' OR LOWER(lastName) LIKE '%oyas%')\n"[39m +
+    [32m'      )\n'[39m +
+    [32m'    );\n'[39m +
+    [32m'\n'[39m +
+    [32m'    SELECT @ids AS found_ids;\n'[39m +
+    [32m'\n'[39m +
+    [32m'    DELETE FROM Notification WHERE FIND_IN_SET(userId, @ids);\n'[39m +
+    [32m'    DELETE FROM Post WHERE FIND_IN_SET(userId, @ids);\n'[39m +
+    [32m'    DELETE FROM Comment WHERE FIND_IN_SET(userId, @ids);\n'[39m +
+    [32m'    DELETE FROM `Like` WHERE FIND_IN_SET(userId, @ids);\n'[39m +
+    [32m'    DELETE FROM Message WHERE FIND_IN_SET(senderId, @ids) OR FIND_IN_SET(receiverId, @ids);\n'[39m +
+    [32m'    DELETE FROM Leave WHERE FIND_IN_SET(userId, @ids);\n'[39m +
+    [32m'    DELETE FROM StaffAttendance WHERE FIND_IN_SET(userId, @ids);\n'[39m +
+    [32m'    UPDATE Result SET teacherId = NULL WHERE teacherId IN (SELECT id FROM Staff WHERE FIND_IN_SET(userId, @ids));\n'[39m +
+    [32m'    UPDATE ClassRoom SET classTeacherId = NULL WHERE classTeacherId IN (SELECT id FROM Staff WHERE FIND_IN_SET(userId, @ids));\n'[39m +
+    [32m'    DELETE FROM Assignment WHERE staffId IN (SELECT id FROM Staff WHERE FIND_IN_SET(userId, @ids));\n'[39m +
+    [32m'    DELETE FROM Staff WHERE FIND_IN_SET(userId, @ids);\n'[39m +
+    [32m'    DELETE FROM User WHERE FIND_IN_SET(id, @ids);\n'[39m +
+    [32m'\n'[39m +
+    [32m'    SET FOREIGN_KEY_CHECKS = 1;\n'[39m +
+    [32m'    SELECT ROW_COUNT() AS deleted;\n'[39m +
+    [32m'  '[39m
+}

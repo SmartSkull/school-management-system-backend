@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 27, 2026 at 01:21 AM
+-- Generation Time: Jul 23, 2026 at 10:10 AM
 -- Server version: 8.0.46-cll-lve
 -- PHP Version: 8.4.22
 
@@ -24068,7 +24068,8 @@ INSERT INTO `notification` (`notification_id`, `unique_id`, `message`, `unset`, 
 (21697, '', 'Your result for second term, 2025/2026 session has been approved and is ready for viewing.', '', ''),
 (21698, '', 'Your result for second term, 2025/2026 session has been approved and is ready for viewing.', '', ''),
 (21699, '', 'Your result for second term, 2025/2026 session has been approved and is ready for viewing.', '', ''),
-(21700, '', 'Your result for second term, 2025/2026 session has been approved and is ready for viewing.', '', '');
+(21700, '', 'Your result for second term, 2025/2026 session has been approved and is ready for viewing.', '', ''),
+(21701, 'admin', 'Your staff Ogunjobi Vera has uploaded shadrach Mercy   Fumilayo Computer result in SS1A class in session 2025/2026 and for Third term', '', '2026-07-22 14:58:05');
 
 -- --------------------------------------------------------
 
@@ -44834,7 +44835,8 @@ INSERT INTO `result` (`result_id`, `teacher_id`, `student_id`, `class`, `course`
 (20652, 'staff/2025/79e9', 'greatkings/2025/ed86', NULL, 'CRK', '2025/2026', 'second', '0', '0', '33', '16', '49', '49', '49', 'D7', '2026-04-21 12:24:10', '1'),
 (20653, 'staff/2025/79e9', 'greatkings/2025/1522', NULL, 'CRK', '2025/2026', 'second', '0', '0', '40', '39', '79', '79', '79', 'A1', '2026-04-21 12:11:21', '1'),
 (20654, 'staff/2025/79e9', 'greatkings/2022/be4a', NULL, 'Chemistry', '2025/2026', 'second', '0', '0', '40', '29', '69', '69', '69', 'B3', '2026-04-28 11:41:15', '0'),
-(20655, 'staff/2025/aefa', 'greatkings/2022/2caa', NULL, 'Yoruba', '2025/2026', 'second', '0', '0', '20', '11', '31', '31', '31', 'F9', '2026-05-12 11:45:17', '0');
+(20655, 'staff/2025/aefa', 'greatkings/2022/2caa', NULL, 'Yoruba', '2025/2026', 'second', '0', '0', '20', '11', '31', '31', '31', 'F9', '2026-05-12 11:45:17', '0'),
+(20656, 'staff/2025/79e9', 'greatkings/2022/f058', NULL, 'Computer', '2025/2026', 'Third', '76', '80', '20', '51', '71', '227', '76', 'A1', '2026-07-22 13:58:04', '0');
 
 -- --------------------------------------------------------
 
@@ -45012,42 +45014,29 @@ CREATE TABLE `staff` (
 INSERT INTO `staff` (`staff_id`, `unique_id`, `firstname`, `lastname`, `image`, `email`, `telephone`, `class`, `course`, `state_of_origin`, `date_of_birth`, `home_address`, `about`, `user`, `password`, `admin_verify`, `email_verify`, `v_email`, `date`, `updated`) VALUES
 (9, 'admin', 'Andrew', 'Odion', '1662716939.jpg', 'Oselueku@gmail.com', '08053655576', 'JSS2A', 'Agricultural-Science, Arts&Social-Sciences', 'Edo state', '1983-02-06', 'Lagos Nigeria', 'School Administrator', 'admin', '$2y$10$54Lq9HQOpMOZIww8.s8IZ.DJB/d0IgXs7G1mA6rXUhSXVBHqb9jLy', '1', 'bb58bde2', '', '2022-08-18 16:43:57', '2022-09-13 08:38:31'),
 (17, 'admin1', 'admin', 'admin', '1663328625.jpg', 'ndunchej@gmail.com', '09048480552', 'JSS1A', NULL, 'Admin', '2022-09-11', 'admin', 'admin', 'admin', '$2y$10$6eQJEG.wnMUR8xKkhSAvLu73OBpUFUMu4bwcojabtYZKBJLqkFv6e', '1', 'dd7e23a9', '', '2022-08-25 06:54:39', '2025-07-23 13:53:25'),
-(25, 'staff/2022/7f3f', 'Ekenedirichukwu', 'Arodiogbu', '1663706521.jpg', 'arodiogbuekene@gmail.com', '09049360676', 'SS1A', NULL, 'Imo', '1989-11-18', '48 Federal Road Isheri Olofin Lagos', 'I am the class teacher for SS 1 and I teach Biology and Basic Science', '', '$2y$10$g9a31jT5vEUdIZRSqf0ySeVUKBnQEmMtu/MKgFujWWSqQarag3Wui', '1', '4d0c40f8', '', '2022-09-01 07:41:41', '2022-12-12 12:17:47'),
 (30, 'leo', 'Joseph', 'Ndunche', '1765007093_6933def5a4ef7.jpg', 'ndunchej@gmail.com', '09048480552', 'JSS3A', NULL, 'Abia state', '1987-09-23', 'Lagos Nigeria', '#TechGuru', 'admin', '$2y$10$uubt795UduE.zxN1idyyyuKMGRZWumPeUeP58MTJHbXZleUxa1GsW', '1', 'bde0e615', '', '2022-09-06 09:33:06', '2022-09-23 14:04:04'),
 (40, 'staff/2022/f445', 'Fatai', 'Adewale', 'image.png', 'jimohfatai179@gmail.com', '07061971160', 'JSS1A', NULL, '', '', '', '', '', '$2y$10$msQoEElwsyxIU36UJudj1OgCxIWaQAk9L3L1Okjl/MqN8trlI80zu', '1', '09b712cb', '', '2022-09-06 14:55:21', '2022-09-06 15:15:59'),
 (43, 'admin2', 'Augustine', 'Okoli', '1662473945.jpg', 'auspom4real@gmail.com', '08062093770', 'Vice Principal (Admin)', NULL, 'Anambra', '1984-08-18', '41 road Gowon Estate, Egbeda, Lagos', 'Augustine Okoli is an enthusiastic educationist with experience spanning over a decade. He is an astute human and material administrator, with a flair for writing and teaching.\r\n\r\nA &quot;slave&quot; to academic excellence who finds a way to reward brilliant students while at the same time devising the means to bring the not-so-bright students to the limelight.\r\n\r\nHe is a disciplinarian who shows his love for his students by meting out appropriate punishments whenever they err. He teaches, guides, and corrects his students with love and utmost affection.\r\n\r\nHe is currently the school\'s vice principal (Admin). When he is not in the class teaching or at his writing table, he is on the other side discussing politics. He\'s married with kids.', 'admin', '$2y$10$m6vCsd9agU.V.nI5dLoiVuuzSI6Ye.FgFeR/bglVgZxLWjYU8bfsW', '1', '1a616818', '', '2022-09-06 15:05:14', '2022-12-12 14:49:17'),
-(47, 'staff/2022/94fa', 'Mrs Akande', 'Busayomi', '1662726955.jpg', 'akdebs2022@gmail.com', '08168052460', 'JSS2A', NULL, '', '', '', '', '', '$2y$10$86ZUdNKmT1awO/EbySWacOAPriIBHACE75T9ZAnc.UgcBrRlX6DEy', '1', 'a6a10d5a', '', '2022-09-07 07:50:02', '2022-09-09 10:37:50'),
-(48, 'staff/2022/f9a3', 'Oluwakemisola', 'Fashonu', '1663330734.jpg', 'fashonukemisola@gmail.com', '08086691607', 'JSS1A', NULL, 'Ondo state', '1991-05-28', '15,yinka ode street.Jumoke bustop orisumbare', 'I am married.                                A Christian.                                     A subject teacher in Great Kings Academy', '', '$2y$10$FI4aCxtL6OV9mYb3dJ71i.NTWGu5UJZ2zJLilMqbKxaOPign2BTDq', '1', '7f13e56e', '', '2022-09-07 08:21:33', '2022-09-16 13:05:05'),
-(49, 'staff/2022/8d14', 'Shogoye', 'Olufunke', '1663328658.jpg', 'olufunkeshogoye@gmail.com', '07068883505', 'JSS3A', NULL, 'Kogi', '1984-08-17', 'No. 4 Primate Ayodele Street lsheri', 'I am Evangelist (Mrs) Shogoye I\'m married to a man of God. I have a baby girl name Eniola my first born.', '', '$2y$10$0tZipMDLhvhESuWJZan.PeEemgVpGNGxPD9CAEfwmmo8L5u/Yc3B6', '1', '721b5f08', '', '2022-09-07 13:18:20', '2022-09-09 10:38:11'),
 (50, 'staff/2022/62f9', 'Alimi', 'Olalekan', 'image.png', 'olalekanalimi81@gmail.com', '08103832857', 'SS3B', NULL, 'Ogun state', '2020-11-07', '60, Okunola Road, Egbeda, Lagos.', 'A a role model and students look up to me and followed my footsteps', '', '', '1', 'd2f1994b', '', '2022-09-07 13:42:48', '2022-09-08 10:05:26'),
 (51, 'staff/2022/df6f', 'Alimi', 'Olalekan', 'image.png', 'olalekanalimi81@gmail.com', '08103832857', 'SS3', NULL, 'Ogun', '2009-06-12', '60, okunola Road, Egbeda, lagos', 'Economics teacher', '', '$2y$10$YteTTOmwlWVKTIas8TBpXuqM2.V27PPE13HP4iFk7i.q56bOxZuBW', '1', '44b6bb39', '', '2022-09-07 13:46:55', '2022-12-12 10:57:22'),
 (56, 'staff/2022/13f4', 'Andrew', 'Odion', 'image.png', 'oselueku@gmail.com', '08053655576', 'SS3B', NULL, '', '', '', '', '', '$2y$10$SQuKCgr6EBpRo4FRyggwG.V8hb6Se.fCz2/EzcVQAJowhEztr7Dky', '1', '71b42cd2', '', '2022-09-08 09:54:27', '2022-09-08 10:06:59'),
 (59, 'staff/2022/0dee', 'E. AJAYI', 'OLASUNKANMI', 'image.png', 'ajcoolsml@gmail.com', '07037380560', 'SS3A', NULL, '', '', '', '', '', '', '1', 'aa2f03b8', '0', '2022-09-09 08:13:16', '2022-09-09 10:37:37'),
-(64, 'staff/2022/1dce', 'Adisa', 'U. V. Oyas', 'image.png', 'victorpeacemaker90@gmail.com', '08162061181', 'SS2A', NULL, '', '', '', '', '', '$2y$10$yjqSGifT5Ur8FRoLiZMeXeTzUzs9YxQh.WOU0wT7Shw8NhrPyXHxG', '1', '6c99ab27', '0', '2022-09-10 02:20:50', ''),
-(69, 'staff/2022/3322', 'Sonia', 'Taiwo', '1663159768.png', 'sommyokoro23@gmail.com', '08065171839', 'SS2A', NULL, 'Imo state', '1990-11-25', '8, Olajide Esan close, Ponle bustop, Egbeda.', 'Am an Ambassador of Christ and a down to earth individual. A self- motivated, confident, trustworthy and hardworking person. A strong believer in team work for excellent results.', '', '$2y$10$mIEXmM4fIrXh.PM2soMDLOZsnES5SwCu2S1lgQps/30.7SUumsGKW', '1', 'a4015a60', '1', '2022-09-13 16:44:31', '2022-12-07 11:41:57'),
 (70, 'staff/2022/fa9a', 'Ajalode', 'Ogenekojeh', '1663158314.jpg', 'ajalodeogenekoje@65g.com', '07034270529', 'Head of Dpt Art and Commercial', NULL, 'Edo State', '1980-12-16', '52 road F Close Gowon Estate', 'God fearing and very simple to understand', '', '$2y$10$vADNK4sdDy89o4XO0Ah32OoSHdqaI0gu/gEDepkOfVlnPIc90SbUS', '1', '25c6b401', '0', '2022-09-14 13:14:36', '2022-09-27 17:50:25'),
 (77, 'staff/2022/6f1d', 'Akinwande', 'Seyi', '1670401233.jpg', 'wandeey17@gmail.com', '07038000268', 'SS3', NULL, 'Osun', '1982-09-07', '3 Babatunde Mateco Street Egan-Ishutti Igando Lagos', 'Mathematics and Agriculture science teacher', '', '$2y$10$kcqQ6/bcEEpon2hx3RbMmuXfVUVuswlWWAnRnpWgUYG9u0IEyLEi.', '1', 'e29244cb', '0', '2022-12-07 09:17:20', '2023-12-12 13:37:29'),
-(78, 'staff/2022/ced7', 'Unuakemolen', 'Oyakhire', '1672664538.jpg', 'victorpeacemaker6@gmail.com', '08115399714', 'SS2A', NULL, 'Nigeria', '2107-12-20', 'Nigeria', 'Easy-going, peace-loving and very strict', '', '$2y$10$2gPSPjmXY6lEouuRTEL7GOzH0XVtHNOTErgRh8AD/XNY8TC6nDW3y', '1', '767cc0a7', '0', '2022-12-07 14:41:09', '2023-01-02 14:14:29'),
-(79, 'staff/2023/20f6', 'Unuakemolen', 'Oyakhire Victor', 'image.png', 'victoroyakhire@yahoo.com', '08162061181', 'SS2A', NULL, '', '', '', '', '', '$2y$10$oRZfonekey5QprmO8AEco.WviWTsbbeZ7n9K4V00RgNb17TgCZQ3e', '1', '7b418cb2', '1', '2023-04-06 07:37:14', '2023-04-08 11:14:29'),
-(80, 'staff/2023/ef20', 'Charles', 'Binitie', 'image.png', 'charles.seawater@yahoo.com', '07040722439', 'SS2A', NULL, '', '', '', '', '', '$2y$10$OdBSFv1M.clRqaAPRh95OOL3BjmuZH6uxR9TGIwt80mqcc2Sg8XdS', '1', '96e01360', '0', '2023-12-13 10:31:39', '2023-12-13 11:11:25'),
 (81, 'staff/2024/8cc4', 'Tobiloba peace', 'Olaiya', 'image.png', 'tobyola01@gmail.com', '08170886367', 'JSS1A', NULL, '', '', '', '', '', '', '1', '5986ac37', '0', '2024-04-09 10:37:20', '2024-04-09 11:13:05'),
 (82, 'staff/2024/82c6', 'Tobiloba peace', 'Olaiya', 'image.png', 'tobyola01@gmail.com', '08170886367', 'JSS2A', NULL, 'Ekiti state', '2004-12-16', 'Gowon estate, egbeda, road 401, flat8', 'Jesus Christ is king', '', '$2y$10$p9oPonwj5qyABDRkrBhVaOtGDJTGH1ngPVKdwvigt2RO3uShou7Ai', '1', 'bb923d5a', '0', '2024-04-09 11:29:41', '2025-11-26 19:48:02'),
 (83, 'staff/2024/cf91', 'Florence', 'Omojiade', 'image.png', 'florenceomojiade@gmail.com', '07063010690', 'JSS1A', NULL, '', '', '', '', '', '$2y$10$nif5sYkf2V2laW3IeQHfJ.NM2HLG2ZkOp.BE7PcR2jeqB.dDpFjzi', '1', '2230cdcd', '0', '2024-07-10 13:51:42', '2024-07-10 13:57:53'),
 (84, 'staff/2024/2fbd', 'Florence', 'Omojiade', 'image.png', 'florenceomojiade@gmail.com', '07063010690', 'JSS1A', NULL, '', '', '', '', '', '$2y$10$QYimXLNmC2LGtA.hQFg/I.l2HYp/gi9/n5mN5u1htgCDlBmQtD7gi', '1', '69956be8', '0', '2024-12-02 14:09:29', '2024-12-02 14:12:01'),
-(85, 'staff/2024/7ca5', 'Shuaib', 'Abimbola', 'image.png', 'surajatabimbola089@gmail.com', '09126558425', 'SS2A', NULL, '', '', '', '', '', '$2y$10$7IGHCqqw/eMLoJtNLC9FkuJuCvjFwYIJMgXRdD1ej9UY2BU0bjHoa', '1', 'ec9b30d6', '0', '2024-12-09 13:43:05', '2024-12-09 13:45:13'),
-(86, 'staff/2024/c764', 'Shuaib', 'Abimbola', 'image.png', 'surajatabimbola089@gmail.com', '09126558425', 'SS2A', NULL, '', '', '', '', '', '$2y$10$d5VfJHSKDA412GZWv0NLY.nKZv87pjkqNUsupG9n6UpMcLBpt7nPW', '1', 'be9bcc07', '0', '2024-12-10 09:38:06', '2024-12-10 09:40:47'),
-(87, 'staff/2024/59da', 'Rodiyat', 'Adeola Banire', 'image.png', 'adeolaba12@gmail.com', '+234 808 486 3605', 'JSS3A', NULL, '', '', '', '', '', '$2y$10$1b3VSHJJKS0AnLiI5qPtc..o3pK859bjPoayAW90WlUH4BdqAgC8y', '1', '357bcb89', '0', '2024-12-10 09:43:42', '2024-12-10 09:44:33'),
-(88, 'staff/2024/f156', 'Gabrel', 'Daniel', 'image.png', 'omachonusaint@gmail.com', '08146227029', 'SS2A', NULL, '', '', '', '', '', '$2y$10$mf2stkPgwd4lvmZfU16sieJRVRd3PeC8aOk2iebtletK1A1i7VL8.', '1', '5b1fc7b1', '0', '2024-12-10 10:48:18', '2024-12-10 10:49:21'),
 (89, 'staff/2025/aefa', 'Praise', 'Ojoegahi', 'image.png', 'praiseuy@gmail.com', '08070476634', 'SS2A', NULL, '', '', '', '', '', '$2y$10$AAhp8X1bNB7NfzVM7BtfQOxEvk5/NZ5mhSfijG7fMwj4ftcbM8rLC', '1', '6a7d2a48', '0', '2025-04-06 18:14:13', '2025-04-06 18:17:10'),
 (90, 'staff/2025/f95c', 'Florence', 'Omojaide', 'image.png', 'florenceomojaide@gmail.com', '08053655576', 'JSS1A', NULL, '', '', '', '', '', '$2y$10$b9RWKRyiOpROPIbmF9h1BOboYe5HgTjWYh06onF2KvM7hbUDSbZqq', '1', '4753ff7b', '0', '2025-04-08 15:44:49', '2025-04-08 15:46:35'),
 (91, 'staff/2025/35da', 'Joseph', 'Leo', 'image.png', 'ndunchej@gmail.com', '09048480552', 'SS3', NULL, '', '', '', '', '', '', '0', '0663eab9', '0', '2025-04-14 18:29:58', ''),
-(92, 'staff/2025/9253', 'Joseph', 'Chizaram', 'image.png', 'ndunchej@gmail.com', '09048480552', 'SS3', NULL, '', '', '', '', '', '', '0', '3c9f3aff', '0', '2025-04-15 06:35:17', ''),
 (97, 'staff/2025/79e9', 'Vera', 'Ogunjobi', 'image.png', 'omoadoni14@gmail.com', '08038251948', 'SS1A', 'Civic-Education, Computer', 'Edo state', '1979-12-17', 'No2 mogbotoluwa close, egbeda', 'Learning', '', '$2y$10$shDOQTo9PdqPWv.bZjKZfuD4sPgHT.zcCkntWODjp27SX632FU2cK', '1', '', '', '', '2025-12-10 15:04:53'),
 (102, 'staff/2025/ed50', 'Mr', 'Traore', 'image.png', 'auspom4real@gmail.co', '+234 813 890 3286', 'JSS3A', 'French', '', '', '', '', '', '$2y$10$LTe6Qcd9LHXns6I3P4Q/TOvMXoZjNF.zNMCrf60nXg6fbL7AECIR2', '1', '', '', '', ''),
 (103, 'staff/2025/19e7', 'Miss', 'Ini', 'image.png', 'auspom4real@gmail.com', '07035335513', '', 'Arts&Social-Sciences, CRK', '', '', '', '', '', '$2y$10$neG9UphhXx4OzO/8ViXDZ.65Q.W4ulXQo5QrY1ru.7pxDKtebze3y', '1', '', '', '', ''),
 (104, 'staff/2025/683b', 'Mr', 'Paul', 'image.png', 'auspom4real@gmail.com', '09031427940', 'SS1A', 'Geography, Security-Education', '', '', '', '', '', '$2y$10$YfR8FOy.aBnFVJpkzCaqjekX1u25JcTdePuyoSgzRP1mG1QKaihXS', '1', '', '', '', ''),
 (106, 'staff/2026/a211', 'Augustine', 'Okoli', 'image.png', 'auspom4real@gmail.com', '+2348062093770', 'JSS3A', NULL, '', '', '', '', '', '$2y$10$vWLuaeu4Vqfa6V4JgKHow.1k5N.JbrvT4mriuY5LaiKbYDO6oOQaC', '1', '998e1b42', '0', '2026-03-03 09:11:25', '2026-03-03 09:14:21'),
-(107, 'staff/2026/6111', 'Mary', 'Audu', 'image.png', 'audumaryahuoyiza@icloud.com', '08137347278', 'SS2A', 'CRK, Social-Studies', '', '', '', '', '', '$2y$10$DkfbmliYEIBLyABb9PhWTe9Gt3wd/0yiauCFpnvxGRovAiHt4CFzW', '1', '', '', '', '');
+(107, 'staff/2026/6111', 'Mary', 'Audu', 'image.png', 'audumaryahuoyiza@icloud.com', '08137347278', 'SS2A', 'CRK, Social-Studies', '', '', '', '', '', '$2y$10$DkfbmliYEIBLyABb9PhWTe9Gt3wd/0yiauCFpnvxGRovAiHt4CFzW', '1', '', '', '', ''),
+(108, 'staff/2026/be11', 'Mr ', 'Winner', 'image.png', 'winnerichi@gmail.com', '09056879811', 'SS1A', 'english_language, Lit-In-English', '', '', '', '', '', '$2y$10$loqekodXdsraD0t05C7zHeb7ddfNU0gi.njv/gp0oT56EahveYCD6', '1', '', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -45534,7 +45523,8 @@ INSERT INTO `users` (`user_id`, `student_id`, `firstname`, `lastname`, `father_n
 (655, 'greatkings/2025/ed86', 'PROMISE', 'TAIWO', '', '', 'image.png', '', 'auspom4real@gmail.com', '08062093770', 'JSS3A', 'Male', '', '', '', '', '', '$2y$10$xK4hIZMZgqHPx4H28YHBle4GyVAao8pZ7edTdD7uw2VSv.KrskJH.', '0', '1', '', '', '2025-12-18 09:24:53', ''),
 (656, 'greatkings/2025/1522', 'OLOHIMAI MICHELLE', 'PHILIP', '', '', 'image.png', '', 'auspom4real@gmail.com', '08062093770', 'JSS3A', 'Female', '', '', '', '', '', '$2y$10$ojTEAvaZBMd5hX3TdOx.p.30sfub8eJV5h.nKAIlUCIAtZDb6Daye', '0', '1', '', '', '2025-12-18 09:38:29', ''),
 (657, 'greatkings/2026/e6a9', 'Suliamon ', 'Qosim', '', '', 'image.png', '', 'auspom4real@gmail.com', '08062093770', 'SS2A', 'Male', '', '', '', '', '', '$2y$10$oVCiay2lHizNBiYJEor0mu/hzlEeMcKHobnCmhZ07foRK.S/eRMPO', '0', '1', '', '', '2026-01-14 10:01:45', ''),
-(658, 'greatkings/2026/1cd7', 'GRACE', 'AFOLABI', '', '', 'image.png', '', 'auspom4real@gmail.com', '08062093770', 'JSS1A', '', '', '', '', '', '', '$2y$10$nLj9DTD6SELmOey/XmAA0ebWoSCIvG.2X56ptym3BlyPmVr9O48Im', '0', '1', '', '', '2026-04-16 12:09:46', '');
+(658, 'greatkings/2026/1cd7', 'GRACE', 'AFOLABI', '', '', 'image.png', '', 'auspom4real@gmail.com', '08062093770', 'JSS1A', '', '', '', '', '', '', '$2y$10$nLj9DTD6SELmOey/XmAA0ebWoSCIvG.2X56ptym3BlyPmVr9O48Im', '0', '1', '', '', '2026-04-16 12:09:46', ''),
+(659, 'greatkings/2026/e9e6', 'NAOMI', 'EKIENABOR', '', '', 'image.png', '', 'auspom4real@gmail.com', '08030632306', 'SS2A', 'Female', '', '', '', '', '', '$2y$10$vIgcJeKM3b4BJtKIu4RwDOCYqkatNj7TQqL9i4x2OiyoVe9svHbSO', '0', '1', '', '', '2026-07-17 10:57:36', '');
 
 --
 -- Indexes for dumped tables
@@ -45894,7 +45884,7 @@ ALTER TABLE `messages`
 -- AUTO_INCREMENT for table `notification`
 --
 ALTER TABLE `notification`
-  MODIFY `notification_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21701;
+  MODIFY `notification_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21702;
 
 --
 -- AUTO_INCREMENT for table `notifications`
@@ -45924,7 +45914,7 @@ ALTER TABLE `posts`
 -- AUTO_INCREMENT for table `result`
 --
 ALTER TABLE `result`
-  MODIFY `result_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20656;
+  MODIFY `result_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20657;
 
 --
 -- AUTO_INCREMENT for table `school_days`
@@ -45966,7 +45956,7 @@ ALTER TABLE `set_term_tbl`
 -- AUTO_INCREMENT for table `staff`
 --
 ALTER TABLE `staff`
-  MODIFY `staff_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=108;
+  MODIFY `staff_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=110;
 
 --
 -- AUTO_INCREMENT for table `student_answer`
@@ -45996,7 +45986,7 @@ ALTER TABLE `typing_status`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=659;
+  MODIFY `user_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=660;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

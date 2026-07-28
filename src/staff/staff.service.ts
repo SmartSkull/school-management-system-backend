@@ -656,19 +656,19 @@ export class StaffService {
           : Promise.resolve([]),
       ]);
 
-      const firstBySubject  = new Map((firstResults  as any[]).map(r => [r.subjectId.toString(), r.total_score]));
-      const secondBySubject = new Map((secondResults as any[]).map(r => [r.subjectId.toString(), r.total_score]));
-      const firstTermCourses = new Set((firstResults as any[]).map((r: any) => r.subjectId.toString()));
-      const secondTermCourses = new Set((secondResults as any[]).map((r: any) => r.subjectId.toString()));
+      const firstBySubject  = new Map((firstResults  as any[]).map(r => [r.course, r.total_score]));
+      const secondBySubject = new Map((secondResults as any[]).map(r => [r.course, r.total_score]));
+      const firstTermCourses = new Set((firstResults as any[]).map((r: any) => r.course));
+      const secondTermCourses = new Set((secondResults as any[]).map((r: any) => r.course));
 
       const results = (rawResults as any[]).map(r => {
         const currentTotal = Number(r.total_score);
-        const firstScore   = Number(firstBySubject.get(r.subjectId.toString())  ?? 0);
-        const secondScore  = Number(secondBySubject.get(r.subjectId.toString()) ?? 0);
+        const firstScore   = Number(firstBySubject.get(r.course)  ?? 0);
+        const secondScore  = Number(secondBySubject.get(r.course) ?? 0);
 
         let divisor = 1;
-        if (firstTermCourses.has(r.subjectId.toString())) divisor++;
-        if (secondTermCourses.has(r.subjectId.toString())) divisor++;
+        if (firstTermCourses.has(r.course)) divisor++;
+        if (secondTermCourses.has(r.course)) divisor++;
 
         const cumulative = currentTotal + firstScore + secondScore;
         const average    = divisor > 0 ? cumulative / divisor : currentTotal;
@@ -686,8 +686,8 @@ export class StaffService {
 
         return {
           ...r,
-          first_term_score:  needFirst  ? (firstBySubject.get(r.subjectId.toString())  ?? '-') : undefined,
-          second_term_score: needSecond ? (secondBySubject.get(r.subjectId.toString()) ?? '-') : undefined,
+          first_term_score:  needFirst  ? (firstBySubject.get(r.course)  ?? '-') : undefined,
+          second_term_score: needSecond ? (secondBySubject.get(r.course) ?? '-') : undefined,
           cumulative: cumulative.toFixed(1),
           average:    average.toFixed(1),
           grade,

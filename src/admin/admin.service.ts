@@ -889,19 +889,19 @@ export class AdminService {
         : Promise.resolve(null),
     ]);
 
-    const firstBySubject = new Map(firstResults.map(r => [r.subjectId.toString(), r.total_score]));
-    const secondBySubject = new Map(secondResults.map(r => [r.subjectId.toString(), r.total_score]));
-    const firstTermCourses = new Set(firstResults.map((r: any) => r.subjectId.toString()));
-    const secondTermCourses = new Set(secondResults.map((r: any) => r.subjectId.toString()));
+    const firstBySubject = new Map(firstResults.map(r => [r.course, r.total_score]));
+    const secondBySubject = new Map(secondResults.map(r => [r.course, r.total_score]));
+    const firstTermCourses = new Set(firstResults.map((r: any) => r.course));
+    const secondTermCourses = new Set(secondResults.map((r: any) => r.course));
 
     const enriched = results.map(r => {
       const currentTotal = Number(r.total_score);
-      const firstScore = Number(firstBySubject.get(r.subjectId.toString()) ?? 0);
-      const secondScore = Number(secondBySubject.get(r.subjectId.toString()) ?? 0);
+      const firstScore = Number(firstBySubject.get(r.course) ?? 0);
+      const secondScore = Number(secondBySubject.get(r.course) ?? 0);
 
       let divisor = 1;
-      if (firstTermCourses.has(r.subjectId.toString())) divisor++;
-      if (secondTermCourses.has(r.subjectId.toString())) divisor++;
+      if (firstTermCourses.has(r.course)) divisor++;
+      if (secondTermCourses.has(r.course)) divisor++;
 
       const cumulative = currentTotal + firstScore + secondScore;
       const average = divisor > 0 ? cumulative / divisor : currentTotal;
@@ -920,8 +920,8 @@ export class AdminService {
 
       return {
         ...r,
-        first_term_score: firstBySubject.get(r.subjectId.toString()) ?? '-',
-        second_term_score: secondBySubject.get(r.subjectId.toString()) ?? '-',
+        first_term_score: firstBySubject.get(r.course) ?? '-',
+        second_term_score: secondBySubject.get(r.course) ?? '-',
         cumulative: cumulative.toFixed(1),
         average: average.toFixed(1),
         grade,
