@@ -299,25 +299,15 @@ export class StaffService {
   }
 
   async changePassword(user: any, body: any) {
-    const { currentPassword, newPassword } = body;
-    if (!currentPassword || !newPassword) {
-      throw new BadRequestException('Current password and new password are required');
+    const { newPassword } = body;
+    if (!newPassword) {
+      throw new BadRequestException('New password is required');
     }
     if (newPassword.length < 6) {
       throw new BadRequestException('New password must be at least 6 characters');
     }
 
-    const dbUser = await this.prisma.user.findUnique({
-      where: { id: this.userId(user) },
-      select: { password: true },
-    });
-    if (!dbUser) throw new BadRequestException('User not found');
-
-    const bcrypt = await import('bcryptjs');
-    const valid = await bcrypt.compare(currentPassword, dbUser.password);
-    if (!valid) throw new BadRequestException('Current password is incorrect');
-
-    const hashed = await bcrypt.hash(newPassword, 10);
+    const hashed = await (await import('bcryptjs')).hash(newPassword, 10);
     await this.prisma.user.update({
       where: { id: this.userId(user) },
       data: { password: hashed },
