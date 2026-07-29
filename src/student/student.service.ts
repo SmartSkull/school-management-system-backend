@@ -134,6 +134,33 @@ export class StudentService {
     return this.ok({ image: url }, 'Image updated successfully');
   }
 
+  async changePassword(user: any, body: any) {
+    const { currentPassword, newPassword } = body;
+    if (!currentPassword || !newPassword) {
+      throw new BadRequestException('Current password and new password are required');
+    }
+    if (newPassword.length < 6) {
+      throw new BadRequestException('New password must be at least 6 characters');
+    }
+
+    const dbUser = await this.prisma.user.findUnique({
+      where: { id: this.userId(user) },
+      select: { password: true },
+    });
+    if (!dbUser) throw new BadRequestException('User not found');
+
+    const bcrypt = await import('bcryptjs');
+    const valid = await bcrypt.compare(currentPassword, dbUser.password);
+    if (!valid) throw new BadRequestException('Current password is incorrect');
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    await this.prisma.user.update({
+      where: { id: this.userId(user) },
+      data: { password: hashed },
+    });
+    return this.ok(null, 'Password changed successfully');
+  }
+
   async getResults(user: any, q: any) {
     const schoolId = this.schoolId(user);
     const session = q.session || await this.getCurrentSession(user);

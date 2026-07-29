@@ -23,6 +23,11 @@ export class StudentController {
     return this.svc.updateImage(user, file);
   }
 
+  @Post('profile/change-password')
+  changePassword(@CurrentUser() user: any, @Body() body: any) {
+    return this.svc.changePassword(user, body);
+  }
+
   @Get('results') getResults(@CurrentUser() user: any, @Query() q: any) { return this.svc.getResults(user, q); }
   @Get('assignments') getAssignments(@CurrentUser() user: any) { return this.svc.getAssignments(user); }
 
