@@ -295,6 +295,23 @@ export class AdminService {
     return this.ok(null, 'Student deleted successfully');
   }
 
+  async changeStudentPassword(body: any) {
+    const { student_id, newPassword } = body;
+    if (!student_id) throw new BadRequestException('Student ID is required');
+    if (!newPassword || newPassword.length < 6) {
+      throw new BadRequestException('New password must be at least 6 characters');
+    }
+
+    const user = await this.prisma.user.findFirst({ where: { uniqueId: student_id } });
+    if (!user) throw new NotFoundException('Student not found');
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { password: await bcrypt.hash(newPassword, 10) },
+    });
+    return this.ok(null, 'Password changed successfully');
+  }
+
   async getStaff(user: any, q: any) {
     const page = Math.max(1, parseInt(q.page) || 1);
     const perPage = Math.min(parseInt(q.per_page) || 20, 50);

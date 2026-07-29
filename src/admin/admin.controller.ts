@@ -63,6 +63,9 @@ export class AdminController {
   @Post('students/update')
   updateStudentByBody(@Body() body: any) { return this.svc.updateStudent(body.student_id, body); }
 
+  @Post('students/change-password')
+  changeStudentPassword(@Body() body: any) { return this.svc.changeStudentPassword(body); }
+
   @Put('students/:id/verify')
   verifyStudent(@Param('id') id: string) { return this.svc.verifyStudent(id); }
 
