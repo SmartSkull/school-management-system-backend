@@ -153,32 +153,75 @@ export class StaffService {
     const activeSessionId = lastResult?.sessionId ?? sessionEntity?.id;
     const activeTermId    = lastResult?.termId    ?? termEntity?.id;
 
-    // --- Chart 1: Student Performance Distribution ---
-    // Group by student, average their total scores, then bucket by grade
-    const results = activeSessionId && activeTermId
-      ? await this.prisma.result.findMany({
-          where: {
-            sessionId: activeSessionId,
-            termId: activeTermId,
-            ...(classRoomId ? { student: { classRoomId, ...(schoolId ? { user: { schoolId } } : {}) } } : schoolId ? { student: { user: { schoolId } } } : {}),
-          },
-          select: { studentId: true, testScore: true, examScore: true },
-        })
-      : [];
-
-    // Group by student, average their total scores — strictly the teacher's class
-    const studentTotals = new Map<string, { sum: number; count: number }>();
-    for (const r of results) {
-      const key = r.studentId.toString();
-      const total = Number(r.testScore) + Number(r.examScore);
-      const existing = studentTotals.get(key) ?? { sum: 0, count: 0 };
-      studentTotals.set(key, { sum: existing.sum + total, count: existing.count + 1 });
+    // Resolve term name to determine cumulative scoring
+    let activeTermName = '';
+    let firstTermId: bigint | undefined;
+    let secondTermId: bigint | undefined;
+    if (activeTermId) {
+      const activeTerm = await this.prisma.academicTerm.findUnique({ where: { id: activeTermId } });
+      activeTermName = activeTerm?.name || '';
+      if (activeTermName === 'SECOND' || activeTermName === 'THIRD') {
+        const ft = await this.prisma.academicTerm.findFirst({ where: { name: 'FIRST' as any, sessionId: activeTerm?.sessionId, ...(schoolId ? { schoolId } : {}) } });
+        if (ft) firstTermId = ft.id;
+      }
+      if (activeTermName === 'THIRD') {
+        const st = await this.prisma.academicTerm.findFirst({ where: { name: 'SECOND' as any, sessionId: activeTerm?.sessionId, ...(schoolId ? { schoolId } : {}) } });
+        if (st) secondTermId = st.id;
+      }
     }
 
-    // --- Top 3 students by average score in the teacher's class ---
+    // --- Chart 1: Student Performance Distribution ---
+    const resultWhere = {
+      ...(classRoomId ? { student: { classRoomId, ...(schoolId ? { user: { schoolId } } : {}) } } : schoolId ? { student: { user: { schoolId } } } : {}),
+    };
+    const [currentResults, firstResults, secondResults] = await Promise.all([
+      activeSessionId && activeTermId
+        ? this.prisma.result.findMany({ where: { ...resultWhere, sessionId: activeSessionId, termId: activeTermId }, include: { subject: true } })
+        : Promise.resolve([]),
+      firstTermId
+        ? this.prisma.result.findMany({ where: { ...resultWhere, sessionId: activeSessionId, termId: firstTermId }, include: { subject: true } })
+        : Promise.resolve([]),
+      secondTermId
+        ? this.prisma.result.findMany({ where: { ...resultWhere, sessionId: activeSessionId, termId: secondTermId }, include: { subject: true } })
+        : Promise.resolve([]),
+    ]);
+
+    // Build per-term per-student per-subject maps
+    const buildMap = (rows: any[]) => {
+      const m = new Map<string, Map<string, number>>();
+      for (const row of rows) {
+        const sid = row.studentId.toString();
+        if (!m.has(sid)) m.set(sid, new Map());
+        m.get(sid)!.set(row.subject.name, Number(row.testScore) + Number(row.examScore));
+      }
+      return m;
+    };
+    const currentMap = buildMap(currentResults);
+    const firstMap = buildMap(firstResults);
+    const secondMap = buildMap(secondResults);
+
+    // Group by student, compute cumulative per-subject average then overall average
+    const studentAverages = new Map<string, number>();
+    for (const [sid, subjects] of currentMap) {
+      let totalAvg = 0;
+      let count = 0;
+      for (const [subj, current] of subjects) {
+        const first = firstMap.get(sid)?.get(subj) ?? null;
+        const second = secondMap.get(sid)?.get(subj) ?? null;
+        let divisor = 1;
+        let cumulative = current;
+        if (first !== null) { cumulative += first; divisor++; }
+        if (second !== null) { cumulative += second; divisor++; }
+        totalAvg += cumulative / divisor;
+        count++;
+      }
+      if (count > 0) studentAverages.set(sid, totalAvg / count);
+    }
+
+    // --- Top 3 students by cumulative average score ---
     const top3Students = classRoomId
-      ? [...studentTotals.entries()]
-          .map(([studentId, { sum, count }]) => ({ studentId, avg: count > 0 ? sum / count : 0 }))
+      ? [...studentAverages.entries()]
+          .map(([studentId, avg]) => ({ studentId, avg }))
           .sort((a, b) => b.avg - a.avg)
           .slice(0, 3)
       : [];
@@ -196,8 +239,7 @@ export class StaffService {
     }));
 
     const gradeBuckets = { A1: 0, B: 0, C: 0, D: 0, E8: 0, F9: 0 };
-    for (const [, { sum, count }] of studentTotals) {
-      const avg = count > 0 ? sum / count : 0;
+    for (const [, avg] of studentAverages) {
       if (avg >= 75) gradeBuckets.A1++;
       else if (avg >= 65) gradeBuckets.B++;
       else if (avg >= 50) gradeBuckets.C++;
