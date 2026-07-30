@@ -140,6 +140,7 @@ export class AdminController {
 
   // Results
   @Get('results') getResults(@CurrentUser() user: any, @Query() q: any) { return this.svc.getResults(user, q); }
+  @Get('results/best') getBestStudents(@CurrentUser() user: any, @Query() q: any) { return this.svc.getBestStudents(user, q); }
   @Get('results/:student_id') getStudentResults(@CurrentUser() user: any, @Param('student_id') id: string, @Query() q: any) { return this.svc.getStudentResults(user, id, q); }
   @Put('results/:student_id/approve') approveResults(@CurrentUser() user: any, @Param('student_id') id: string, @Body() body: any) { return this.svc.approveResults(user, id, body); }
   @Put('results/:student_id/unapprove') unapproveResults(@CurrentUser() user: any, @Param('student_id') id: string, @Body() body: any) { return this.svc.unapproveResults(user, id, body); }
