@@ -345,7 +345,16 @@ export class AdminService {
       subjectFilter = await this.prisma.subject.findFirst({ where: { name: q.subject } });
     }
 
-    const [users, currentRows] = await Promise.all([
+    const needFirst = term === 'SECOND' || term === 'THIRD';
+    const needSecond = term === 'THIRD';
+    const firstTerm = needFirst
+      ? await this.prisma.academicTerm.findFirst({ where: { name: 'FIRST' as any, sessionId: sessionEntity.id, ...(schoolId ? { schoolId } : {}) } })
+      : null;
+    const secondTerm = needSecond
+      ? await this.prisma.academicTerm.findFirst({ where: { name: 'SECOND' as any, sessionId: sessionEntity.id, ...(schoolId ? { schoolId } : {}) } })
+      : null;
+
+    const [users, currentRows, firstRows, secondRows] = await Promise.all([
       this.prisma.user.findMany({
         where: userWhere,
         select: { uniqueId: true, firstName: true, lastName: true, image: true, student: { include: { classRoom: true } } },
@@ -354,23 +363,34 @@ export class AdminService {
         where: { sessionId: sessionEntity.id, termId: termEntity.id, ...(subjectFilter ? { subjectId: subjectFilter.id } : {}) },
         include: { subject: true },
       }),
+      firstTerm
+        ? this.prisma.result.findMany({ where: { sessionId: sessionEntity.id, termId: firstTerm.id, ...(subjectFilter ? { subjectId: subjectFilter.id } : {}) }, include: { subject: true } })
+        : Promise.resolve([]),
+      secondTerm
+        ? this.prisma.result.findMany({ where: { sessionId: sessionEntity.id, termId: secondTerm.id, ...(subjectFilter ? { subjectId: subjectFilter.id } : {}) }, include: { subject: true } })
+        : Promise.resolve([]),
     ]);
 
     const userMap = new Map(users.map(u => [u.student?.id?.toString(), u]));
 
-    // Build current term scores per student per subject
-    const currentMap = new Map<string, Map<string, number>>();
-    for (const row of currentRows) {
-      const sid = row.studentId?.toString();
-      if (!currentMap.has(sid)) currentMap.set(sid, new Map());
-      currentMap.get(sid)!.set(row.subject.name, Number(row.testScore) + Number(row.examScore));
-    }
+    // Build per-term subject scores per student
+    const buildMap = (rows: any[]) => {
+      const m = new Map<string, Map<string, number>>();
+      for (const row of rows) {
+        const sid = row.studentId?.toString();
+        if (!m.has(sid)) m.set(sid, new Map());
+        m.get(sid)!.set(row.subject.name, Number(row.testScore) + Number(row.examScore));
+      }
+      return m;
+    };
+    const currentMap = buildMap(currentRows);
+    const firstMap = buildMap(firstRows);
+    const secondMap = buildMap(secondRows);
 
-    // Collect unique subjects from the current term
     const currentSubjectNames = [...new Set(currentRows.map(r => r.subject.name))].sort();
-
-    // ── Overall best (simple average of current term test+exam totals, matching result sheet) ──
     const studentIds = new Set([...currentMap.keys()]);
+
+    // ── Overall best (average of per-subject cumulative averages, matching result sheet) ──
     const overallTmp: any[] = [];
     for (const sid of studentIds) {
       const u = userMap.get(sid);
@@ -379,16 +399,25 @@ export class AdminService {
       const studentSubjects = currentMap.get(sid);
       if (!studentSubjects || studentSubjects.size === 0) continue;
 
-      let totalCurrent = 0;
+      let totalCumulativeAvg = 0;
       let subjectCount = 0;
 
-      for (const [, current] of studentSubjects) {
-        totalCurrent += current;
+      for (const [subj, current] of studentSubjects) {
+        const first = firstMap.get(sid)?.get(subj) ?? null;
+        const second = secondMap.get(sid)?.get(subj) ?? null;
+
+        let divisor = 1;
+        let cumulative = current;
+        if (first !== null) { cumulative += first; divisor++; }
+        if (second !== null) { cumulative += second; divisor++; }
+
+        const subjAvg = cumulative / divisor;
+        totalCumulativeAvg += subjAvg;
         subjectCount++;
       }
 
       if (subjectCount === 0) continue;
-      const average = Math.round((totalCurrent / subjectCount) * 10) / 10;
+      const average = Math.round((totalCumulativeAvg / subjectCount) * 10) / 10;
 
       overallTmp.push({
         student_id: u.uniqueId,
@@ -397,14 +426,14 @@ export class AdminService {
         image: u.image,
         class: u.student?.classRoom?.name,
         subject_count: subjectCount,
-        total: average,  // show average as the score
+        total: average,
         average,
       });
     }
 
     const overall = overallTmp.sort((a, b) => b.average - a.average).map((s, i) => ({ ...s, rank: i + 1 }));
 
-    // ── Per-subject best (ranked by current term total test+exam) ──
+    // ── Per-subject best (ranked by cumulative average across terms) ──
     const perSubject = currentSubjectNames.map(subj => {
       const studentsTmp: any[] = [];
       for (const sid of studentIds) {
@@ -414,21 +443,27 @@ export class AdminService {
         const current = currentMap.get(sid)?.get(subj);
         if (current === undefined) continue;
 
+        const first = firstMap.get(sid)?.get(subj) ?? null;
+        const second = secondMap.get(sid)?.get(subj) ?? null;
+
+        let divisor = 1;
+        let cumulative = current;
+        if (first !== null) { cumulative += first; divisor++; }
+        if (second !== null) { cumulative += second; divisor++; }
+        const avg = Math.round((cumulative / divisor) * 10) / 10;
+
         studentsTmp.push({
           student_id: u.uniqueId,
           firstname: u.firstName,
           lastname: u.lastName,
           image: u.image,
           class: u.student?.classRoom?.name,
-          total: current,
+          total: avg,
         });
       }
 
       studentsTmp.sort((a, b) => b.total - a.total);
-      return {
-        subject: subj,
-        students: studentsTmp.map((s, i) => ({ ...s, rank: i + 1 })),
-      };
+      return { subject: subj, students: studentsTmp.map((s, i) => ({ ...s, rank: i + 1 })) };
     });
 
     return this.ok({
