@@ -325,11 +325,14 @@ export class AdminService {
     const termEntity = await this.prisma.academicTerm.findFirst({ where: termWhere });
 
     const classWhere = schoolId ? { schoolId } : {};
-    const [classes, sessions, subjects] = await Promise.all([
+    const [classes, sessions, allSubjects] = await Promise.all([
       this.prisma.classRoom.findMany({ where: classWhere, orderBy: { name: 'asc' } }),
       this.prisma.academicSession.findMany({ where: classWhere, orderBy: { name: 'desc' } }),
       this.prisma.subject.findMany({ orderBy: { name: 'asc' } }),
     ]);
+    // Deduplicate subjects by name
+    const seen = new Set<string>();
+    const subjects = allSubjects.filter(s => { if (seen.has(s.name)) return false; seen.add(s.name); return true; });
 
     if (!sessionEntity || !termEntity) {
       return this.ok({ overall: [], perSubject: [], classes: classes.map(c => c.name), sessions: sessions.map(s => s.name), subjects: subjects.map(s => s.name), current_session: session, current_term: term });
@@ -342,7 +345,14 @@ export class AdminService {
 
     let subjectFilter: any = null;
     if (q.subject) {
-      subjectFilter = await this.prisma.subject.findFirst({ where: { name: q.subject } });
+      // Use the subject that actually has result data (latest entry if duplicates exist)
+      const resultSubject = await this.prisma.result.findFirst({
+        where: { subject: { name: q.subject }, sessionId: sessionEntity?.id, termId: termEntity?.id },
+        select: { subjectId: true },
+      });
+      if (resultSubject) {
+        subjectFilter = await this.prisma.subject.findUnique({ where: { id: resultSubject.subjectId } });
+      }
     }
 
     const needFirst = term === 'SECOND' || term === 'THIRD';

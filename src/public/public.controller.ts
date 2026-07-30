@@ -275,7 +275,10 @@ export class PublicController {
       where: selectedSchool ? { classRoom: { schoolId: selectedSchool.id } } : {},
       orderBy: { name: 'asc' },
     });
-    return { success: true, data: courses.map(c => ({ course_id: c.id.toString(), course: c.name })) };
+    // Deduplicate by name
+    const seen = new Set<string>();
+    const unique = courses.filter(c => { if (seen.has(c.name)) return false; seen.add(c.name); return true; });
+    return { success: true, data: unique.map(c => ({ course_id: c.id.toString(), course: c.name })) };
   }
 
   @Get('public/posts')
