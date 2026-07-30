@@ -398,18 +398,20 @@ export class AdminService {
     // Collect unique subjects from the current term only (for ranking)
     const currentSubjectNames = [...new Set(currentRows.map(r => r.subject.name))].sort();
 
-    // ── Overall best (cumulative average across all subjects the student has in current term) ──
+    // ── Overall best (cumulative average across each student's own subjects) ──
     const studentIds = new Set([...currentMap.keys()]);
     const overallTmp: any[] = [];
     for (const sid of studentIds) {
       const u = userMap.get(sid);
       if (!u) continue;
 
+      const studentSubjects = currentMap.get(sid);
+      if (!studentSubjects || studentSubjects.size === 0) continue;
+
       let totalScore = 0;
       let subjectCount = 0;
 
-      for (const subj of currentSubjectNames) {
-        const current = currentMap.get(sid)?.get(subj) ?? 0;
+      for (const [subj, current] of studentSubjects) {
         const first = firstMap.get(sid)?.get(subj) ?? null;
         const second = secondMap.get(sid)?.get(subj) ?? null;
 
