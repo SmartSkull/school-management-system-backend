@@ -787,27 +787,74 @@ export class StaffService {
     
     const studentIds = students.map(s => s.student?.id).filter(Boolean) as bigint[];
     const approvedFilter = q.approved === 'approved' ? { not: null } : q.approved === 'pending' ? null : undefined;
-    const results = await this.prisma.result.findMany({
-      where: {
-        sessionId: sessionEntity?.id,
-        termId: termEntity?.id,
-        studentId: { in: studentIds },
-        ...(q.course ? { subject: { name: q.course } } : {}),
-        ...(approvedFilter !== undefined ? { approvedAt: approvedFilter } : {}),
-      },
-      include: { student: { include: { user: true } }, subject: true }
-    });
 
-    const data = results.map(r => ({
-      ...r,
-      student_id: r.student.user.uniqueId,
-      firstname: r.student.user.firstName,
-      lastname: r.student.user.lastName,
-      course: r.subject.name,
-      test_score: r.testScore,
-      exam_score: r.examScore,
-      total_score: Number(r.testScore || 0) + Number(r.examScore || 0),
-    }));
+    const needFirst  = term === 'SECOND' || term === 'THIRD';
+    const needSecond = term === 'THIRD';
+
+    const [firstTerm, secondTerm] = await Promise.all([
+      needFirst
+        ? this.prisma.academicTerm.findFirst({ where: { name: 'FIRST' as any, sessionId: sessionEntity.id, ...(schoolId ? { schoolId } : {}) } })
+        : Promise.resolve(null),
+      needSecond
+        ? this.prisma.academicTerm.findFirst({ where: { name: 'SECOND' as any, sessionId: sessionEntity.id, ...(schoolId ? { schoolId } : {}) } })
+        : Promise.resolve(null),
+    ]);
+
+    const [currentResults, firstResults, secondResults] = await Promise.all([
+      this.prisma.result.findMany({
+        where: {
+          sessionId: sessionEntity?.id,
+          termId: termEntity?.id,
+          studentId: { in: studentIds },
+          ...(q.course ? { subject: { name: q.course } } : {}),
+          ...(approvedFilter !== undefined ? { approvedAt: approvedFilter } : {}),
+        },
+        include: { student: { include: { user: true } }, subject: true }
+      }),
+      needFirst && firstTerm
+        ? this.prisma.result.findMany({
+            where: { sessionId: sessionEntity.id, termId: firstTerm.id, studentId: { in: studentIds }, ...(q.course ? { subject: { name: q.course } } : {}) },
+          })
+        : Promise.resolve([]),
+      needSecond && secondTerm
+        ? this.prisma.result.findMany({
+            where: { sessionId: sessionEntity.id, termId: secondTerm.id, studentId: { in: studentIds }, ...(q.course ? { subject: { name: q.course } } : {}) },
+          })
+        : Promise.resolve([]),
+    ]);
+
+    const firstBySubjectStudent = new Map<string, number>();
+    for (const r of firstResults) {
+      firstBySubjectStudent.set(`${r.studentId}-${r.subjectId}`, Number(r.testScore) + Number(r.examScore));
+    }
+    const secondBySubjectStudent = new Map<string, number>();
+    for (const r of secondResults) {
+      secondBySubjectStudent.set(`${r.studentId}-${r.subjectId}`, Number(r.testScore) + Number(r.examScore));
+    }
+
+    const data = currentResults.map(r => {
+      const key = `${r.studentId}-${r.subjectId}`;
+      const firstScore  = needFirst  ? (firstBySubjectStudent.get(key) ?? null) : null;
+      const secondScore = needSecond ? (secondBySubjectStudent.get(key) ?? null) : null;
+
+      let divisor = 1;
+      let cumulative = Number(r.testScore) + Number(r.examScore);
+      if (firstScore !== null)  { cumulative += firstScore; divisor++; }
+      if (secondScore !== null) { cumulative += secondScore; divisor++; }
+      const average = divisor > 0 ? Math.round((cumulative / divisor) * 10) / 10 : 0;
+
+      return {
+        ...r,
+        student_id: r.student.user.uniqueId,
+        firstname: r.student.user.firstName,
+        lastname: r.student.user.lastName,
+        course: r.subject.name,
+        test_score: r.testScore,
+        exam_score: r.examScore,
+        total_score: Number(r.testScore || 0) + Number(r.examScore || 0),
+        average,
+      };
+    });
 
     return this.ok(data);
   }
