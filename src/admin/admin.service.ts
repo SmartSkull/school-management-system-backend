@@ -344,6 +344,7 @@ export class AdminService {
     }
 
     let subjectFilter: any = null;
+    // Ensure we use the subject ID that actually has results (handles duplicate subject entries)
     if (q.subject) {
       // Use the subject that actually has result data (latest entry if duplicates exist)
       const resultSubject = await this.prisma.result.findFirst({
