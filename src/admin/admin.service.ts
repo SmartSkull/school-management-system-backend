@@ -343,16 +343,16 @@ export class AdminService {
       userWhere.student = { classRoom: { name: q.class } };
     }
 
-    let subjectFilter: any = null;
-    // Ensure we use the subject ID that actually has results (handles duplicate subject entries)
+    let subjectFilterIds: bigint[] | null = null;
+    // Ensure we use ALL subject IDs that have results (handles duplicate subject entries)
     if (q.subject) {
-      // Use the subject that actually has result data (latest entry if duplicates exist)
-      const resultSubject = await this.prisma.result.findFirst({
+      const resultSubjects = await this.prisma.result.findMany({
         where: { subject: { name: q.subject }, sessionId: sessionEntity?.id, termId: termEntity?.id },
         select: { subjectId: true },
+        distinct: ['subjectId'],
       });
-      if (resultSubject) {
-        subjectFilter = await this.prisma.subject.findUnique({ where: { id: resultSubject.subjectId } });
+      if (resultSubjects.length > 0) {
+        subjectFilterIds = resultSubjects.map(r => r.subjectId);
       }
     }
 
@@ -371,14 +371,14 @@ export class AdminService {
         select: { uniqueId: true, firstName: true, lastName: true, image: true, student: { include: { classRoom: true } } },
       }),
       this.prisma.result.findMany({
-        where: { sessionId: sessionEntity.id, termId: termEntity.id, ...(subjectFilter ? { subjectId: subjectFilter.id } : {}) },
+        where: { sessionId: sessionEntity.id, termId: termEntity.id, ...(subjectFilterIds ? { subjectId: { in: subjectFilterIds } } : {}) },
         include: { subject: true },
       }),
       firstTerm
-        ? this.prisma.result.findMany({ where: { sessionId: sessionEntity.id, termId: firstTerm.id, ...(subjectFilter ? { subjectId: subjectFilter.id } : {}) }, include: { subject: true } })
+        ? this.prisma.result.findMany({ where: { sessionId: sessionEntity.id, termId: firstTerm.id, ...(subjectFilterIds ? { subjectId: { in: subjectFilterIds } } : {}) }, include: { subject: true } })
         : Promise.resolve([]),
       secondTerm
-        ? this.prisma.result.findMany({ where: { sessionId: sessionEntity.id, termId: secondTerm.id, ...(subjectFilter ? { subjectId: subjectFilter.id } : {}) }, include: { subject: true } })
+        ? this.prisma.result.findMany({ where: { sessionId: sessionEntity.id, termId: secondTerm.id, ...(subjectFilterIds ? { subjectId: { in: subjectFilterIds } } : {}) }, include: { subject: true } })
         : Promise.resolve([]),
     ]);
 
