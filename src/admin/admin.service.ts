@@ -700,20 +700,32 @@ export class AdminService {
     const schoolId = this.schoolId(user);
     const where: any = { id: BigInt(id) };
     if (schoolId) where.schoolId = schoolId;
-    await this.prisma.academicTerm.update({ where, data: { ...(data.name && { name: data.name as any }) } });
+    let nameData: any = undefined;
+    if (data.name) {
+      const normalized = data.name.trim().toUpperCase().replace(' TERM', '');
+      if (!['FIRST', 'SECOND', 'THIRD'].includes(normalized)) {
+        throw new BadRequestException('Term name must be First, Second, or Third');
+      }
+      nameData = normalized;
+    }
+    await this.prisma.academicTerm.update({ where, data: { ...(nameData && { name: nameData as any }) } });
     return this.ok(null, 'Term updated successfully');
   }
 
   async createTerm(user: any, sessionName: string, name: string) {
     if (!sessionName) throw new BadRequestException('Session is required');
     if (!name) throw new BadRequestException('Term name is required');
+    const normalized = name.trim().toUpperCase().replace(' TERM', '');
+    if (!['FIRST', 'SECOND', 'THIRD'].includes(normalized)) {
+      throw new BadRequestException('Term name must be First, Second, or Third');
+    }
     const schoolId = this.schoolId(user);
     const sessionWhere: any = { name: sessionName };
     if (schoolId) sessionWhere.schoolId = schoolId;
     const session = await this.prisma.academicSession.findFirst({ where: sessionWhere });
     if (!session) throw new NotFoundException('Session not found');
     try {
-      await this.prisma.academicTerm.create({ data: { name: name as any, sessionId: session.id, schoolId } });
+      await this.prisma.academicTerm.create({ data: { name: normalized as any, sessionId: session.id, schoolId } });
     } catch (e: any) {
       if (e.code === 'P2002') throw new BadRequestException('Term already exists for this session');
       throw e;
