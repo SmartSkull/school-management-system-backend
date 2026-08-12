@@ -1263,7 +1263,15 @@ export class StaffService {
         : { classRoomId: { not: null } },
       orderBy: { name: 'asc' },
     });
-    return { success: true, data: courses.map(c => ({ course_id: c.id.toString(), course: c.name })) };
+    // Deduplicate by name — subjects exist per-class, but the timetable
+    // only needs one entry per unique subject name for drag-and-drop.
+    const seen = new Set<string>();
+    const unique = courses.filter(c => {
+      if (seen.has(c.name)) return false;
+      seen.add(c.name);
+      return true;
+    });
+    return { success: true, data: unique.map(c => ({ course_id: c.id.toString(), course: c.name })) };
   }
 
   async getSchoolDays() {
