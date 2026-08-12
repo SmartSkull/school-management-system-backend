@@ -1257,7 +1257,12 @@ export class StaffService {
 
   async getCourses(user: any) {
     const schoolId = this.schoolId(user);
-    const courses = await this.prisma.subject.findMany({ where: { ...(schoolId ? { classRoom: { schoolId } } : {}) }, orderBy: { name: 'asc' } });
+    const courses = await this.prisma.subject.findMany({
+      where: schoolId
+        ? { classRoomId: { not: null }, classRoom: { schoolId } }
+        : { classRoomId: { not: null } },
+      orderBy: { name: 'asc' },
+    });
     return { success: true, data: courses.map(c => ({ course_id: c.id.toString(), course: c.name })) };
   }
 
