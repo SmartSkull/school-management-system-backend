@@ -399,6 +399,9 @@ model AssignmentSubmission {
   note         String?   @db.Text
   fileUrl      String?   @db.VarChar(500)
   submittedAt  DateTime  @default(now())
+  grade        String?   @db.VarChar(20)
+  feedback     String?   @db.Text
+  gradedAt     DateTime?
 
   assignment   Assignment @relation(fields: [assignmentId], references: [id])
   student      Student    @relation(fields: [studentId], references: [id])

@@ -329,7 +329,7 @@ export class StudentService {
     const ids = assignments.map((a: any) => BigInt(a.id));
     const submissions = await this.prisma.assignmentSubmission.findMany({
       where: { assignmentId: { in: ids }, studentId: student.id },
-      select: { assignmentId: true, submittedAt: true, note: true, fileUrl: true },
+      select: { assignmentId: true, submittedAt: true, note: true, fileUrl: true, grade: true, feedback: true, gradedAt: true },
     });
     const subMap = new Map(submissions.map((s: any) => [s.assignmentId.toString(), s]));
     return this.ok(assignments.map((a: any) => ({ ...a, submission: subMap.get(String(a.id)) ?? null })));

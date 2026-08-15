@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Post, Put, Delete, Body, Param, Query,
+  Controller, Get, Post, Put, Patch, Delete, Body, Param, Query,
   UseGuards, UseInterceptors, UploadedFile, UploadedFiles,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -60,6 +60,11 @@ export class StaffController {
   @Get('assignments') getAssignments(@CurrentUser() user: any) { return this.svc.getAssignments(user); }
 
   @Get('assignments/:id/submissions') getAssignmentSubmissions(@CurrentUser() user: any, @Param('id') id: string) { return this.svc.getAssignmentSubmissions(user, +id); }
+
+  @Patch('assignments/:id/submissions/:submissionId/grade')
+  gradeSubmission(@CurrentUser() user: any, @Param('id') id: string, @Param('submissionId') submissionId: string, @Body() body: any) {
+    return this.svc.gradeSubmission(user, +id, submissionId, body);
+  }
 
   @Put('assignments/:id')
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))

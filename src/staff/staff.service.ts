@@ -1147,7 +1147,36 @@ export class StaffService {
       note: s.note,
       fileUrl: s.fileUrl,
       submittedAt: s.submittedAt,
+      grade: s.grade ?? null,
+      feedback: s.feedback ?? null,
+      gradedAt: s.gradedAt ?? null,
     })));
+  }
+
+  async gradeSubmission(user: any, assignmentId: number, submissionId: string, body: { grade: string; feedback?: string }) {
+    const staff = await this.staffForSchool(user);
+    const assignment = await this.prisma.assignment.findFirst({
+      where: { id: BigInt(assignmentId), staffId: staff?.id },
+    });
+    if (!assignment) throw new NotFoundException('Assignment not found');
+    const submission = await this.prisma.assignmentSubmission.findFirst({
+      where: { id: BigInt(submissionId), assignmentId: BigInt(assignmentId) },
+    });
+    if (!submission) throw new NotFoundException('Submission not found');
+    const updated = await this.prisma.assignmentSubmission.update({
+      where: { id: BigInt(submissionId) },
+      data: {
+        grade: body.grade?.trim() || null,
+        feedback: body.feedback?.trim() || null,
+        gradedAt: body.grade?.trim() ? new Date() : null,
+      },
+    });
+    return this.ok({
+      id: updated.id.toString(),
+      grade: updated.grade,
+      feedback: updated.feedback,
+      gradedAt: updated.gradedAt,
+    }, 'Submission graded successfully');
   }
 
   async updateAssignment(user: any, id: number, body: any, file?: Express.Multer.File) {
