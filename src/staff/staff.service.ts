@@ -99,6 +99,7 @@ export class StaffService {
   }
 
   async dashboard(user: any) {
+    try {
     const session = await this.getCurrentSession();
     const term = await this.getCurrentTerm();
 
@@ -129,7 +130,7 @@ export class StaffService {
 
     const [studentCount, assignments, libraryItems] = await Promise.all([
       this.prisma.user.count({ 
-        where: { role: 'STUDENT', status: 'ACTIVE', ...(schoolId ? { schoolId } : {}), student: { classRoomId } } 
+        where: { role: 'STUDENT', status: 'ACTIVE', ...(schoolId ? { schoolId } : {}), ...(classRoomId ? { student: { classRoomId } } : {}) } 
       }),
       this.prisma.assignment.findMany({ 
         where: { staffId: staff?.id }, 
@@ -144,7 +145,9 @@ export class StaffService {
     // Find the last session+term that has results uploaded (by this staff or for their class)
     const lastResult = await this.prisma.result.findFirst({
       where: {
-        ...(classRoomId ? { student: { classRoomId, ...(schoolId ? { user: { schoolId } } : {}) } } : schoolId ? { student: { user: { schoolId } } } : {}),
+        ...(classRoomId
+          ? { student: { classRoomId, ...(schoolId ? { user: { schoolId } } : {}) } }
+          : schoolId ? { student: { user: { schoolId } } } : {}),
       },
       orderBy: { createdAt: 'desc' },
       select: { sessionId: true, termId: true },
@@ -172,7 +175,9 @@ export class StaffService {
 
     // --- Chart 1: Student Performance Distribution ---
     const resultWhere = {
-      ...(classRoomId ? { student: { classRoomId, ...(schoolId ? { user: { schoolId } } : {}) } } : schoolId ? { student: { user: { schoolId } } } : {}),
+      ...(classRoomId
+        ? { student: { classRoomId, ...(schoolId ? { user: { schoolId } } : {}) } }
+        : schoolId ? { student: { user: { schoolId } } } : {}),
     };
     const [currentResults, firstResults, secondResults] = await Promise.all([
       activeSessionId && activeTermId
@@ -290,7 +295,15 @@ export class StaffService {
       total_assignments: assignments.length,
       total_library: libraryItems.length,
       analytics: { 
-        assignments: { total: assignments.length, recent: assignments.slice(0, 5) }, 
+        assignments: { total: assignments.length, recent: assignments.slice(0, 5).map((a: any) => ({
+          id: a.id.toString(),
+          title: a.title,
+          subject: a.title,
+          class: a.classRoomId?.toString() ?? '',
+          deadline: a.dueAt,
+          status: a.status,
+          createdAt: a.createdAt,
+        })) }, 
         library: { 
           total: libraryItems.length, 
           verified: libraryItems.filter((i: any) => i.status === 'APPROVED').length, 
@@ -302,6 +315,10 @@ export class StaffService {
         top3Students: top3,
       } 
     });
+    } catch (err: any) {
+      console.error('[Staff Dashboard Error]', err?.message ?? err);
+      throw err;
+    }
   }
 
   async profile(user: any) {
