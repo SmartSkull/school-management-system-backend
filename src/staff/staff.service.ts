@@ -316,8 +316,32 @@ export class StaffService {
       } 
     });
     } catch (err: any) {
-      console.error('[Staff Dashboard Error]', err?.message ?? err);
-      throw err;
+      console.error('[Staff Dashboard Error]', err?.message ?? err, err?.stack);
+      // Return a safe fallback so the page loads — the real error is logged above
+      const userInfo = user.user ?? user;
+      return this.ok({
+        user: {
+          firstname: userInfo.firstName,
+          lastname: userInfo.lastName,
+          image: userInfo.image,
+          uniqueId: userInfo.uniqueId,
+          class: null,
+          _error: err?.message ?? 'Unknown error',
+        },
+        current_session: '',
+        current_term: '',
+        total_students: 0,
+        total_assignments: 0,
+        total_library: 0,
+        analytics: {
+          assignments: { total: 0, recent: [] },
+          library: { total: 0, verified: 0, pending: 0 },
+          performanceDistribution: [],
+          assignmentTrend: [],
+          classDistribution: [],
+          top3Students: [],
+        },
+      });
     }
   }
 
