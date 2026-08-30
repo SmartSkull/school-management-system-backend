@@ -566,6 +566,90 @@ export class AttendanceService {
     return { success: true, message: `${absent.length} students marked absent` };
   }
 
+  // ── Scan clock-in (staff or admin scans student QR) ──────────────────
+  async scanClockIn(actor: any, body: { uniqueId: string; date?: string }) {
+    const { uniqueId, date } = body;
+    if (!uniqueId) throw new BadRequestException('uniqueId is required');
+
+    const schoolId = actor.schoolId ?? actor.school?.id ?? actor.user?.schoolId;
+    if (!schoolId) throw new ForbiddenException('No school associated');
+
+    // Verify the student belongs to this school
+    const student = await this.prisma.user.findFirst({
+      where: { uniqueId, schoolId: BigInt(schoolId), role: 'STUDENT' },
+      select: { id: true, uniqueId: true, firstName: true, lastName: true },
+    });
+    if (!student) throw new BadRequestException('Student not found in this school');
+
+    // Get active attendance location (for late calculation)
+    const location = await this.prisma.attendanceLocation.findFirst({
+      where: { schoolId: BigInt(schoolId), isActive: true },
+    });
+
+    // Resolve target date
+    let targetDate: Date;
+    if (date) {
+      const [y, m, d] = date.split('-');
+      targetDate = new Date(Date.UTC(Number(y), Number(m) - 1, Number(d)));
+    } else {
+      targetDate = todayDate();
+    }
+
+    // Compute status based on resumption time
+    const now = new Date();
+    let lateMinutes = 0;
+    let status: 'PRESENT' | 'LATE' = 'PRESENT';
+    if (location) {
+      const [rHour, rMin] = (location.resumptionTime ?? '08:00').split(':').map(Number);
+      const cutoff = new Date(targetDate);
+      cutoff.setHours(rHour, rMin, 0, 0);
+      lateMinutes = now > cutoff ? Math.floor((now.getTime() - cutoff.getTime()) / 60000) : 0;
+      status = lateMinutes > 0 ? 'LATE' : 'PRESENT';
+    }
+
+    const record = await this.prisma.studentAttendance.upsert({
+      where: { studentId_date: { studentId: uniqueId, date: targetDate } },
+      create: {
+        studentId: uniqueId,
+        locationId: location?.id ?? null,
+        date: targetDate,
+        clockIn: now,
+        status,
+        lateMinutes,
+      },
+      update: {
+        // Only update if not already clocked in
+        clockIn: now,
+        status,
+        lateMinutes,
+        ...(location ? { locationId: location.id } : {}),
+      },
+    });
+
+    const lateLabel = lateMinutes > 0
+      ? lateMinutes < 60
+        ? `${lateMinutes} min late`
+        : `${Math.floor(lateMinutes / 60)}h ${lateMinutes % 60 ? `${lateMinutes % 60}m ` : ''}late`
+      : '';
+
+    // Notify the student
+    this.notificationService.notify(
+      student.id,
+      'Attendance Recorded',
+      `You were clocked in by your teacher${lateLabel ? ` (${lateLabel})` : ''}.`,
+    );
+
+    return {
+      success: true,
+      message: `${student.firstName} ${student.lastName} clocked in${lateLabel ? ` (${lateLabel})` : ''}`,
+      data: {
+        ...this.serializeStudentRecord(record),
+        studentName: `${student.firstName} ${student.lastName}`,
+        status,
+      },
+    };
+  }
+
   private serializeStudentRecord(r: any) {
     return {
       id: r.id.toString(),

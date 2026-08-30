@@ -112,4 +112,16 @@ export class AttendanceController {
   staffMarkStudentAttendance(@CurrentUser() user: any, @Body() body: any) {
     return this.svc.staffMarkStudentAttendance(user, body);
   }
+
+  @Post('staff/scan-clock-in')
+  @UseGuards(StaffGuard)
+  staffScanClockIn(@CurrentUser() user: any, @Body() body: { uniqueId: string; date?: string }) {
+    return this.svc.scanClockIn(user, body);
+  }
+
+  @Post('admin/scan-clock-in')
+  @UseGuards(AdminGuard)
+  adminScanClockIn(@CurrentUser() user: any, @Body() body: { uniqueId: string; date?: string }) {
+    return this.svc.scanClockIn(user, body);
+  }
 }
