@@ -43,6 +43,18 @@ export class MessagesGateway implements OnGatewayDisconnect {
     client.emit('user:status', { userId, online: isOnline });
   }
 
+  @SubscribeMessage('user:typing')
+  handleUserTyping(
+    @MessageBody() data: { toUserId: string; fromUserId: string; isTyping: boolean },
+    @ConnectedSocket() client: Socket,
+  ) {
+    // Forward typing event to the recipient's room
+    this.server.to(`user:${data.toUserId}`).emit('user:typing', {
+      fromUserId: data.fromUserId,
+      isTyping: data.isTyping,
+    });
+  }
+
   handleDisconnect(client: Socket) {
     const userId = this.socketUser.get(client.id);
     if (!userId) return;
