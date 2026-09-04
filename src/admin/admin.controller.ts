@@ -171,6 +171,10 @@ export class AdminController {
   @Put('exam-timetable/:id') updateExamTimetable(@Param('id') id: string, @Body() body: any) { return this.svc.updateExamTimetable(id, body); }
   @Delete('exam-timetable/:id') deleteExamTimetable(@Param('id') id: string) { return this.svc.deleteExamTimetable(id); }
 
+  // Timetable overview (read-only, with teacher info)
+  @Get('timetable/class') getAdminClassTimetables(@CurrentUser() user: any) { return this.svc.getAdminClassTimetables(user); }
+  @Get('timetable/exam') getAdminExamTimetables(@CurrentUser() user: any) { return this.svc.getAdminExamTimetablesAll(user); }
+
   // Staff performance
   @Get('staff/performance') getStaffPerformance(@CurrentUser() user: any) { return this.svc.getStaffPerformance(user); }
 }

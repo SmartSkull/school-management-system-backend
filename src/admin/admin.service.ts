@@ -1546,6 +1546,55 @@ export class AdminService {
     return this.ok({ sent: targets.length }, `Broadcast sent to ${targets.length} users`);
   }
 
+  // ── Timetable overview (admin read-only with teacher info) ─────────────────
+  async getAdminClassTimetables(user: any) {
+    const schoolId = this.schoolId(user);
+    const rows = await this.prisma.classTimetable.findMany({
+      where: schoolId ? { classRoom: { schoolId } } : {},
+      include: {
+        classRoom: true,
+        staff: { include: { user: { select: { firstName: true, lastName: true, uniqueId: true, image: true } } } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    return this.ok(rows.map(r => ({
+      id: r.id.toString(),
+      classRoomId: r.classRoomId.toString(),
+      classRoom: r.classRoom?.name ?? 'Unknown',
+      content: r.content,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
+      teacher: r.staff ? {
+        name: `${r.staff.user.firstName} ${r.staff.user.lastName}`,
+        uniqueId: r.staff.user.uniqueId,
+        image: r.staff.user.image ?? null,
+      } : null,
+    })));
+  }
+
+  async getAdminExamTimetablesAll(user: any) {
+    const schoolId = this.schoolId(user);
+    const rows = await this.prisma.examTimetable.findMany({
+      where: schoolId ? { staff: { user: { schoolId } } } : {},
+      include: {
+        staff: { include: { user: { select: { firstName: true, lastName: true, uniqueId: true, image: true } } } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    return this.ok(rows.map(r => ({
+      id: r.id.toString(),
+      level: r.level,
+      content: r.content,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
+      teacher: r.staff ? {
+        name: `${r.staff.user.firstName} ${r.staff.user.lastName}`,
+        uniqueId: r.staff.user.uniqueId,
+        image: r.staff.user.image ?? null,
+      } : null,
+    })));
+  }
+
   // ── Exam Timetable ─────────────────────────────────────────────────────────
   async getExamTimetables(user: any) {
     const rows = await this.prisma.examTimetable.findMany({ orderBy: { createdAt: 'desc' } });
