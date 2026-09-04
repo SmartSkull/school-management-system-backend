@@ -10,7 +10,7 @@ export class AttendanceController {
   // ── Staff endpoints ────────────────────────────────────────────────────
   @Post('clock-in')
   @UseGuards(StaffGuard)
-  clockIn(@CurrentUser() user: any, @Body() body: { latitude: number; longitude: number }) {
+  clockIn(@CurrentUser() user: any, @Body() body: { latitude: number; longitude: number; deviceId?: string }) {
     return this.svc.clockIn(user, body);
   }
 

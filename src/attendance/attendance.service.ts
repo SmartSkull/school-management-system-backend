@@ -47,18 +47,16 @@ export class AttendanceService {
   }
 
   // ── Staff: clock in ────────────────────────────────────────────────────
-  async clockIn(user: any, body: { latitude: number; longitude: number }) {
-    const { latitude, longitude } = body;
+  async clockIn(user: any, body: { latitude: number; longitude: number; deviceId?: string }) {
+    const { latitude, longitude, deviceId } = body;
     if (latitude == null || longitude == null) throw new BadRequestException('Location required');
 
     const schoolId = user.schoolId ?? user.user?.schoolId;
     if (!schoolId) throw new ForbiddenException('No school associated');
 
-    // Find active location for this school
     const location = await this.prisma.attendanceLocation.findFirst({
       where: { schoolId: BigInt(schoolId), isActive: true },
     });
-
     if (!location) throw new BadRequestException('No attendance location configured by admin');
 
     const dist = distanceMetres(latitude, longitude, location.latitude, location.longitude);
@@ -76,7 +74,46 @@ export class AttendanceService {
     });
     if (existing?.clockIn) throw new BadRequestException('Already clocked in today');
 
-    // Determine if late based on admin-configured resumption time
+    // ── Device lock enforcement ──────────────────────────────────────────
+    if (deviceId) {
+      // CHECK 1 — Cross-staff: has this device been used by a DIFFERENT staff
+      // member to clock in today? One physical device = one person per day.
+      const usedByOtherToday = await this.prisma.staffAttendance.findFirst({
+        where: {
+          deviceId,
+          date: today,
+          clockIn: { not: null },
+          staffId: { not: BigInt(staffId) },
+        },
+      });
+      if (usedByOtherToday) {
+        throw new ForbiddenException(
+          'This device has already been used to clock in for another account today. One device may only be used for one staff member per day.',
+        );
+      }
+
+      // CHECK 2 — Own-device consistency: has this staff member previously
+      // clocked in from a different device in the last 30 days?
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+      const previousWithDevice = await this.prisma.staffAttendance.findFirst({
+        where: {
+          staffId: BigInt(staffId),
+          deviceId: { not: null },
+          date: { gte: thirtyDaysAgo },
+          clockIn: { not: null },
+        },
+        orderBy: { date: 'desc' },
+      });
+      if (previousWithDevice?.deviceId && previousWithDevice.deviceId !== deviceId) {
+        throw new ForbiddenException(
+          'Clock-in is only allowed from the device you first used. Please use your registered device.',
+        );
+      }
+    }
+    // ────────────────────────────────────────────────────────────────────
+
     const now = new Date();
     const [rHour, rMin] = (location.resumptionTime ?? '08:00').split(':').map(Number);
     const cutoff = new Date(today);
@@ -93,8 +130,9 @@ export class AttendanceService {
         clockIn: now,
         status,
         lateMinutes,
+        deviceId: deviceId ?? null,
       },
-      update: { clockIn: now, locationId: location.id, status, lateMinutes },
+      update: { clockIn: now, locationId: location.id, status, lateMinutes, deviceId: deviceId ?? null },
     });
 
     const lateLabel = lateMinutes > 0
