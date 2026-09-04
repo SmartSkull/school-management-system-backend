@@ -305,8 +305,8 @@ export class AttendanceService {
   }
 
   // ── Student: clock in ─────────────────────────────────────────────────
-  async studentClockIn(user: any, body: { latitude: number; longitude: number }) {
-    const { latitude, longitude } = body;
+  async studentClockIn(user: any, body: { latitude: number; longitude: number; deviceId?: string }) {
+    const { latitude, longitude, deviceId } = body;
     if (latitude == null || longitude == null) throw new BadRequestException('Location required');
 
     const schoolId = user.schoolId ?? user.user?.schoolId;
@@ -332,6 +332,32 @@ export class AttendanceService {
     });
     if (existing?.clockIn) throw new BadRequestException('Already clocked in today');
 
+    // ── Device lock enforcement ──────────────────────────────────────────
+    // If a deviceId is provided, check whether this student has previously
+    // clocked in from a different device. We look at the last 30 days so a
+    // student who has never clocked in before is always allowed through.
+    if (deviceId) {
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+      const previousWithDevice = await this.prisma.studentAttendance.findFirst({
+        where: {
+          studentId,
+          deviceId: { not: null },
+          date: { gte: thirtyDaysAgo },
+          clockIn: { not: null },
+        },
+        orderBy: { date: 'desc' },
+      });
+
+      if (previousWithDevice?.deviceId && previousWithDevice.deviceId !== deviceId) {
+        throw new ForbiddenException(
+          'Clock-in is only allowed from the device you first used. Please use your registered device.',
+        );
+      }
+    }
+    // ────────────────────────────────────────────────────────────────────
+
     const now = new Date();
     const [rHour, rMin] = (location.resumptionTime ?? '08:00').split(':').map(Number);
     const cutoff = new Date(today);
@@ -341,8 +367,8 @@ export class AttendanceService {
 
     const record = await this.prisma.studentAttendance.upsert({
       where: { studentId_date: { studentId, date: today } },
-      create: { studentId, locationId: location.id, date: today, clockIn: now, status, lateMinutes },
-      update: { clockIn: now, locationId: location.id, status, lateMinutes },
+      create: { studentId, locationId: location.id, date: today, clockIn: now, status, lateMinutes, deviceId: deviceId ?? null },
+      update: { clockIn: now, locationId: location.id, status, lateMinutes, deviceId: deviceId ?? null },
     });
 
     const lateLabel = lateMinutes > 0

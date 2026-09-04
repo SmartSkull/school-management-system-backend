@@ -35,7 +35,7 @@ export class AttendanceController {
   // ── Student endpoints ──────────────────────────────────────────────────
   @Post('student/clock-in')
   @UseGuards(StudentGuard)
-  studentClockIn(@CurrentUser() user: any, @Body() body: { latitude: number; longitude: number }) {
+  studentClockIn(@CurrentUser() user: any, @Body() body: { latitude: number; longitude: number; deviceId?: string }) {
     return this.svc.studentClockIn(user, body);
   }
 
