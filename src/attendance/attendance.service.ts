@@ -333,10 +333,26 @@ export class AttendanceService {
     if (existing?.clockIn) throw new BadRequestException('Already clocked in today');
 
     // ── Device lock enforcement ──────────────────────────────────────────
-    // If a deviceId is provided, check whether this student has previously
-    // clocked in from a different device. We look at the last 30 days so a
-    // student who has never clocked in before is always allowed through.
     if (deviceId) {
+      // CHECK 1 — Cross-student: has this device been used by a DIFFERENT
+      // student to clock in today? One physical device = one student per day.
+      const usedByOtherToday = await this.prisma.studentAttendance.findFirst({
+        where: {
+          deviceId,
+          date: today,
+          clockIn: { not: null },
+          studentId: { not: studentId },  // exclude current student
+        },
+      });
+
+      if (usedByOtherToday) {
+        throw new ForbiddenException(
+          'This device has already been used to clock in for another account today. One device may only be used for one student per day.',
+        );
+      }
+
+      // CHECK 2 — Own-device consistency: has this student previously clocked
+      // in from a different device? Prevents a student switching devices.
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
