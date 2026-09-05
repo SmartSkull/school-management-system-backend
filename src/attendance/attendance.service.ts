@@ -987,40 +987,28 @@ export class AttendanceService {
       throw new BadRequestException(e?.response?.data?.message ?? 'Face recognition service error');
     }
 
-    // Extract matched ID from all known response shapes
-    let matchedId: string | null = null;
+    // Response is a top-level ARRAY: [{name, probability, uuid, rectangle, collections}]
+    // uuid in the array is what Luxand returns during enrollment
+    const results = Array.isArray(luxandResult)
+      ? luxandResult
+      : (Array.isArray(luxandResult?.faces) ? luxandResult.faces : []);
+    const matchedUuid: string | null = results.length > 0 ? (results[0]?.uuid ?? null) : null;
 
-    if (Array.isArray(luxandResult?.faces) && luxandResult.faces.length > 0) {
-      const face = luxandResult.faces[0];
-      // Each face may have direct id/uuid or a nested persons array
-      if (face?.id != null)                        matchedId = String(face.id);
-      else if (face?.uuid)                         matchedId = face.uuid;
-      else if (face?.persons?.[0]?.uuid)           matchedId = face.persons[0].uuid;
-      else if (face?.persons?.[0]?.id != null)     matchedId = String(face.persons[0].id);
-    } else if (Array.isArray(luxandResult?.persons) && luxandResult.persons.length > 0) {
-      const p = luxandResult.persons[0];
-      matchedId = p?.uuid ?? (p?.id != null ? String(p.id) : null);
-    } else if (luxandResult?.uuid) {
-      matchedId = luxandResult.uuid;
-    } else if (luxandResult?.id != null) {
-      matchedId = String(luxandResult.id);
-    }
-
-    if (!matchedId) {
+    if (!matchedUuid) {
       this.logger.log('[faceClockIn] No match. Full response: ' + JSON.stringify(luxandResult));
       return { success: true, enrolled: false, message: 'Face not found in database. Please enroll first.' };
     }
 
-    this.logger.log('[faceClockIn] Matched ID: ' + matchedId);
+    this.logger.log('[faceClockIn] Matched UUID: ' + matchedUuid);
 
-    // Look up which student owns this faceUuid (stored as string)
+    // Look up which student owns this faceUuid
     const student = await this.prisma.student.findFirst({
-      where: { faceUuid: matchedId },
+      where: { faceUuid: matchedUuid },
       include: { user: { select: { uniqueId: true, schoolId: true } } },
     });
 
     if (!student || !student.user) {
-      this.logger.warn('[faceClockIn] No student found for faceUuid: ' + matchedId);
+      this.logger.warn('[faceClockIn] No student found for faceUuid: ' + matchedUuid);
       return { success: true, enrolled: false, message: 'Face not linked to any student. Please enroll first.' };
     }
 
@@ -1097,7 +1085,9 @@ export class AttendanceService {
       // Reject if liveness score below 0.5 or status is not success
       const score = livenessData?.liveness ?? livenessData?.score ?? 0;
       const status = livenessData?.status ?? '';
-      if (status !== 'success' || score < 0.5) {
+      this.logger.log('[faceEnroll] Liveness: status=' + status + ' score=' + score + ' full=' + JSON.stringify(livenessData));
+      // Threshold lowered to 0.3 — mobile cameras sometimes produce lower scores
+      if (status !== 'success' || score < 0.3) {
         throw new ForbiddenException(
           `Liveness check failed (score: ${(score * 100).toFixed(0)}%). Please use a real live face — do not use a photo or screen.`,
         );
@@ -1153,11 +1143,10 @@ export class AttendanceService {
       throw new BadRequestException(e?.response?.data?.message ?? 'Failed to enroll face');
     }
 
-    // /subject/v2 returns { id, status } or { uuid } depending on version
-    const uuid = luxandResult?.id != null
-      ? String(luxandResult.id)
-      : (luxandResult?.uuid ?? luxandResult?.person?.uuid ?? null);
-    this.logger.log('[faceEnroll] Parsed ID: ' + uuid);
+    // /subject/v2 returns { uuid, id, ... } — ALWAYS save uuid (not id)
+    // because the search endpoint returns uuid for matching
+    const uuid = luxandResult?.uuid ?? (luxandResult?.id != null ? String(luxandResult.id) : null);
+    this.logger.log('[faceEnroll] Saving faceUuid: ' + uuid + ' (id=' + luxandResult?.id + ')');
     if (!uuid) throw new BadRequestException('No ID returned from face recognition service');
 
     // Save UUID to student record
@@ -1167,5 +1156,38 @@ export class AttendanceService {
     });
 
     return { success: true, message: 'Face enrolled successfully. You can now clock in with your face.' };
+  }
+
+  // ── Debug: raw Luxand search response ────────────────────────────────
+  async faceDebugSearch(photoBuffer: Buffer) {
+    const token = process.env.LUXAND_TOKEN;
+    if (!token) return { error: 'LUXAND_TOKEN not set' };
+
+    // Search
+    const searchForm = new FormData();
+    searchForm.append('photo', photoBuffer, { filename: 'face.jpg', contentType: 'image/jpeg' });
+    searchForm.append('collections', '');
+    let searchResult: any = null;
+    let searchError: any  = null;
+    try {
+      const r  = await axios.post('https://api.luxand.cloud/photo/search/v2', searchForm, {
+        headers: { ...searchForm.getHeaders(), token }, timeout: 15000,
+      });
+      searchResult = r.data;
+    } catch (e: any) { searchError = e?.response?.data ?? e?.message; }
+
+    // Liveness
+    const livenessForm = new FormData();
+    livenessForm.append('photo', photoBuffer, { filename: 'face.jpg', contentType: 'image/jpeg' });
+    let livenessResult: any = null;
+    let livenessError: any  = null;
+    try {
+      const r = await axios.post('https://api.luxand.cloud/photo/liveness/v2', livenessForm, {
+        headers: { ...livenessForm.getHeaders(), token }, timeout: 15000,
+      });
+      livenessResult = r.data;
+    } catch (e: any) { livenessError = e?.response?.data ?? e?.message; }
+
+    return { searchResult, searchError, livenessResult, livenessError };
   }
 }

@@ -63,6 +63,15 @@ export class AttendanceController {
     return this.svc.faceEnroll(user, file.buffer);
   }
 
+  // ── Debug: returns raw Luxand search response (student auth required) ──
+  @Post('student/face-debug-search')
+  @UseGuards(StudentGuard)
+  @UseInterceptors(FileInterceptor('photo', { limits: { fileSize: 5 * 1024 * 1024 } }))
+  faceDebugSearch(@CurrentUser() user: any, @UploadedFile() file: Express.Multer.File) {
+    if (!file) throw new Error('No photo uploaded');
+    return this.svc.faceDebugSearch(file.buffer);
+  }
+
   @Get('student/today')
   @UseGuards(StudentGuard)
   studentTodayStatus(@CurrentUser() user: any) {
