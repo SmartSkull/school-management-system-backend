@@ -434,12 +434,64 @@ export class StaffService {
   }
 
   async getStudentDetails(user: any, id: string) {
-    const student = await this.prisma.user.findUnique({ 
+    const student = await this.prisma.user.findUnique({
       where: { uniqueId: id, ...(this.schoolId(user) ? { schoolId: this.schoolId(user) } : {}) },
-      include: { student: { include: { classRoom: true } } }
+      include: {
+        student: {
+          include: {
+            classRoom: true,
+          },
+        },
+      },
     });
     if (!student) throw new NotFoundException('Student not found');
-    return this.ok(student);
+
+    // Attendance summary (current month)
+    const now = new Date();
+    const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+    const monthEnd   = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
+    const attendance = await this.prisma.studentAttendance.findMany({
+      where: { studentId: id, date: { gte: monthStart, lt: monthEnd } },
+      orderBy: { date: 'desc' },
+      take: 30,
+    });
+    const attendanceSummary = {
+      present: attendance.filter(a => a.status === 'PRESENT').length,
+      late:    attendance.filter(a => a.status === 'LATE').length,
+      absent:  attendance.filter(a => a.status === 'ABSENT').length,
+      total:   attendance.length,
+    };
+
+    // Recent results (last 5) — studentId is BigInt (student table id, not uniqueId)
+    const studentRecord = student.student;
+    const results = studentRecord ? await this.prisma.result.findMany({
+      where: { studentId: studentRecord.id },
+      orderBy: { createdAt: 'desc' },
+      take: 5,
+      include: { subject: { select: { name: true } } },
+    }) : [];
+
+    // Assignments summary
+    const assignmentCount = await this.prisma.assignment.count({
+      where: { classRoomId: student.student?.classRoomId ?? undefined },
+    });
+
+    return this.ok({
+      ...student,
+      student: {
+        ...student.student,
+        classRoom: student.student?.classRoom,
+      },
+      attendanceSummary,
+      recentResults: results.map(r => ({
+        id: r.id.toString(),
+        subject: (r as any).subject?.name ?? 'Unknown',
+        totalScore: Number(r.totalScore),
+        grade: r.grade,
+        remark: r.remark,
+      })),
+      assignmentCount,
+    });
   }
 
   private async schoolPrefix(schoolId?: bigint): Promise<string> {
