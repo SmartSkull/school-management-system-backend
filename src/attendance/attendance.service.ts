@@ -979,17 +979,38 @@ export class AttendanceService {
         timeout: 15000,
       });
       luxandResult = res.data;
+      // Log full response so we can see the actual structure
+      this.logger.log('[faceClockIn] Luxand search response: ' + JSON.stringify(luxandResult));
     } catch (e: any) {
+      this.logger.error('[faceClockIn] Luxand error: ' + JSON.stringify(e?.response?.data));
       throw new BadRequestException(e?.response?.data?.message ?? 'Face recognition service error');
     }
 
-    // Luxand returns array of matches; status "success" with faces means found
-    const faces = luxandResult?.faces ?? [];
-    if (!faces.length || !faces[0]?.persons?.length) {
+    // Luxand /photo/search/v2 response can be:
+    // { status: "success", persons: [{ uuid, name, ... }] }  — top-level persons array
+    // OR { faces: [{ persons: [...] }] }                      — nested under faces
+    // Handle both shapes:
+    let uuid: string | null = null;
+
+    // Shape 1: top-level persons
+    if (luxandResult?.persons?.length) {
+      uuid = luxandResult.persons[0]?.uuid ?? null;
+    }
+    // Shape 2: nested under faces
+    else if (luxandResult?.faces?.length && luxandResult.faces[0]?.persons?.length) {
+      uuid = luxandResult.faces[0].persons[0]?.uuid ?? null;
+    }
+    // Shape 3: single result directly
+    else if (luxandResult?.uuid) {
+      uuid = luxandResult.uuid;
+    }
+
+    if (!uuid) {
+      this.logger.log('[faceClockIn] No match found. status=' + luxandResult?.status);
       return { success: true, enrolled: false, message: 'Face not found in database. Please enroll first.' };
     }
 
-    const uuid = faces[0].persons[0].uuid as string;
+    this.logger.log('[faceClockIn] Matched UUID: ' + uuid);
 
     // Look up which student owns this faceUuid
     const student = await this.prisma.student.findFirst({
@@ -1111,6 +1132,7 @@ export class AttendanceService {
     const form = new FormData();
     form.append('name', name);
     form.append('store', '1');
+    form.append('unique', '0');   // allow duplicate faces across persons
     form.append('photos', photoBuffer, { filename: 'face.jpg', contentType: 'image/jpeg' });
 
     let luxandResult: any;
@@ -1120,11 +1142,15 @@ export class AttendanceService {
         timeout: 15000,
       });
       luxandResult = res.data;
+      this.logger.log('[faceEnroll] Luxand enroll response: ' + JSON.stringify(luxandResult));
     } catch (e: any) {
+      this.logger.error('[faceEnroll] Luxand error: ' + JSON.stringify(e?.response?.data));
       throw new BadRequestException(e?.response?.data?.message ?? 'Failed to enroll face');
     }
 
-    const uuid = luxandResult?.uuid ?? luxandResult?.person?.uuid;
+    // Response can be { uuid } or { person: { uuid } } or { uuid, status }
+    const uuid = luxandResult?.uuid ?? luxandResult?.person?.uuid ?? luxandResult?.id;
+    this.logger.log('[faceEnroll] Parsed UUID: ' + uuid);
     if (!uuid) throw new BadRequestException('No UUID returned from face recognition service');
 
     // Save UUID to student record
