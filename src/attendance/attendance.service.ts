@@ -3,6 +3,10 @@ import { EmailService } from '../common/email.service';
 import { SmsService } from '../common/sms.service';
 import { NotificationService } from '../common/notification.service';
 import { PrismaService } from '../database/prisma.service';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const FormData = require('form-data');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const axios = require('axios').default ?? require('axios');
 
 function distanceMetres(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6371000;
@@ -965,10 +969,6 @@ export class AttendanceService {
     const token = process.env.LUXAND_TOKEN;
     if (!token) throw new BadRequestException('Face recognition not configured');
 
-    // Search Luxand for this face
-    const FormData = (await import('form-data')).default;
-    const axios    = (await import('axios')).default;
-
     const form = new FormData();
     form.append('photo', photoBuffer, { filename: 'face.jpg', contentType: 'image/jpeg' });
 
@@ -1069,8 +1069,6 @@ export class AttendanceService {
 
     // If already enrolled, add a new photo to improve recognition accuracy
     if (student.faceUuid) {
-      const FormData = (await import('form-data')).default;
-      const axios    = (await import('axios')).default;
       const form = new FormData();
       form.append('photos', photoBuffer, { filename: 'face.jpg', contentType: 'image/jpeg' });
       form.append('store', '1');
@@ -1082,8 +1080,6 @@ export class AttendanceService {
     }
 
     // First enrollment — create new person in Luxand
-    const FormData = (await import('form-data')).default;
-    const axios    = (await import('axios')).default;
     const name = `${student.user?.firstName ?? ''} ${student.user?.lastName ?? ''}`.trim() || studentId;
 
     const form = new FormData();
