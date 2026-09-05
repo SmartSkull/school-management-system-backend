@@ -462,13 +462,17 @@ export class StaffService {
       total:   attendance.length,
     };
 
-    // Recent results (last 5) — studentId is BigInt (student table id, not uniqueId)
+    // Recent results — studentId is BigInt (student table id, not uniqueId)
     const studentRecord = student.student;
     const results = studentRecord ? await this.prisma.result.findMany({
       where: { studentId: studentRecord.id },
       orderBy: { createdAt: 'desc' },
-      take: 5,
-      include: { subject: { select: { name: true } } },
+      take: 10,
+      include: {
+        subject: { select: { name: true } },
+        session: { select: { name: true } },
+        term:    { select: { name: true } },
+      },
     }) : [];
 
     // Assignments summary
@@ -484,11 +488,15 @@ export class StaffService {
       },
       attendanceSummary,
       recentResults: results.map(r => ({
-        id: r.id.toString(),
-        subject: (r as any).subject?.name ?? 'Unknown',
+        id:         r.id.toString(),
+        subject:    (r as any).subject?.name ?? 'Unknown',
+        testScore:  Number(r.testScore),
+        examScore:  Number(r.examScore),
         totalScore: Number(r.totalScore),
-        grade: r.grade,
-        remark: r.remark,
+        grade:      r.grade,
+        remark:     r.remark,
+        session:    (r as any).session?.name ?? '',
+        term:       (r as any).term?.name ?? '',
       })),
       assignmentCount,
     });
