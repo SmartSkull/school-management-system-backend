@@ -467,7 +467,7 @@ export class StaffService {
     const results = studentRecord ? await this.prisma.result.findMany({
       where: { studentId: studentRecord.id },
       orderBy: { createdAt: 'desc' },
-      take: 10,
+      take: 5,
       include: {
         subject: { select: { name: true } },
         session: { select: { name: true } },
