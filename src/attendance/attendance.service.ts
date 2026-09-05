@@ -957,4 +957,160 @@ export class AttendanceService {
       throw e;
     }
   }
+
+  // ── Face recognition: clock in ────────────────────────────────────────
+  // 1. Send photo to Luxand search. If found → identify student → clock in.
+  // 2. If not found → return enrolled:false so frontend prompts enrollment.
+  async faceClockIn(user: any, photoBuffer: Buffer) {
+    const token = process.env.LUXAND_TOKEN;
+    if (!token) throw new BadRequestException('Face recognition not configured');
+
+    // Search Luxand for this face
+    const FormData = (await import('form-data')).default;
+    const axios    = (await import('axios')).default;
+
+    const form = new FormData();
+    form.append('photo', photoBuffer, { filename: 'face.jpg', contentType: 'image/jpeg' });
+
+    let luxandResult: any;
+    try {
+      const res = await axios.post('https://api.luxand.cloud/photo/search/v2', form, {
+        headers: { ...form.getHeaders(), token },
+        timeout: 15000,
+      });
+      luxandResult = res.data;
+    } catch (e: any) {
+      throw new BadRequestException(e?.response?.data?.message ?? 'Face recognition service error');
+    }
+
+    // Luxand returns array of matches; status "success" with faces means found
+    const faces = luxandResult?.faces ?? [];
+    if (!faces.length || !faces[0]?.persons?.length) {
+      return { success: true, enrolled: false, message: 'Face not found in database. Please enroll first.' };
+    }
+
+    const uuid = faces[0].persons[0].uuid as string;
+
+    // Look up which student owns this faceUuid
+    const student = await this.prisma.student.findFirst({
+      where: { faceUuid: uuid },
+      include: { user: { select: { uniqueId: true, schoolId: true } } },
+    });
+
+    if (!student) {
+      return { success: true, enrolled: false, message: 'Face not linked to any student. Please enroll first.' };
+    }
+
+    // Now clock in using the student's uniqueId — reuse the existing clock-in logic
+    const schoolId = student.user?.schoolId;
+    const location = schoolId
+      ? await this.prisma.attendanceLocation.findFirst({ where: { schoolId, isActive: true } })
+      : null;
+    if (!location) throw new BadRequestException('No attendance location configured by admin');
+
+    const studentId = student.user.uniqueId;
+    const today     = todayDate();
+
+    const existing = await this.prisma.studentAttendance.findUnique({
+      where: { studentId_date: { studentId, date: today } },
+    });
+    if (existing?.clockIn) {
+      return { success: true, enrolled: true, alreadyClockedIn: true, message: 'Already clocked in today' };
+    }
+
+    const now = new Date();
+    const [rHour, rMin] = (location.resumptionTime ?? '08:00').split(':').map(Number);
+    const cutoff = new Date(today);
+    cutoff.setHours(rHour, rMin, 0, 0);
+    const lateMinutes = now > cutoff ? Math.floor((now.getTime() - cutoff.getTime()) / 60000) : 0;
+    const status = lateMinutes > 0 ? 'LATE' : 'PRESENT';
+
+    const record = await this.prisma.studentAttendance.upsert({
+      where: { studentId_date: { studentId, date: today } },
+      create: { studentId, locationId: location.id, date: today, clockIn: now, status, lateMinutes },
+      update: { clockIn: now, locationId: location.id, status, lateMinutes },
+    });
+
+    const lateLabel = lateMinutes > 0
+      ? lateMinutes < 60 ? `${lateMinutes} min late` : `${Math.floor(lateMinutes / 60)}h ${lateMinutes % 60}m late`
+      : '';
+
+    // Notify student
+    this.notificationService.notify(
+      student.userId,
+      'Attendance Recorded',
+      `You clocked in via face recognition${lateLabel ? ` (${lateLabel})` : ''}.`,
+    );
+
+    return {
+      success: true,
+      enrolled: true,
+      alreadyClockedIn: false,
+      message: `Clocked in${lateLabel ? ` (${lateLabel})` : ''}`,
+      data: this.serializeStudentRecord(record),
+    };
+  }
+
+  // ── Face recognition: enroll ──────────────────────────────────────────
+  // Register the current student's face in Luxand and save the returned UUID.
+  async faceEnroll(user: any, photoBuffer: Buffer) {
+    const token = process.env.LUXAND_TOKEN;
+    if (!token) throw new BadRequestException('Face recognition not configured');
+
+    const studentUser = await this.getStudentUser(user);
+    const studentId   = studentUser.uniqueId;
+
+    // Fetch full student record with user info
+    const student = await this.prisma.student.findFirst({
+      where: { user: { uniqueId: studentId } },
+      include: { user: { select: { firstName: true, lastName: true } } },
+    });
+    if (!student) throw new BadRequestException('Student record not found');
+
+    // If already enrolled, add a new photo to improve recognition accuracy
+    if (student.faceUuid) {
+      const FormData = (await import('form-data')).default;
+      const axios    = (await import('axios')).default;
+      const form = new FormData();
+      form.append('photos', photoBuffer, { filename: 'face.jpg', contentType: 'image/jpeg' });
+      form.append('store', '1');
+      await axios.post(`https://api.luxand.cloud/v2/person/${student.faceUuid}`, form, {
+        headers: { ...form.getHeaders(), token },
+        timeout: 15000,
+      });
+      return { success: true, message: 'Face updated successfully' };
+    }
+
+    // First enrollment — create new person in Luxand
+    const FormData = (await import('form-data')).default;
+    const axios    = (await import('axios')).default;
+    const name = `${student.user?.firstName ?? ''} ${student.user?.lastName ?? ''}`.trim() || studentId;
+
+    const form = new FormData();
+    form.append('name', name);
+    form.append('store', '1');
+    form.append('photos', photoBuffer, { filename: 'face.jpg', contentType: 'image/jpeg' });
+
+    let luxandResult: any;
+    try {
+      const res = await axios.post('https://api.luxand.cloud/v2/person', form, {
+        headers: { ...form.getHeaders(), token },
+        timeout: 15000,
+      });
+      luxandResult = res.data;
+    } catch (e: any) {
+      throw new BadRequestException(e?.response?.data?.message ?? 'Failed to enroll face');
+    }
+
+    const uuid = luxandResult?.uuid ?? luxandResult?.person?.uuid;
+    if (!uuid) throw new BadRequestException('No UUID returned from face recognition service');
+
+    // Save UUID to student record
+    await this.prisma.student.update({
+      where: { id: student.id },
+      data: { faceUuid: uuid },
+    });
+
+    return { success: true, message: 'Face enrolled successfully. You can now clock in with your face.' };
+  }
 }

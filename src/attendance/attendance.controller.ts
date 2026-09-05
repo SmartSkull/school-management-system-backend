@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, UseGuards, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { AttendanceService } from './attendance.service';
 import { StaffGuard, AdminGuard, StudentGuard } from '../common/guards/auth.guard';
 import { CurrentUser } from '../common/decorators/user.decorator';
@@ -43,6 +44,23 @@ export class AttendanceController {
   @UseGuards(StudentGuard)
   studentClockOut(@CurrentUser() user: any, @Body() body: { latitude: number; longitude: number }) {
     return this.svc.studentClockOut(user, body);
+  }
+
+  // ── Face recognition endpoints (student) ──────────────────────────────
+  @Post('student/face-clock-in')
+  @UseGuards(StudentGuard)
+  @UseInterceptors(FileInterceptor('photo', { limits: { fileSize: 5 * 1024 * 1024 } }))
+  faceClockIn(@CurrentUser() user: any, @UploadedFile() file: Express.Multer.File) {
+    if (!file) throw new Error('No photo uploaded');
+    return this.svc.faceClockIn(user, file.buffer);
+  }
+
+  @Post('student/face-enroll')
+  @UseGuards(StudentGuard)
+  @UseInterceptors(FileInterceptor('photo', { limits: { fileSize: 5 * 1024 * 1024 } }))
+  faceEnroll(@CurrentUser() user: any, @UploadedFile() file: Express.Multer.File) {
+    if (!file) throw new Error('No photo uploaded');
+    return this.svc.faceEnroll(user, file.buffer);
   }
 
   @Get('student/today')

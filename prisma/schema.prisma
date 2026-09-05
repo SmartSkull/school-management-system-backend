@@ -153,6 +153,7 @@ model Student {
   about           String?   @db.Text
   religion        String?   @db.VarChar(50)
   bloodGroup      String?   @db.VarChar(10)
+  faceUuid        String?   @db.VarChar(255)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
