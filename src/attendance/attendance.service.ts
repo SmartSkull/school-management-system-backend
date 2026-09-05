@@ -1060,6 +1060,32 @@ export class AttendanceService {
     const studentUser = await this.getStudentUser(user);
     const studentId   = studentUser.uniqueId;
 
+    // ── Liveness check ──────────────────────────────────────────────────
+    // Reject spoofing attempts (printed photo, screen replay, mask, etc.)
+    try {
+      const livenessForm = new FormData();
+      livenessForm.append('photo', photoBuffer, { filename: 'face.jpg', contentType: 'image/jpeg' });
+      const livenessRes = await axios.post('https://api.luxand.cloud/photo/liveness/v2', livenessForm, {
+        headers: { ...livenessForm.getHeaders(), token },
+        timeout: 15000,
+      });
+      const livenessData = livenessRes.data;
+      // Luxand returns { status: "success"|"failure", liveness: 0.0–1.0 }
+      // Reject if liveness score below 0.5 or status is not success
+      const score = livenessData?.liveness ?? livenessData?.score ?? 0;
+      const status = livenessData?.status ?? '';
+      if (status !== 'success' || score < 0.5) {
+        throw new ForbiddenException(
+          `Liveness check failed (score: ${(score * 100).toFixed(0)}%). Please use a real live face — do not use a photo or screen.`,
+        );
+      }
+    } catch (e: any) {
+      // Re-throw our own exceptions; wrap external errors
+      if (e instanceof ForbiddenException || e instanceof BadRequestException) throw e;
+      throw new BadRequestException(e?.response?.data?.message ?? 'Liveness check service error. Please try again.');
+    }
+    // ────────────────────────────────────────────────────────────────────
+
     // Fetch full student record with user info
     const student = await this.prisma.student.findFirst({
       where: { user: { uniqueId: studentId } },
