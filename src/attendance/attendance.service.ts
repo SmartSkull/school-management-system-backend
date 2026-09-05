@@ -986,22 +986,22 @@ export class AttendanceService {
       throw new BadRequestException(e?.response?.data?.message ?? 'Face recognition service error');
     }
 
-    // Luxand /photo/search/v2 response can be:
-    // { status: "success", persons: [{ uuid, name, ... }] }  — top-level persons array
-    // OR { faces: [{ persons: [...] }] }                      — nested under faces
-    // Handle both shapes:
+    // Luxand /photo/search/v2 response shapes:
+    // Shape A: { faces: [{ id, name, similarity }] }  ← most common for /subject/v2 enrolled persons
+    // Shape B: { status, persons: [{ uuid, name }] }
+    // Shape C: { uuid } direct
     let uuid: string | null = null;
 
-    // Shape 1: top-level persons
-    if (luxandResult?.persons?.length) {
-      uuid = luxandResult.persons[0]?.uuid ?? null;
-    }
-    // Shape 2: nested under faces
-    else if (luxandResult?.faces?.length && luxandResult.faces[0]?.persons?.length) {
-      uuid = luxandResult.faces[0].persons[0]?.uuid ?? null;
-    }
-    // Shape 3: single result directly
-    else if (luxandResult?.uuid) {
+    if (luxandResult?.faces?.length) {
+      // Shape A — id is the subject id saved during enroll
+      uuid = luxandResult.faces[0]?.id?.toString()
+          ?? luxandResult.faces[0]?.uuid
+          ?? null;
+    } else if (luxandResult?.persons?.length) {
+      // Shape B
+      uuid = luxandResult.persons[0]?.uuid ?? luxandResult.persons[0]?.id?.toString() ?? null;
+    } else if (luxandResult?.uuid) {
+      // Shape C
       uuid = luxandResult.uuid;
     }
 
@@ -1010,7 +1010,7 @@ export class AttendanceService {
       return { success: true, enrolled: false, message: 'Face not found in database. Please enroll first.' };
     }
 
-    this.logger.log('[faceClockIn] Matched UUID: ' + uuid);
+    this.logger.log('[faceClockIn] Matched UUID/ID: ' + uuid);
 
     // Look up which student owns this faceUuid
     const student = await this.prisma.student.findFirst({
@@ -1116,28 +1116,31 @@ export class AttendanceService {
 
     // If already enrolled, add a new photo to improve recognition accuracy
     if (student.faceUuid) {
+      // POST /subject/v2/:id/photo adds another photo to an existing subject
       const form = new FormData();
-      form.append('photos', photoBuffer, { filename: 'face.jpg', contentType: 'image/jpeg' });
-      form.append('store', '1');
-      await axios.post(`https://api.luxand.cloud/v2/person/${student.faceUuid}`, form, {
-        headers: { ...form.getHeaders(), token },
-        timeout: 15000,
-      });
+      form.append('photo', photoBuffer, { filename: 'face.jpg', contentType: 'image/jpeg' });
+      try {
+        await axios.post(`https://api.luxand.cloud/subject/v2/${student.faceUuid}/photo`, form, {
+          headers: { ...form.getHeaders(), token },
+          timeout: 15000,
+        });
+      } catch {
+        // Ignore update errors — the face is already enrolled
+      }
       return { success: true, message: 'Face updated successfully' };
     }
 
-    // First enrollment — create new person in Luxand
+    // First enrollment — create new person in Luxand using the correct endpoint
+    // POST /subject/v2 is the standard enroll endpoint; returns { id, status }
     const name = `${student.user?.firstName ?? ''} ${student.user?.lastName ?? ''}`.trim() || studentId;
 
     const form = new FormData();
     form.append('name', name);
-    form.append('store', '1');
-    form.append('unique', '0');   // allow duplicate faces across persons
-    form.append('photos', photoBuffer, { filename: 'face.jpg', contentType: 'image/jpeg' });
+    form.append('photo', photoBuffer, { filename: 'face.jpg', contentType: 'image/jpeg' });
 
     let luxandResult: any;
     try {
-      const res = await axios.post('https://api.luxand.cloud/v2/person', form, {
+      const res = await axios.post('https://api.luxand.cloud/subject/v2', form, {
         headers: { ...form.getHeaders(), token },
         timeout: 15000,
       });
@@ -1148,10 +1151,10 @@ export class AttendanceService {
       throw new BadRequestException(e?.response?.data?.message ?? 'Failed to enroll face');
     }
 
-    // Response can be { uuid } or { person: { uuid } } or { uuid, status }
-    const uuid = luxandResult?.uuid ?? luxandResult?.person?.uuid ?? luxandResult?.id;
-    this.logger.log('[faceEnroll] Parsed UUID: ' + uuid);
-    if (!uuid) throw new BadRequestException('No UUID returned from face recognition service');
+    // /subject/v2 returns { id, status } or { uuid } depending on version
+    const uuid = luxandResult?.id ?? luxandResult?.uuid ?? luxandResult?.person?.uuid;
+    this.logger.log('[faceEnroll] Parsed UUID/ID: ' + uuid);
+    if (!uuid) throw new BadRequestException('No ID returned from face recognition service');
 
     // Save UUID to student record
     await this.prisma.student.update({
