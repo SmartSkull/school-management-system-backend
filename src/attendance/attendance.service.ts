@@ -969,8 +969,10 @@ export class AttendanceService {
     const token = process.env.LUXAND_TOKEN;
     if (!token) throw new BadRequestException('Face recognition not configured');
 
+    // Add required 'collections' field (empty = search all)
     const form = new FormData();
     form.append('photo', photoBuffer, { filename: 'face.jpg', contentType: 'image/jpeg' });
+    form.append('collections', '');
 
     let luxandResult: any;
     try {
@@ -979,53 +981,53 @@ export class AttendanceService {
         timeout: 15000,
       });
       luxandResult = res.data;
-      // Log full response so we can see the actual structure
       this.logger.log('[faceClockIn] Luxand search response: ' + JSON.stringify(luxandResult));
     } catch (e: any) {
       this.logger.error('[faceClockIn] Luxand error: ' + JSON.stringify(e?.response?.data));
       throw new BadRequestException(e?.response?.data?.message ?? 'Face recognition service error');
     }
 
-    // Luxand /photo/search/v2 response shapes:
-    // Shape A: { faces: [{ id, name, similarity }] }  ← most common for /subject/v2 enrolled persons
-    // Shape B: { status, persons: [{ uuid, name }] }
-    // Shape C: { uuid } direct
-    let uuid: string | null = null;
+    // Extract matched ID from all known response shapes
+    let matchedId: string | null = null;
 
-    if (luxandResult?.faces?.length) {
-      // Shape A — id is the subject id saved during enroll
-      uuid = luxandResult.faces[0]?.id?.toString()
-          ?? luxandResult.faces[0]?.uuid
-          ?? null;
-    } else if (luxandResult?.persons?.length) {
-      // Shape B
-      uuid = luxandResult.persons[0]?.uuid ?? luxandResult.persons[0]?.id?.toString() ?? null;
+    if (Array.isArray(luxandResult?.faces) && luxandResult.faces.length > 0) {
+      const face = luxandResult.faces[0];
+      // Each face may have direct id/uuid or a nested persons array
+      if (face?.id != null)                        matchedId = String(face.id);
+      else if (face?.uuid)                         matchedId = face.uuid;
+      else if (face?.persons?.[0]?.uuid)           matchedId = face.persons[0].uuid;
+      else if (face?.persons?.[0]?.id != null)     matchedId = String(face.persons[0].id);
+    } else if (Array.isArray(luxandResult?.persons) && luxandResult.persons.length > 0) {
+      const p = luxandResult.persons[0];
+      matchedId = p?.uuid ?? (p?.id != null ? String(p.id) : null);
     } else if (luxandResult?.uuid) {
-      // Shape C
-      uuid = luxandResult.uuid;
+      matchedId = luxandResult.uuid;
+    } else if (luxandResult?.id != null) {
+      matchedId = String(luxandResult.id);
     }
 
-    if (!uuid) {
-      this.logger.log('[faceClockIn] No match found. status=' + luxandResult?.status);
+    if (!matchedId) {
+      this.logger.log('[faceClockIn] No match. Full response: ' + JSON.stringify(luxandResult));
       return { success: true, enrolled: false, message: 'Face not found in database. Please enroll first.' };
     }
 
-    this.logger.log('[faceClockIn] Matched UUID/ID: ' + uuid);
+    this.logger.log('[faceClockIn] Matched ID: ' + matchedId);
 
-    // Look up which student owns this faceUuid
+    // Look up which student owns this faceUuid (stored as string)
     const student = await this.prisma.student.findFirst({
-      where: { faceUuid: uuid },
+      where: { faceUuid: matchedId },
       include: { user: { select: { uniqueId: true, schoolId: true } } },
     });
 
-    if (!student) {
+    if (!student || !student.user) {
+      this.logger.warn('[faceClockIn] No student found for faceUuid: ' + matchedId);
       return { success: true, enrolled: false, message: 'Face not linked to any student. Please enroll first.' };
     }
 
-    // Now clock in using the student's uniqueId — reuse the existing clock-in logic
-    const schoolId = student.user?.schoolId;
+    // Clock in the matched student
+    const schoolId = student.user.schoolId;
     const location = schoolId
-      ? await this.prisma.attendanceLocation.findFirst({ where: { schoolId, isActive: true } })
+      ? await this.prisma.attendanceLocation.findFirst({ where: { schoolId: BigInt(schoolId), isActive: true } })
       : null;
     if (!location) throw new BadRequestException('No attendance location configured by admin');
 
@@ -1152,8 +1154,10 @@ export class AttendanceService {
     }
 
     // /subject/v2 returns { id, status } or { uuid } depending on version
-    const uuid = luxandResult?.id ?? luxandResult?.uuid ?? luxandResult?.person?.uuid;
-    this.logger.log('[faceEnroll] Parsed UUID/ID: ' + uuid);
+    const uuid = luxandResult?.id != null
+      ? String(luxandResult.id)
+      : (luxandResult?.uuid ?? luxandResult?.person?.uuid ?? null);
+    this.logger.log('[faceEnroll] Parsed ID: ' + uuid);
     if (!uuid) throw new BadRequestException('No ID returned from face recognition service');
 
     // Save UUID to student record
