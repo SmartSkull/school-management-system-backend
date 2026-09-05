@@ -1,0 +1,1 @@
+ALTER TABLE `Staff` ADD COLUMN `faceUuid` VARCHAR(255) NULL AFTER `about`;

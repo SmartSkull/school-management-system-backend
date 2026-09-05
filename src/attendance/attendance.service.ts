@@ -1190,4 +1190,153 @@ export class AttendanceService {
 
     return { searchResult, searchError, livenessResult, livenessError };
   }
+
+  // ── Staff face clock-in ───────────────────────────────────────────────
+  async staffFaceClockIn(user: any, photoBuffer: Buffer) {
+    const token = process.env.LUXAND_TOKEN;
+    if (!token) throw new BadRequestException('Face recognition not configured');
+
+    const form = new FormData();
+    form.append('photo', photoBuffer, { filename: 'face.jpg', contentType: 'image/jpeg' });
+    form.append('collections', '');
+
+    let luxandResult: any;
+    try {
+      const res = await axios.post('https://api.luxand.cloud/photo/search/v2', form, {
+        headers: { ...form.getHeaders(), token }, timeout: 15000,
+      });
+      luxandResult = res.data;
+      this.logger.log('[staffFaceClockIn] Luxand response: ' + JSON.stringify(luxandResult));
+    } catch (e: any) {
+      throw new BadRequestException(e?.response?.data?.message ?? 'Face recognition service error');
+    }
+
+    const results = Array.isArray(luxandResult) ? luxandResult : (Array.isArray(luxandResult?.faces) ? luxandResult.faces : []);
+    const matchedUuid: string | null = results.length > 0 ? (results[0]?.uuid ?? null) : null;
+
+    if (!matchedUuid) {
+      return { success: true, enrolled: false, message: 'Face not found. Please enroll first.' };
+    }
+
+    // Find staff by faceUuid
+    const staff = await this.prisma.staff.findFirst({
+      where: { faceUuid: matchedUuid },
+    });
+
+    if (!staff) {
+      return { success: true, enrolled: false, message: 'Face not linked to any staff record. Please enroll first.' };
+    }
+
+    // Verify this matches the logged-in staff member
+    const staffId = user.id ?? user.staffId;
+    if (staff.id !== BigInt(staffId)) {
+      throw new ForbiddenException('Face does not match your registered face. Please use your own face.');
+    }
+
+    // Clock in directly (no geo required for face clock-in)
+    const today = todayDate();
+    const existing = await this.prisma.staffAttendance.findUnique({
+      where: { staffId_date: { staffId: staff.id, date: today } },
+    });
+    if (existing?.clockIn) {
+      return { success: true, enrolled: true, alreadyClockedIn: true, message: 'Already clocked in today' };
+    }
+
+    const schoolId = (await this.prisma.staff.findUnique({
+      where: { id: staff.id }, include: { user: { select: { schoolId: true } } },
+    }))?.user?.schoolId;
+
+    const location = schoolId
+      ? await this.prisma.attendanceLocation.findFirst({ where: { schoolId: BigInt(schoolId), isActive: true } })
+      : null;
+
+    const now = new Date();
+    const [rHour, rMin] = (location?.resumptionTime ?? '08:00').split(':').map(Number);
+    const cutoff = new Date(today);
+    cutoff.setHours(rHour, rMin, 0, 0);
+    const lateMinutes = now > cutoff ? Math.floor((now.getTime() - cutoff.getTime()) / 60000) : 0;
+    const status = lateMinutes > 0 ? 'LATE' : 'PRESENT';
+
+    const record = await this.prisma.staffAttendance.upsert({
+      where: { staffId_date: { staffId: staff.id, date: today } },
+      create: { staffId: staff.id, locationId: location?.id, date: today, clockIn: now, status, lateMinutes },
+      update: { clockIn: now, locationId: location?.id, status, lateMinutes },
+    });
+
+    const lateLabel = lateMinutes > 0
+      ? lateMinutes < 60 ? `${lateMinutes} min late` : `${Math.floor(lateMinutes / 60)}h ${lateMinutes % 60}m late`
+      : '';
+
+    return {
+      success: true, enrolled: true, alreadyClockedIn: false,
+      message: `Clocked in${lateLabel ? ` (${lateLabel})` : ''}`,
+      data: this.serializeRecord(record),
+    };
+  }
+
+  // ── Staff face enroll ─────────────────────────────────────────────────
+  async staffFaceEnroll(user: any, photoBuffer: Buffer) {
+    const token = process.env.LUXAND_TOKEN;
+    if (!token) throw new BadRequestException('Face recognition not configured');
+
+    // Liveness check
+    try {
+      const lf = new FormData();
+      lf.append('photo', photoBuffer, { filename: 'face.jpg', contentType: 'image/jpeg' });
+      const lr = await axios.post('https://api.luxand.cloud/photo/liveness/v2', lf, {
+        headers: { ...lf.getHeaders(), token }, timeout: 15000,
+      });
+      const ld = lr.data;
+      const score = ld?.liveness ?? ld?.score ?? 0;
+      this.logger.log('[staffFaceEnroll] Liveness score: ' + score);
+      if ((ld?.status ?? '') !== 'success' || score < 0.3) {
+        throw new ForbiddenException(`Liveness check failed (score: ${(score * 100).toFixed(0)}%). Please use a real live face.`);
+      }
+    } catch (e: any) {
+      if (e instanceof ForbiddenException || e instanceof BadRequestException) throw e;
+      throw new BadRequestException(e?.response?.data?.message ?? 'Liveness check failed. Please try again.');
+    }
+
+    const staffId = user.id ?? user.staffId;
+    const staff = await this.prisma.staff.findUnique({
+      where: { id: BigInt(staffId) },
+      include: { user: { select: { firstName: true, lastName: true } } },
+    });
+    if (!staff) throw new BadRequestException('Staff record not found');
+
+    // Already enrolled — update photo
+    if (staff.faceUuid) {
+      const form = new FormData();
+      form.append('photo', photoBuffer, { filename: 'face.jpg', contentType: 'image/jpeg' });
+      try {
+        await axios.post(`https://api.luxand.cloud/subject/v2/${staff.faceUuid}/photo`, form, {
+          headers: { ...form.getHeaders(), token }, timeout: 15000,
+        });
+      } catch { /* ignore */ }
+      return { success: true, message: 'Face updated successfully' };
+    }
+
+    // First enroll
+    const name = `${staff.user?.firstName ?? ''} ${staff.user?.lastName ?? ''}`.trim() || `Staff-${staffId}`;
+    const form = new FormData();
+    form.append('name', name);
+    form.append('photo', photoBuffer, { filename: 'face.jpg', contentType: 'image/jpeg' });
+
+    let result: any;
+    try {
+      const res = await axios.post('https://api.luxand.cloud/subject/v2', form, {
+        headers: { ...form.getHeaders(), token }, timeout: 15000,
+      });
+      result = res.data;
+      this.logger.log('[staffFaceEnroll] Luxand response: ' + JSON.stringify(result));
+    } catch (e: any) {
+      throw new BadRequestException(e?.response?.data?.message ?? 'Failed to enroll face');
+    }
+
+    const uuid = result?.uuid ?? (result?.id != null ? String(result.id) : null);
+    if (!uuid) throw new BadRequestException('No UUID returned from face recognition service');
+
+    await this.prisma.staff.update({ where: { id: staff.id }, data: { faceUuid: uuid } });
+    return { success: true, message: 'Face enrolled successfully. You can now clock in with your face.' };
+  }
 }

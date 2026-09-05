@@ -63,6 +63,23 @@ export class AttendanceController {
     return this.svc.faceEnroll(user, file.buffer);
   }
 
+  // ── Staff face recognition endpoints ──────────────────────────────────
+  @Post('face-clock-in')
+  @UseGuards(StaffGuard)
+  @UseInterceptors(FileInterceptor('photo', { limits: { fileSize: 5 * 1024 * 1024 } }))
+  staffFaceClockIn(@CurrentUser() user: any, @UploadedFile() file: Express.Multer.File) {
+    if (!file) throw new Error('No photo uploaded');
+    return this.svc.staffFaceClockIn(user, file.buffer);
+  }
+
+  @Post('face-enroll')
+  @UseGuards(StaffGuard)
+  @UseInterceptors(FileInterceptor('photo', { limits: { fileSize: 5 * 1024 * 1024 } }))
+  staffFaceEnroll(@CurrentUser() user: any, @UploadedFile() file: Express.Multer.File) {
+    if (!file) throw new Error('No photo uploaded');
+    return this.svc.staffFaceEnroll(user, file.buffer);
+  }
+
   // ── Debug: returns raw Luxand search response (student auth required) ──
   @Post('student/face-debug-search')
   @UseGuards(StudentGuard)

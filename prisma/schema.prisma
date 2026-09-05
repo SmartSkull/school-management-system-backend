@@ -183,6 +183,7 @@ model Staff {
   dateOfBirth   DateTime?
   homeAddress   String?   @db.Text
   about         String?   @db.Text
+  faceUuid      String?   @db.VarChar(255)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
