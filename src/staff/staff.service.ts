@@ -1546,7 +1546,18 @@ export class StaffService {
       where, orderBy: { createdAt: 'desc' },
       include: { topic: true, subject: true, classRoom: true },
     });
-    return this.ok(plans.map(p => ({ ...p, id: p.id.toString(), staffId: p.staffId.toString(), topicId: p.topicId?.toString(), subjectId: p.subjectId?.toString(), classRoomId: p.classRoomId?.toString(), topic: p.topic?.title, subject: p.subject?.name, classRoom: p.classRoom?.name })));
+    return this.ok(plans.map(p => ({
+      ...p,
+      id: p.id.toString(),
+      staffId: p.staffId.toString(),
+      topicId: p.topicId?.toString(),
+      subjectId: p.subjectId?.toString(),
+      classRoomId: p.classRoomId?.toString(),
+      reviewedBy: (p as any).reviewedBy?.toString() ?? null,
+      topic: p.topic?.title,
+      subject: p.subject?.name,
+      classRoom: p.classRoom?.name,
+    })));
   }
 
   async saveLessonPlan(user: any, body: any) {
@@ -1578,6 +1589,20 @@ export class StaffService {
     if (!plan || plan.staffId !== staff?.id) throw new NotFoundException('Lesson plan not found');
     await this.prisma.lessonPlan.delete({ where: { id: BigInt(id) } });
     return this.ok(null, 'Lesson plan deleted');
+  }
+
+  // Submit a lesson plan for admin review
+  async submitLessonPlanForReview(user: any, id: string) {
+    const staff = await this.prisma.staff.findUnique({ where: { userId: this.userId(user) } });
+    const plan = await this.prisma.lessonPlan.findUnique({ where: { id: BigInt(id) } });
+    if (!plan || plan.staffId !== staff?.id) throw new NotFoundException('Lesson plan not found');
+    if ((plan as any).status === 'SUBMITTED') throw new BadRequestException('Already submitted for review');
+    if ((plan as any).status === 'APPROVED') throw new BadRequestException('This plan is already approved');
+    await this.prisma.lessonPlan.update({
+      where: { id: BigInt(id) },
+      data: { status: 'SUBMITTED' } as any,
+    });
+    return this.ok(null, 'Lesson plan submitted for review');
   }
 
   async getWeeklySchemes(user: any, q: any) {

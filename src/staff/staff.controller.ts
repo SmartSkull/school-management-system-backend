@@ -106,6 +106,7 @@ export class StaffController {
   @Get('curriculum/lesson-plans') getLessonPlans(@CurrentUser() user: any, @Query() q: any) { return this.svc.getLessonPlans(user, q); }
   @Post('curriculum/lesson-plans') saveLessonPlan(@CurrentUser() user: any, @Body() body: any) { return this.svc.saveLessonPlan(user, body); }
   @Delete('curriculum/lesson-plans/:id') deleteLessonPlan(@CurrentUser() user: any, @Param('id') id: string) { return this.svc.deleteLessonPlan(user, id); }
+  @Post('curriculum/lesson-plans/:id/submit') submitLessonPlan(@CurrentUser() user: any, @Param('id') id: string) { return this.svc.submitLessonPlanForReview(user, id); }
 
   @Get('curriculum/weekly-schemes') getWeeklySchemes(@CurrentUser() user: any, @Query() q: any) { return this.svc.getWeeklySchemes(user, q); }
   @Post('curriculum/weekly-schemes') saveWeeklyScheme(@CurrentUser() user: any, @Body() body: any) { return this.svc.saveWeeklyScheme(user, body); }

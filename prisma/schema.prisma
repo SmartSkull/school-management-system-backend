@@ -849,6 +849,10 @@ model LessonPlan {
   evaluation  String?         @db.Text
   date        DateTime?       @db.Date
   duration    Int?
+  status      String          @default("DRAFT") @db.VarChar(20)
+  reviewComment String?       @db.Text
+  reviewedAt  DateTime?
+  reviewedBy  BigInt?
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 

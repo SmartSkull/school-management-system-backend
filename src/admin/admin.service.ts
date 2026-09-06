@@ -1758,4 +1758,77 @@ export class AdminService {
     }
     return this.ok({ signature: url }, 'Signature uploaded successfully');
   }
+
+  // ── Curriculum: lesson plan review ───────────────────────────────────────
+  async getAdminLessonPlans(user: any, q: any) {
+    const schoolId = this.schoolId(user);
+    // Fetch all lesson plans for this school via staff → user → schoolId
+    const plans = await this.prisma.lessonPlan.findMany({
+      where: {
+        staff: { user: { schoolId: schoolId ? BigInt(schoolId) : undefined } },
+        ...(q.status ? { status: q.status } : {}),
+      },
+      orderBy: { updatedAt: 'desc' },
+      include: {
+        topic: { select: { title: true } },
+        subject: { select: { name: true } },
+        classRoom: { select: { name: true } },
+        staff: { include: { user: { select: { firstName: true, lastName: true, uniqueId: true } } } },
+      },
+    });
+    return this.ok(plans.map(p => ({
+      id: p.id.toString(),
+      title: p.title,
+      objectives: p.objectives,
+      content: p.content,
+      resources: p.resources,
+      evaluation: p.evaluation,
+      date: p.date,
+      duration: p.duration,
+      status: (p as any).status ?? 'DRAFT',
+      reviewComment: (p as any).reviewComment ?? null,
+      reviewedAt: (p as any).reviewedAt ?? null,
+      topic: p.topic?.title ?? null,
+      subject: p.subject?.name ?? null,
+      classRoom: p.classRoom?.name ?? null,
+      staffName: `${p.staff?.user?.firstName ?? ''} ${p.staff?.user?.lastName ?? ''}`.trim(),
+      staffId: p.staff?.user?.uniqueId ?? null,
+      createdAt: p.createdAt,
+      updatedAt: p.updatedAt,
+    })));
+  }
+
+  async reviewLessonPlan(user: any, id: string, body: { status: string; comment?: string }) {
+    const { status, comment } = body;
+    const allowed = ['APPROVED', 'NEEDS_REVISION'];
+    if (!allowed.includes(status)) throw new BadRequestException(`Status must be one of: ${allowed.join(', ')}`);
+
+    const plan = await this.prisma.lessonPlan.findUnique({ where: { id: BigInt(id) } });
+    if (!plan) throw new NotFoundException('Lesson plan not found');
+    if ((plan as any).status !== 'SUBMITTED') throw new BadRequestException('Only submitted lesson plans can be reviewed');
+
+    await this.prisma.lessonPlan.update({
+      where: { id: BigInt(id) },
+      data: {
+        status,
+        reviewComment: comment ?? null,
+        reviewedAt: new Date(),
+        reviewedBy: BigInt(user.authUserId ?? user.userId ?? user.id),
+      } as any,
+    });
+
+    // Notify the staff member
+    const staffRecord = await this.prisma.staff.findUnique({
+      where: { id: plan.staffId },
+      include: { user: { select: { id: true } } },
+    });
+    if (staffRecord?.user?.id) {
+      const msg = status === 'APPROVED'
+        ? 'Your lesson plan has been approved.'
+        : `Your lesson plan needs revision: ${comment ?? 'See review comments.'}`;
+      await this.notificationService.notify(staffRecord.user.id, 'Lesson Plan Review', msg);
+    }
+
+    return this.ok(null, status === 'APPROVED' ? 'Lesson plan approved' : 'Revision requested');
+  }
 }

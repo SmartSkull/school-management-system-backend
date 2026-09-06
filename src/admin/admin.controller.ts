@@ -177,4 +177,8 @@ export class AdminController {
 
   // Staff performance
   @Get('staff/performance') getStaffPerformance(@CurrentUser() user: any) { return this.svc.getStaffPerformance(user); }
+
+  // Curriculum — lesson plan review
+  @Get('curriculum/lesson-plans') getAdminLessonPlans(@CurrentUser() user: any, @Query() q: any) { return this.svc.getAdminLessonPlans(user, q); }
+  @Post('curriculum/lesson-plans/:id/review') reviewLessonPlan(@CurrentUser() user: any, @Param('id') id: string, @Body() body: any) { return this.svc.reviewLessonPlan(user, id, body); }
 }
