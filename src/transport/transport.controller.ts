@@ -108,3 +108,36 @@ export class BusFeeCallbackController {
     return this.service.verifyBusFeePayment(reference || trxref);
   }
 }
+
+
+// ── Public parent pickup confirmation endpoint (no auth — email link) ──────
+import { Controller as C4, Get as G4, Param as Pm4, Query as Q4, Res as Res4 } from '@nestjs/common';
+import type { Response } from 'express';
+
+@C4('transport')
+export class ParentPickupConfirmController {
+  constructor(private service: TransportService) {}
+
+  @G4('parent-confirm/:token')
+  async confirm(
+    @Pm4('token') token: string,
+    @Q4('action') action: string,
+    @Res4() res: Response,
+  ) {
+    const boarded = action?.toUpperCase() === 'YES';
+    const result  = await this.service.handleParentPickupConfirm(token, boarded);
+    // Return a simple HTML page so the parent sees a clear confirmation message
+    const color   = boarded ? '#16a34a' : '#dc2626';
+    const icon    = boarded ? '✅' : '❌';
+    res.setHeader('Content-Type', 'text/html');
+    res.send(`<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+      <title>Pickup Confirmation</title>
+      <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:system-ui,sans-serif;background:#f8fafc;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}.card{background:#fff;border-radius:16px;padding:40px 32px;max-width:400px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,.1);text-align:center}.icon{font-size:56px;margin-bottom:16px}.title{font-size:22px;font-weight:700;color:${color};margin-bottom:8px}.msg{color:#6b7280;font-size:15px;line-height:1.6}</style>
+    </head><body><div class="card">
+      <div class="icon">${icon}</div>
+      <div class="title">${result.confirmed ? 'Confirmed' : 'Noted'}</div>
+      <div class="msg">${result.message}</div>
+      <p style="margin-top:24px;font-size:12px;color:#94a3b8">You can close this page.</p>
+    </div></body></html>`);
+  }
+}

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException, ForbiddenException, Inject, forwardRef } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, ForbiddenException, Inject, forwardRef, OnModuleInit } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { EmailService } from '../common/email.service';
 import { TransportGateway } from './transport.gateway';
@@ -20,12 +20,26 @@ function haversineMeters(lat1: number, lng1: number, lat2: number, lng2: number)
 }
 
 @Injectable()
-export class TransportService {
+export class TransportService implements OnModuleInit {
+
+  onModuleInit() {
+    // Run escalation check every 5 minutes
+    setInterval(() => this.escalateUnconfirmedPickups().catch(() => {}), 5 * 60 * 1000);
+  }
   constructor(
     private prisma: PrismaService,
     private email: EmailService,
     @Inject(forwardRef(() => TransportGateway)) private gateway: TransportGateway,
   ) {}
+
+  /** Fire-and-forget in-app notification via Prisma directly (avoids injecting NotificationService + its deps) */
+  private async notify(userId: bigint | number, title: string, message: string) {
+    try {
+      await this.prisma.notification.create({
+        data: { userId: BigInt(userId), title, message, type: 'INFO' },
+      });
+    } catch { /* silent — notification failure must not break transport flow */ }
+  }
 
   private ok(data: any = null, message = 'Success') { return { success: true, data, message }; }
   private sid(user: any): bigint | undefined { return user?.schoolId ? BigInt(user.schoolId) : undefined; }
@@ -285,27 +299,13 @@ export class TransportService {
         if (!busTracker.has(uid)) {
           busTracker.set(uid, now); // first time within 50m
         } else if (now - busTracker.get(uid)! >= DWELL_MS) {
-          // Bus has been within 50m for ≥15 s → confirm pickup
-          busTracker.delete(uid);
-          const pickedUpAt = new Date();
-          await this.prisma.transportAssignment.update({
-            where: { id: a.id },
-            data: { pickedUp: true, pickedUpAt },
-          });
-          // Broadcast to admin watchers
-          if (this.gateway) {
-            this.gateway.broadcastPickup(busId, uid, true, pickedUpAt.toISOString());
+          // Bus has been within 50m for ≥15 s
+          // Do NOT auto-confirm — send parent a confirmation request instead
+          const currentStatus = (a as any).pickupStatus;
+          if (currentStatus === 'SCHEDULED' || currentStatus === null || currentStatus === undefined) {
+            busTracker.delete(uid);
+            await this.requestParentPickupConfirmation(a, s, bus);
           }
-          // Email parent
-          const parentEmail = s.parentEmail ?? s.user.email ?? '';
-          this.email.sendStudentPickedUp({
-            parentEmail,
-            studentName: `${s.user.firstName} ${s.user.lastName}`,
-            plateNumber: bus.plateNumber,
-            routeName: (bus.route as any)?.name,
-            pickedUpAt,
-            schoolName: (bus.school as any)?.name ?? 'School',
-          });
         }
       } else {
         // Bus moved away — reset dwell timer for this student
@@ -1118,5 +1118,208 @@ export class TransportService {
     const token = crypto.randomBytes(24).toString('hex');
     const trackingUrl = `${process.env.APP_URL || 'https://www.smartcampus.com.ng'}/parent/track/${token}`;
     return this.ok({ trackingUrl, busId: String(bus.id), plateNumber: bus.plateNumber, routeName: bus.route?.name });
+  }
+
+  // ── Parent pickup confirmation flow ──────────────────────────────────────
+
+  /**
+   * Called when the bus dwells at a student's stop.
+   * Sets status to PENDING_CONFIRMATION and emails the parent
+   * two action links: "Yes, boarded" and "No, not picked up".
+   */
+  async requestParentPickupConfirmation(assignment: any, student: any, bus: any) {
+    const token = crypto.randomBytes(24).toString('hex');
+    const appUrl = process.env.APP_URL || 'https://www.smartcampus.com.ng';
+    const confirmUrl = `${appUrl}/api/transport/parent-confirm/${token}?action=YES`;
+    const denyUrl    = `${appUrl}/api/transport/parent-confirm/${token}?action=NO`;
+
+    await this.prisma.transportAssignment.update({
+      where: { id: assignment.id },
+      data: {
+        pickupStatus:       'PENDING_CONFIRMATION',
+        parentConfirmToken: token,
+        pendingConfirmAt:   new Date(),
+      } as any,
+    });
+
+    const studentName  = `${student.user.firstName} ${student.user.lastName}`;
+    const parentEmail  = student.parentEmail ?? student.user.email ?? '';
+    const plateNumber  = bus.plateNumber;
+    const routeName    = bus.route?.name ?? '';
+    const schoolName   = bus.school?.name ?? 'School';
+
+    if (parentEmail) {
+      await this.email.sendGeneric({
+        to: parentEmail,
+        subject: `⚠️ Did ${studentName} board the bus?`,
+        text: `
+The school bus (${plateNumber}${routeName ? ` · ${routeName}` : ''}) has just passed ${studentName}'s stop at ${new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}.
+
+Please confirm whether your child boarded the bus:
+
+✅ YES — ${studentName} boarded:
+${confirmUrl}
+
+❌ NO — ${studentName} was NOT picked up:
+${denyUrl}
+
+If we don't hear from you within 10 minutes, we will alert the school admin to follow up.
+
+— ${schoolName} Transport System
+        `.trim(),
+      });
+    }
+
+    // Also send an in-app notification to the student's user account
+    const studentUser = await this.prisma.user.findFirst({
+      where: { uniqueId: student.user.uniqueId, role: 'STUDENT' },
+      select: { id: true },
+    });
+    if (studentUser) {
+      this.notify(
+        studentUser.id,
+        'Did you board the bus?',
+        `The bus has been at your stop. Please ask your parent to confirm your boarding via the email we just sent.`,
+      );
+    }
+  }
+
+  /**
+   * Parent clicks YES or NO in the confirmation email.
+   * Token is single-use — deleted after first use.
+   */
+  async handleParentPickupConfirm(token: string, boarded: boolean) {
+    const assignment = await this.prisma.transportAssignment.findFirst({
+      where: { parentConfirmToken: token } as any,
+      include: {
+        student: {
+          include: {
+            user: { select: { firstName: true, lastName: true, uniqueId: true, email: true, id: true } },
+          },
+        },
+        bus: {
+          include: {
+            school: { select: { name: true } },
+            route:  { select: { name: true } },
+          },
+        },
+      },
+    });
+
+    if (!assignment) {
+      return { success: false, message: 'Confirmation link is invalid or has already been used.' };
+    }
+
+    const studentName = `${assignment.student.user.firstName} ${assignment.student.user.lastName}`;
+
+    if (boarded) {
+      // ── Parent confirms child boarded ────────────────────────────────
+      const pickedUpAt = new Date();
+      await this.prisma.transportAssignment.update({
+        where: { id: assignment.id },
+        data: {
+          pickupStatus:       'CONFIRMED',
+          parentConfirmToken: null,
+          pickedUp:           true,
+          pickedUpAt,
+        } as any,
+      });
+
+      // Broadcast confirmed pickup to admin watchers
+      if (this.gateway) {
+        this.gateway.broadcastPickup(
+          String(assignment.busId),
+          assignment.student.user.uniqueId,
+          true,
+          pickedUpAt.toISOString(),
+        );
+      }
+
+      return {
+        success: true,
+        confirmed: true,
+        message: `✅ Thank you! We've recorded that ${studentName} boarded the bus.`,
+      };
+
+    } else {
+      // ── Parent says child was NOT picked up ──────────────────────────
+      await this.prisma.transportAssignment.update({
+        where: { id: assignment.id },
+        data: {
+          pickupStatus:       'MISSED',
+          parentConfirmToken: null,
+        } as any,
+      });
+
+      // Alert admin via notification
+      const schoolId = (assignment.bus as any).schoolId;
+      if (schoolId) {
+        const admins = await this.prisma.user.findMany({
+          where: { role: 'ADMIN', schoolId: BigInt(schoolId) },
+          select: { id: true },
+        });
+        for (const admin of admins) {
+          this.notify(
+            admin.id,
+            '🚨 Student NOT Picked Up',
+            `${studentName} was NOT picked up by bus ${(assignment.bus as any).plateNumber}. Parent confirmed the bus passed their stop without picking up the child.`,
+          );
+        }
+      }
+
+      return {
+        success: true,
+        confirmed: false,
+        message: `❌ Noted. We've alerted the school admin that ${studentName} was not picked up. Someone will follow up shortly.`,
+      };
+    }
+  }
+
+  /**
+   * Scheduled job: runs every 5 minutes.
+   * For any assignment stuck in PENDING_CONFIRMATION for > 10 mins
+   * with no parent response, escalate to admin.
+   */
+  async escalateUnconfirmedPickups() {
+    const cutoff = new Date(Date.now() - 10 * 60 * 1000); // 10 minutes ago
+    const stale = await this.prisma.transportAssignment.findMany({
+      where: {
+        pickupStatus:    'PENDING_CONFIRMATION',
+        pendingConfirmAt: { lt: cutoff },
+      } as any,
+      include: {
+        student: {
+          include: { user: { select: { firstName: true, lastName: true } } },
+        },
+        bus: {
+          include: { school: { select: { id: true, name: true } } },
+        },
+      },
+    });
+
+    for (const a of stale) {
+      const studentName = `${a.student.user.firstName} ${a.student.user.lastName}`;
+      const schoolId    = (a.bus.school as any)?.id;
+
+      // Mark as UNCONFIRMED so it doesn't keep re-alerting
+      await this.prisma.transportAssignment.update({
+        where: { id: a.id },
+        data: { pickupStatus: 'UNCONFIRMED', parentConfirmToken: null } as any,
+      });
+
+      if (schoolId) {
+        const admins = await this.prisma.user.findMany({
+          where: { role: 'ADMIN', schoolId: BigInt(schoolId) },
+          select: { id: true },
+        });
+        for (const admin of admins) {
+          this.notify(
+            admin.id,
+            '⚠️ Unconfirmed Pickup — Action Required',
+            `No parent response for ${studentName} on bus ${(a.bus as any).plateNumber}. Pickup status is unconfirmed — please verify manually.`,
+          );
+        }
+      }
+    }
   }
 }

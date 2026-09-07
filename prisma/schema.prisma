@@ -1081,6 +1081,9 @@ model TransportAssignment {
   absentToday Boolean   @default(false)
   pickedUp    Boolean   @default(false)
   pickedUpAt  DateTime?
+  pickupStatus        String?   @default("SCHEDULED") @db.VarChar(30)
+  parentConfirmToken  String?   @db.VarChar(100)
+  pendingConfirmAt    DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
