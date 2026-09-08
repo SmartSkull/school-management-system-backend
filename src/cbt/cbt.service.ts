@@ -782,7 +782,54 @@ export class CbtService {
       }));
 
     const { count } = await this.prisma.cbtQuestion.createMany({ data: rows, skipDuplicates: false });
-    return this.ok({ count }, `Successfully imported ${count} questions`);
+    return this.ok({ count, testId: test.id.toString() }, `Successfully imported ${count} questions`);
+  }
+
+  async replaceOwnTestQuestions(user: any, testId: string, body: any) {
+    const { data, duration } = body;
+    if (!Array.isArray(data) || !data.length) throw new BadRequestException('Missing questions data');
+
+    const staffUserId = BigInt(user.authUserId ?? user.userId ?? user.id);
+    const staff = await this.prisma.staff.findFirst({ where: { userId: staffUserId } });
+    if (!staff) throw new ForbiddenException('Staff profile was not found');
+
+    const test = await this.prisma.cbtTest.findUnique({ where: { id: BigInt(testId) } });
+    if (!test) throw new NotFoundException('Test not found');
+
+    const ownQuestions = await this.prisma.cbtQuestion.findMany({
+      where: { testId: test.id, staffId: staff.id },
+      select: { id: true },
+    });
+    const ownQuestionIds = ownQuestions.map((question) => question.id);
+    const submitted = ownQuestionIds.length ? await this.prisma.cbtAnswer.count({ where: { questionId: { in: ownQuestionIds } } }) : 0;
+    if (submitted > 0) throw new BadRequestException('This test already has submitted answers and cannot be edited.');
+
+    const rows = data
+      .filter((item: any) => item.question && item.answer)
+      .map((item: any) => ({
+        testId: test.id,
+        staffId: staff.id,
+        subjectId: test.subjectId,
+        question: item.question,
+        optionA: item.option1 || '',
+        optionB: item.option2 || '',
+        optionC: item.option3 || null,
+        optionD: item.option4 || null,
+        answer: item.answer,
+        sectionLabel: item.sectionLabel || null,
+        sectionOrder: parseInt(String(item.sectionOrder ?? 0), 10) || 0,
+      }));
+    if (!rows.length) throw new BadRequestException('No complete questions to update');
+
+    await this.prisma.$transaction(async (tx) => {
+      if (ownQuestionIds.length) {
+        await tx.cbtAnswer.deleteMany({ where: { questionId: { in: ownQuestionIds } } });
+        await tx.cbtQuestion.deleteMany({ where: { id: { in: ownQuestionIds } } });
+      }
+      await tx.cbtQuestion.createMany({ data: rows });
+      if (duration) await tx.cbtTest.update({ where: { id: test.id }, data: { durationMin: parseInt(duration, 10) || test.durationMin } });
+    });
+    return this.ok({ count: rows.length, testId: test.id.toString() }, `Updated ${rows.length} questions`);
   }
 
 

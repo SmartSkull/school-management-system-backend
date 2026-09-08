@@ -104,6 +104,12 @@ export class CbtController {
   @UseGuards(StaffGuard)
   bulkCreate(@CurrentUser() user: any, @Body() body: any) { return this.svc.bulkCreate(user, body); }
 
+  @Put('staff/cbt/tests/:id/questions')
+  @UseGuards(StaffGuard)
+  replaceOwnTestQuestions(@CurrentUser() user: any, @Param('id') id: string, @Body() body: any) {
+    return this.svc.replaceOwnTestQuestions(user, id, body);
+  }
+
   @Post('admin/cbt/questions')
   @UseGuards(AdminGuard)
   adminCreateQuestion(@CurrentUser() user: any, @Body() body: any) { return this.svc.createQuestion(user, body); }
