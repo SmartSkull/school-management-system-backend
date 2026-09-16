@@ -50,9 +50,17 @@ export class AttendanceController {
   @Post('student/face-clock-in')
   @UseGuards(StudentGuard)
   @UseInterceptors(FileInterceptor('photo', { limits: { fileSize: 5 * 1024 * 1024 } }))
-  faceClockIn(@CurrentUser() user: any, @UploadedFile() file: Express.Multer.File) {
+  faceClockIn(
+    @CurrentUser() user: any,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: { latitude?: string; longitude?: string },
+  ) {
     if (!file) throw new Error('No photo uploaded');
-    return this.svc.faceClockIn(user, file.buffer);
+    // Multipart text fields arrive as strings.
+    return this.svc.faceClockIn(user, file.buffer, {
+      latitude: body?.latitude != null ? Number(body.latitude) : undefined,
+      longitude: body?.longitude != null ? Number(body.longitude) : undefined,
+    });
   }
 
   @Post('student/face-enroll')
@@ -67,9 +75,17 @@ export class AttendanceController {
   @Post('face-clock-in')
   @UseGuards(StaffGuard)
   @UseInterceptors(FileInterceptor('photo', { limits: { fileSize: 5 * 1024 * 1024 } }))
-  staffFaceClockIn(@CurrentUser() user: any, @UploadedFile() file: Express.Multer.File) {
+  staffFaceClockIn(
+    @CurrentUser() user: any,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: { latitude?: string; longitude?: string },
+  ) {
     if (!file) throw new Error('No photo uploaded');
-    return this.svc.staffFaceClockIn(user, file.buffer);
+    // Multipart text fields arrive as strings.
+    return this.svc.staffFaceClockIn(user, file.buffer, {
+      latitude: body?.latitude != null ? Number(body.latitude) : undefined,
+      longitude: body?.longitude != null ? Number(body.longitude) : undefined,
+    });
   }
 
   @Post('face-enroll')

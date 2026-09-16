@@ -50,12 +50,37 @@ export class AttendanceService {
     return studentUser;
   }
 
-  // ── Staff: clock in ────────────────────────────────────────────────────
-  async clockIn(user: any, body: { latitude: number; longitude: number; deviceId?: string }) {
-    const { latitude, longitude, deviceId } = body;
-    if (latitude == null || longitude == null) throw new BadRequestException('Location required');
+  /**
+   * The Staff row for whoever is acting. A staff login already carries it, but
+   * an admin logs in as a User, so their linked staff record is looked up —
+   * without this an admin's clock-in would be filed against a user id. Admins
+   * normally get a staff record when the account is created; older migrations
+   * only gave them to staff, so one is created here if it is missing.
+   */
+  private async staffRecordFor(user: any): Promise<bigint> {
+    if (user?.role === 'staff') return BigInt(user.id ?? user.staffId);
 
-    const schoolId = user.schoolId ?? user.user?.schoolId;
+    const userId = this.userId(user);
+    const staff = await this.prisma.staff.upsert({
+      where: { userId },
+      update: {},
+      create: {
+        userId,
+        staffNo: user.uniqueId ?? String(userId),
+        staffRole: user.role === 'admin' ? 'Administrator' : null,
+      },
+      select: { id: true },
+    });
+    return staff.id;
+  }
+
+  /**
+   * The school's active attendance location, once the given coordinates are
+   * confirmed to sit inside its radius. Every clock-in path goes through this,
+   * so the geofence is enforced identically whatever the identification method.
+   */
+  private async locationWithinRange(schoolId: any, latitude?: number, longitude?: number) {
+    if (latitude == null || longitude == null) throw new BadRequestException('Location required');
     if (!schoolId) throw new ForbiddenException('No school associated');
 
     const location = await this.prisma.attendanceLocation.findFirst({
@@ -69,8 +94,15 @@ export class AttendanceService {
         `You are ${Math.round(dist)}m away from the allowed location (${location.radiusMeters}m radius). Clock-in denied.`,
       );
     }
+    return location;
+  }
 
-    const staffId = user.id ?? user.staffId;
+  // ── Staff: clock in ────────────────────────────────────────────────────
+  async clockIn(user: any, body: { latitude: number; longitude: number; deviceId?: string }) {
+    const { latitude, longitude, deviceId } = body;
+    const location = await this.locationWithinRange(user.schoolId ?? user.user?.schoolId, latitude, longitude);
+
+    const staffId = await this.staffRecordFor(user);
     const today = todayDate();
 
     const existing = await this.prisma.staffAttendance.findUnique({
@@ -152,7 +184,7 @@ export class AttendanceService {
     const { latitude, longitude } = body;
     if (latitude == null || longitude == null) throw new BadRequestException('Location required');
 
-    const staffId = user.id ?? user.staffId;
+    const staffId = await this.staffRecordFor(user);
     const today = todayDate();
 
     const record = await this.prisma.staffAttendance.findUnique({
@@ -181,7 +213,7 @@ export class AttendanceService {
 
   // ── Staff: today status ────────────────────────────────────────────────
   async todayStatus(user: any) {
-    const staffId = user.id ?? user.staffId;
+    const staffId = await this.staffRecordFor(user);
     const today = todayDate();
 
     const record = await this.prisma.staffAttendance.findUnique({
@@ -205,7 +237,7 @@ export class AttendanceService {
 
   // ── Staff: own history ─────────────────────────────────────────────────
   async myHistory(user: any, query: any) {
-    const staffId = user.id ?? user.staffId;
+    const staffId = await this.staffRecordFor(user);
     const { month, year } = query;
 
     const where: any = { staffId: BigInt(staffId) };
@@ -349,22 +381,7 @@ export class AttendanceService {
   // ── Student: clock in ─────────────────────────────────────────────────
   async studentClockIn(user: any, body: { latitude: number; longitude: number; deviceId?: string }) {
     const { latitude, longitude, deviceId } = body;
-    if (latitude == null || longitude == null) throw new BadRequestException('Location required');
-
-    const schoolId = user.schoolId ?? user.user?.schoolId;
-    if (!schoolId) throw new ForbiddenException('No school associated');
-
-    const location = await this.prisma.attendanceLocation.findFirst({
-      where: { schoolId: BigInt(schoolId), isActive: true },
-    });
-    if (!location) throw new BadRequestException('No attendance location configured by admin');
-
-    const dist = distanceMetres(latitude, longitude, location.latitude, location.longitude);
-    if (dist > location.radiusMeters) {
-      throw new ForbiddenException(
-        `You are ${Math.round(dist)}m away from the allowed location (${location.radiusMeters}m radius). Clock-in denied.`,
-      );
-    }
+    const location = await this.locationWithinRange(user.schoolId ?? user.user?.schoolId, latitude, longitude);
 
     const studentId = (await this.getStudentUser(user)).uniqueId;
     const today = todayDate();
@@ -965,7 +982,11 @@ export class AttendanceService {
   // ── Face recognition: clock in ────────────────────────────────────────
   // 1. Send photo to Luxand search. If found → identify student → clock in.
   // 2. If not found → return enrolled:false so frontend prompts enrollment.
-  async faceClockIn(user: any, photoBuffer: Buffer) {
+  async faceClockIn(user: any, photoBuffer: Buffer, coords: { latitude?: number; longitude?: number } = {}) {
+    // A matching face proves who you are, not where you are — the same geofence
+    // as the location clock-in applies here, and before the paid face lookup.
+    const location = await this.locationWithinRange(user.schoolId ?? user.user?.schoolId, coords.latitude, coords.longitude);
+
     const token = process.env.LUXAND_TOKEN;
     if (!token) throw new BadRequestException('Face recognition not configured');
 
@@ -1004,7 +1025,7 @@ export class AttendanceService {
     // Look up which student owns this faceUuid
     const student = await this.prisma.student.findFirst({
       where: { faceUuid: matchedUuid },
-      include: { user: { select: { uniqueId: true, schoolId: true } } },
+      include: { user: { select: { uniqueId: true } } },
     });
 
     if (!student || !student.user) {
@@ -1013,12 +1034,6 @@ export class AttendanceService {
     }
 
     // Clock in the matched student
-    const schoolId = student.user.schoolId;
-    const location = schoolId
-      ? await this.prisma.attendanceLocation.findFirst({ where: { schoolId: BigInt(schoolId), isActive: true } })
-      : null;
-    if (!location) throw new BadRequestException('No attendance location configured by admin');
-
     const studentId = student.user.uniqueId;
     const today     = todayDate();
 
@@ -1192,7 +1207,11 @@ export class AttendanceService {
   }
 
   // ── Staff face clock-in ───────────────────────────────────────────────
-  async staffFaceClockIn(user: any, photoBuffer: Buffer) {
+  async staffFaceClockIn(user: any, photoBuffer: Buffer, coords: { latitude?: number; longitude?: number } = {}) {
+    // A matching face proves who you are, not where you are — the same geofence
+    // as the location clock-in applies here, and before the paid face lookup.
+    const location = await this.locationWithinRange(user.schoolId ?? user.user?.schoolId, coords.latitude, coords.longitude);
+
     const token = process.env.LUXAND_TOKEN;
     if (!token) throw new BadRequestException('Face recognition not configured');
 
@@ -1228,12 +1247,11 @@ export class AttendanceService {
     }
 
     // Verify this matches the logged-in staff member
-    const staffId = user.id ?? user.staffId;
+    const staffId = await this.staffRecordFor(user);
     if (staff.id !== BigInt(staffId)) {
       throw new ForbiddenException('Face does not match your registered face. Please use your own face.');
     }
 
-    // Clock in directly (no geo required for face clock-in)
     const today = todayDate();
     const existing = await this.prisma.staffAttendance.findUnique({
       where: { staffId_date: { staffId: staff.id, date: today } },
@@ -1242,16 +1260,8 @@ export class AttendanceService {
       return { success: true, enrolled: true, alreadyClockedIn: true, message: 'Already clocked in today' };
     }
 
-    const schoolId = (await this.prisma.staff.findUnique({
-      where: { id: staff.id }, include: { user: { select: { schoolId: true } } },
-    }))?.user?.schoolId;
-
-    const location = schoolId
-      ? await this.prisma.attendanceLocation.findFirst({ where: { schoolId: BigInt(schoolId), isActive: true } })
-      : null;
-
     const now = new Date();
-    const [rHour, rMin] = (location?.resumptionTime ?? '08:00').split(':').map(Number);
+    const [rHour, rMin] = (location.resumptionTime ?? '08:00').split(':').map(Number);
     const cutoff = new Date(today);
     cutoff.setHours(rHour, rMin, 0, 0);
     const lateMinutes = now > cutoff ? Math.floor((now.getTime() - cutoff.getTime()) / 60000) : 0;
@@ -1259,8 +1269,8 @@ export class AttendanceService {
 
     const record = await this.prisma.staffAttendance.upsert({
       where: { staffId_date: { staffId: staff.id, date: today } },
-      create: { staffId: staff.id, locationId: location?.id, date: today, clockIn: now, status, lateMinutes },
-      update: { clockIn: now, locationId: location?.id, status, lateMinutes },
+      create: { staffId: staff.id, locationId: location.id, date: today, clockIn: now, status, lateMinutes },
+      update: { clockIn: now, locationId: location.id, status, lateMinutes },
     });
 
     const lateLabel = lateMinutes > 0
@@ -1297,7 +1307,7 @@ export class AttendanceService {
       throw new BadRequestException(e?.response?.data?.message ?? 'Liveness check failed. Please try again.');
     }
 
-    const staffId = user.id ?? user.staffId;
+    const staffId = await this.staffRecordFor(user);
     const staff = await this.prisma.staff.findUnique({
       where: { id: BigInt(staffId) },
       include: { user: { select: { firstName: true, lastName: true } } },

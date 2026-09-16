@@ -1421,10 +1421,26 @@ export class StaffService {
     const schoolId = this.schoolId(user);
     const rows = await this.prisma.classTimetable.findMany({
       where: schoolId ? { classRoom: { schoolId } } : {},
-      include: { classRoom: true },
+      include: {
+        classRoom: true,
+        staff: { include: { user: { select: { firstName: true, lastName: true, uniqueId: true, image: true } } } },
+      },
       orderBy: { createdAt: 'desc' },
     });
-    return this.ok(rows.map(r => ({ ...r, id: r.id.toString(), classRoomId: r.classRoomId.toString(), classRoom: r.classRoom?.name })));
+    return this.ok(rows.map(r => ({
+      id: r.id.toString(),
+      classRoomId: r.classRoomId.toString(),
+      classRoom: r.classRoom?.name,
+      staffId: r.staffId ? r.staffId.toString() : null,
+      content: r.content,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
+      teacher: r.staff ? {
+        name: `${r.staff.user.firstName} ${r.staff.user.lastName}`,
+        uniqueId: r.staff.user.uniqueId,
+        image: r.staff.user.image ?? null,
+      } : null,
+    })));
   }
 
   async saveClassTimetable(user: any, body: any) {
@@ -1444,13 +1460,49 @@ export class StaffService {
     return this.ok(null, 'Class timetable deleted');
   }
 
+  async getTimetableSchedulerConfig(user: any) {
+    const schoolId = this.schoolId(user);
+    if (!schoolId) throw new BadRequestException('School context is required');
+    const config = await this.prisma.timetableSchedulerConfig.findUnique({ where: { schoolId } });
+    return this.ok(config ? { content: config.content, updatedAt: config.updatedAt } : null);
+  }
+
+  async saveTimetableSchedulerConfig(user: any, body: any) {
+    const schoolId = this.schoolId(user);
+    if (!schoolId) throw new BadRequestException('School context is required');
+    if (typeof body?.content !== 'string' || !body.content.trim()) {
+      throw new BadRequestException('Scheduler configuration is required');
+    }
+    await this.prisma.timetableSchedulerConfig.upsert({
+      where: { schoolId },
+      create: { schoolId, content: body.content },
+      update: { content: body.content },
+    });
+    return this.ok(null, 'Timetable scheduler settings saved');
+  }
+
   async getExamTimetables(user: any) {
     const schoolId = this.schoolId(user);
     const rows = await this.prisma.examTimetable.findMany({
       where: schoolId ? { staff: { user: { schoolId } } } : {},
+      include: {
+        staff: { include: { user: { select: { firstName: true, lastName: true, uniqueId: true, image: true } } } },
+      },
       orderBy: { createdAt: 'desc' },
     });
-    return this.ok(rows.map(r => ({ ...r, id: r.id.toString() })));
+    return this.ok(rows.map(r => ({
+      id: r.id.toString(),
+      level: r.level,
+      staffId: r.staffId ? r.staffId.toString() : null,
+      content: r.content,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
+      teacher: r.staff ? {
+        name: `${r.staff.user.firstName} ${r.staff.user.lastName}`,
+        uniqueId: r.staff.user.uniqueId,
+        image: r.staff.user.image ?? null,
+      } : null,
+    })));
   }
 
   async saveExamTimetable(user: any, body: any) {

@@ -98,6 +98,7 @@ model School {
   transportRoutes     TransportRoute[]
   transportDrivers    TransportDriver[]
   transportBuses      TransportBus[]
+  timetableSchedulerConfig TimetableSchedulerConfig?
 }
 
 model User {
@@ -629,6 +630,16 @@ model ExamTimetable {
   updatedAt DateTime @updatedAt
 
   staff     Staff?   @relation(fields: [staffId], references: [id])
+}
+
+model TimetableSchedulerConfig {
+  id        BigInt   @id @default(autoincrement())
+  schoolId  BigInt   @unique
+  content   String   @db.LongText
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }
 
 model AttendanceLocation {

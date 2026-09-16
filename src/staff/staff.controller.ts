@@ -94,6 +94,8 @@ export class StaffController {
   @Get('timetable/class') getClassTimetables(@CurrentUser() user: any) { return this.svc.getClassTimetables(user); }
   @Post('timetable/class') saveClassTimetable(@CurrentUser() user: any, @Body() body: any) { return this.svc.saveClassTimetable(user, body); }
   @Delete('timetable/class/:id') deleteClassTimetable(@CurrentUser() user: any, @Param('id') id: string) { return this.svc.deleteClassTimetable(user, id); }
+  @Get('timetable/scheduler-config') getTimetableSchedulerConfig(@CurrentUser() user: any) { return this.svc.getTimetableSchedulerConfig(user); }
+  @Post('timetable/scheduler-config') saveTimetableSchedulerConfig(@CurrentUser() user: any, @Body() body: any) { return this.svc.saveTimetableSchedulerConfig(user, body); }
 
   @Get('timetable/exam') getExamTimetables(@CurrentUser() user: any) { return this.svc.getExamTimetables(user); }
   @Post('timetable/exam') saveExamTimetable(@CurrentUser() user: any, @Body() body: any) { return this.svc.saveExamTimetable(user, body); }
