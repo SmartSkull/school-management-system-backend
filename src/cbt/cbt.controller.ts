@@ -94,10 +94,12 @@ export class CbtController {
 
   @Post('staff/cbt/upload-image')
   @UseGuards(StaffGuard)
-  @UseInterceptors(FileInterceptor('image', { storage: diskStorage({ destination: './uploads/cbt-images', filename: (_, f, cb) => cb(null, `${Date.now()}-${Math.random().toString(36).slice(2)}${extname(f.originalname)}`) }) }))
+  // Memory storage, not disk: the file goes straight to Cloudinary. Writing it
+  // to ./uploads kept it only until the next deploy, after which every question
+  // that embedded it showed a broken image.
+  @UseInterceptors(FileInterceptor('image', { limits: { fileSize: 5 * 1024 * 1024 } }))
   uploadQuestionImage(@UploadedFile() file: Express.Multer.File) {
-    if (!file) throw new Error('No file uploaded');
-    return { success: true, data: { url: `/uploads/cbt-images/${file.filename}` } };
+    return this.svc.saveCbtImage(file);
   }
 
   @Post('staff/cbt/bulk-create')

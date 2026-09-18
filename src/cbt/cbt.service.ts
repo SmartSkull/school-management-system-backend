@@ -1,6 +1,7 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import * as fs from 'fs';
 import { PrismaService } from '../database/prisma.service';
+import { uploadToCloudinary } from '../common/cloudinary';
 
 @Injectable()
 export class CbtService {
@@ -8,6 +9,24 @@ export class CbtService {
 
   private ok(data: any = null, message = 'Success') {
     return { success: true, data, message };
+  }
+
+  /**
+   * Stores a question image on Cloudinary.
+   *
+   * This used to write to ./uploads/cbt-images on the server's own disk, which
+   * is ephemeral on the host we deploy to: the file survived until the next
+   * deploy or restart, and then every question referencing it broke — on the
+   * web and on the desktop alike, since both load the image from the server.
+   * Every other upload in the app already goes to Cloudinary for this reason.
+   */
+  async saveCbtImage(file: Express.Multer.File) {
+    if (!file?.buffer?.length) throw new BadRequestException('No image uploaded');
+    if (!file.mimetype?.startsWith('image/')) {
+      throw new BadRequestException('Only image files can be inserted into a question');
+    }
+    const url = await uploadToCloudinary(file, 'florieren/cbt');
+    return this.ok({ url }, 'Image uploaded');
   }
 
   async getAvailableTests(user: any) {
