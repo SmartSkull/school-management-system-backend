@@ -975,14 +975,24 @@ export class AdminService {
     const session = q.session || await this.getCurrentSession(user);
     const term = q.term || await this.getCurrentTerm(user);
     
-    const sessionWhere: any = { name: session };
-    if (schoolId) sessionWhere.schoolId = schoolId;
-    const termWhere: any = { name: term as any, sessionId: undefined };
+    let sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session, ...(schoolId ? { schoolId } : {}) } });
+    if (!sessionEntity) {
+      sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
+    }
     
-    const sessionEntity = await this.prisma.academicSession.findFirst({ where: sessionWhere });
-    if (sessionEntity) termWhere.sessionId = sessionEntity.id;
-    if (schoolId) termWhere.schoolId = schoolId;
-    const termEntity = await this.prisma.academicTerm.findFirst({ where: termWhere });
+    let termEntity: any = null;
+    if (sessionEntity) {
+      termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term as any, sessionId: sessionEntity.id } });
+    }
+    if (!termEntity) {
+      const termsByName = await this.prisma.academicTerm.findMany({ where: { name: term as any } });
+      if (termsByName.length > 0) {
+        termEntity = sessionEntity ? termsByName.find((t:any) => t.sessionId === sessionEntity.id) : termsByName[0];
+        if (!sessionEntity && termEntity) {
+          sessionEntity = await this.prisma.academicSession.findUnique({ where: { id: termEntity.sessionId } });
+        }
+      }
+    }
 
     const sessionListWhere = schoolId ? { schoolId } : {};
     const classWhere = schoolId ? { schoolId } : {};
@@ -1054,12 +1064,19 @@ export class AdminService {
     const session = q.session || await this.getCurrentSession(currentUser);
     const term = (q.term || await this.getCurrentTerm(currentUser)).toUpperCase();
 
-    const sessionWhere: any = { name: session };
-    if (schoolId) sessionWhere.schoolId = schoolId;
-    const sessionEntity = await this.prisma.academicSession.findFirst({ where: sessionWhere });
-    const termWhere: any = { name: term as any, sessionId: sessionEntity?.id };
-    if (schoolId) termWhere.schoolId = schoolId;
-    const termEntity = sessionEntity ? await this.prisma.academicTerm.findFirst({ where: termWhere }) : null;
+    let sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session, ...(schoolId ? { schoolId } : {}) } });
+    if (!sessionEntity) sessionEntity = await this.prisma.academicSession.findFirst({ where: { name: session } });
+    let termEntity: any = null;
+    if (sessionEntity) {
+      termEntity = await this.prisma.academicTerm.findFirst({ where: { name: term as any, sessionId: sessionEntity.id } });
+    }
+    if (!termEntity) {
+      const termsByName = await this.prisma.academicTerm.findMany({ where: { name: term as any } });
+      if (termsByName.length > 0) {
+        termEntity = sessionEntity ? termsByName.find((t:any)=>t.sessionId===sessionEntity.id) : termsByName[0];
+        if (!sessionEntity && termEntity) sessionEntity = await this.prisma.academicSession.findUnique({ where: { id: termEntity.sessionId } });
+      }
+    }
     const user = await this.prisma.user.findUnique({
       where: { uniqueId: studentId, ...(schoolId ? { schoolId } : {}) },
       include: { student: { include: { classRoom: true } } },
