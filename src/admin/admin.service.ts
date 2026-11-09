@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '../database/prisma.service';
 import { EmailService } from '../common/email.service';
@@ -752,10 +752,24 @@ export class AdminService {
     return this.ok(terms.map(t => ({ ...t, id: t.id.toString(), term: t.name, sessionName: t.session?.name })));
   }
 
-  async setCurrentTerm(termId: string) {
-    const term = await this.prisma.academicTerm.findUnique({ where: { id: BigInt(termId) } });
+  async setCurrentTerm(user: any, termId: string) {
+    const term = await this.prisma.academicTerm.findUnique({
+      where: { id: BigInt(termId) },
+      include: { session: true },
+    });
     if (!term) throw new BadRequestException('Term not found');
-    await this.prisma.academicTerm.updateMany({ where: { sessionId: term.sessionId }, data: { isCurrent: false } });
+
+    const schoolId = term.schoolId ?? term.session?.schoolId ?? null;
+    const adminSchool = this.schoolId(user);
+    if (adminSchool && schoolId && adminSchool !== schoolId) {
+      throw new ForbiddenException('Term belongs to another school');
+    }
+
+    // A school has exactly one current term: getCurrentTerm() reads isCurrent
+    // school-wide (not per session). Clearing only this term's own session used
+    // to leave a term in the other session still flagged, which is why the page
+    // showed two "Current" terms and the term could not be moved.
+    await this.prisma.academicTerm.updateMany({ where: { schoolId }, data: { isCurrent: false } });
     await this.prisma.academicTerm.update({ where: { id: BigInt(termId) }, data: { isCurrent: true } });
     return this.ok(null, 'Current term updated successfully');
   }

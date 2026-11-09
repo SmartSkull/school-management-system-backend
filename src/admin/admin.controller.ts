@@ -112,7 +112,7 @@ export class AdminController {
   @Post('sessions/delete') deleteSessionByBody(@CurrentUser() user: any, @Body('name') name: string) { return this.svc.deleteSession(user, name); }
   @Get('terms') getTerms(@CurrentUser() user: any) { return this.svc.getTerms(user); }
   @Post('terms') createTerm(@CurrentUser() user: any, @Body() body: { session: string; name: string }) { return this.svc.createTerm(user, body.session, body.name); }
-  @Put('terms/:term/current') setCurrentTerm(@Param('term') t: string) { return this.svc.setCurrentTerm(t); }
+  @Put('terms/:term/current') setCurrentTerm(@CurrentUser() user: any, @Param('term') t: string) { return this.svc.setCurrentTerm(user, t); }
   @Delete('terms/:id') deleteTerm(@CurrentUser() user: any, @Param('id') id: string) { return this.svc.deleteTerm(user, id); }
   @Put('terms/:id') updateTerm(@CurrentUser() user: any, @Param('id') id: string, @Body() body: any) { return this.svc.updateTerm(user, id, body); }
 
