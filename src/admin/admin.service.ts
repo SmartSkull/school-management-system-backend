@@ -567,8 +567,17 @@ export class AdminService {
     } catch (err: any) {
       // Prisma unique constraint error code
       if (err?.code === 'P2002') {
-        const field = err?.meta?.target?.[0] ?? 'field';
-        throw new BadRequestException(`A staff member with this ${field} already exists`);
+        // meta.target is a constraint name like "User_email_key" or an array ["email"]
+        const raw: string = Array.isArray(err?.meta?.target)
+          ? err.meta.target.join(', ')
+          : (err?.meta?.target ?? '');
+        // Map known constraint names to human-readable field labels
+        const label =
+          /email/i.test(raw) ? 'email address' :
+          /telephone|phone/i.test(raw) ? 'phone number' :
+          /uniqueId|staffNo/i.test(raw) ? 'staff ID' :
+          raw || 'field';
+        throw new BadRequestException(`A staff member with this ${label} already exists`);
       }
       throw err;
     }
@@ -1490,7 +1499,11 @@ export class AdminService {
     // Increment and ensure the generated ID doesn't already exist globally (across all schools)
     let num = maxNum + 1;
     let candidate = `${prefix}S${year}${String(num).padStart(4, '0')}`;
-    while (await this.prisma.user.findFirst({ where: { uniqueId: candidate }, select: { id: true } })) {
+    // Check both uniqueId (User) and staffNo (Staff) — both are globally @unique
+    while (
+      await this.prisma.user.findFirst({ where: { uniqueId: candidate }, select: { id: true } }) ||
+      await this.prisma.staff.findFirst({ where: { staffNo: candidate }, select: { id: true } })
+    ) {
       num++;
       candidate = `${prefix}S${year}${String(num).padStart(4, '0')}`;
     }
