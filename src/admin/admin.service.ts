@@ -1422,12 +1422,30 @@ export class AdminService {
     const { studentId, toClassId } = body;
     if (!studentId || !toClassId) throw new BadRequestException('studentId and toClassId are required');
 
-    const student = await this.prisma.student.findUnique({ where: { id: BigInt(studentId) } });
+    const schoolId = this.schoolId(user);
+
+    // studentId may be a uniqueId string (e.g. "SCH250001") or a numeric DB id.
+    // Always resolve via uniqueId first so both forms work.
+    let student = await this.prisma.student.findFirst({
+      where: { user: { uniqueId: studentId, ...(schoolId ? { schoolId } : {}) } },
+    });
+
+    // Fall back to numeric DB id if the caller passed one
+    if (!student && /^\d+$/.test(studentId)) {
+      student = await this.prisma.student.findUnique({ where: { id: BigInt(studentId) } });
+    }
+
     if (!student) throw new NotFoundException('Student not found');
 
+    const targetClass = await this.prisma.classRoom.findUnique({
+      where: { id: BigInt(toClassId) },
+      select: { id: true },
+    });
+    if (!targetClass) throw new NotFoundException('Destination class not found');
+
     await this.prisma.student.update({
-      where: { id: BigInt(studentId) },
-      data: { classRoomId: BigInt(toClassId) },
+      where: { id: student.id },
+      data: { classRoomId: targetClass.id },
     });
     return this.ok(null, 'Student transferred successfully');
   }
