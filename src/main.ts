@@ -34,11 +34,12 @@ async function bootstrap() {
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   });
 
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { bodyParser: false });
 
   // Apply JSON and urlencoded body parsers only to non-multipart requests.
-  // If these run on multipart/form-data they drain the raw stream before
-  // Multer can read it, causing FileInterceptor to see an empty upload.
+  // NestFactory's built-in bodyParser is disabled above — if it ran on
+  // multipart/form-data it would drain the stream before Multer could read it,
+  // causing FileInterceptor to always see an empty upload.
   app.use((req: any, res: any, next: any) => {
     if (/multipart\/form-data/i.test(req.headers['content-type'] ?? '')) return next();
     require('express').json({ limit: '50mb' })(req, res, next);
