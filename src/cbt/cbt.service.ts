@@ -1,7 +1,43 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import * as fs from 'fs';
 import { PrismaService } from '../database/prisma.service';
 import { uploadToCloudinary } from '../common/cloudinary';
+import {
+  QUESTION_EXTRACTION_PROMPT,
+  assignSectionOrder,
+  collectExtractedQuestions,
+  continuationPrompt,
+  emptyTally,
+  parseJsonBlock,
+  readUploadedDocument,
+  splitForExtraction,
+} from './question-extraction';
+
+/**
+ * Attempts per model call. Free model tiers cap requests per minute, and a long
+ * paper is split into several calls, so a rate limit here is expected rather
+ * than exceptional — one 429 should not fail the whole upload.
+ */
+const EXTRACTION_ATTEMPTS = 4;
+const EXTRACTION_BACKOFF_MS = 2000;
+
+const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+/** A provider answering 429 usually says how long to wait. Honour it. */
+function retryAfterMs(err: any): number {
+  const raw = err?.headers?.['retry-after']
+    ?? err?.headers?.get?.('retry-after')
+    ?? err?.response?.headers?.['retry-after'];
+  const seconds = Number(raw);
+  return Number.isFinite(seconds) && seconds > 0 ? Math.min(seconds * 1000, 30_000) : 0;
+}
+
+/**
+ * The environment ships values like "your-openai-api-key". Sending one to a
+ * provider turns a setup mistake into a confusing 401, so treat it as unset.
+ */
+function isPlaceholder(value: string): boolean {
+  return /^(your[-_]|changeme|placeholder|<)/i.test((value ?? '').trim());
+}
 
 @Injectable()
 export class CbtService {
@@ -744,13 +780,193 @@ export class CbtService {
     }));
   }
 
+  /** Provider settings for question extraction. */
+  private aiConfig() {
+    // AI_API_KEY is the canonical key. GEMINI_API_KEY is a convenience alias
+    // so the .env can name the key after the provider without breaking anything.
+    const apiKey =
+      process.env.AI_API_KEY ||
+      process.env.GEMINI_API_KEY ||
+      process.env.OPENAI_API_KEY ||
+      '';
+    const model = process.env.AI_MODEL || process.env.OPENAI_MODEL || 'gemini-2.0-flash';
+    return {
+      apiKey: isPlaceholder(apiKey) ? '' : apiKey,
+      baseURL:
+        process.env.AI_BASE_URL ||
+        process.env.OPENAI_BASE_URL ||
+        'https://generativelanguage.googleapis.com/v1beta/openai/',
+      model,
+      visionModel: process.env.AI_VISION_MODEL || model,
+    };
+  }
+
+  /**
+   * One call to the extraction model.
+   *
+   * Retries on 429 and 5xx. Free model tiers cap requests per minute, and a long
+   * paper arrives as several calls, so being rate-limited part-way through is
+   * normal — giving up there would fail an upload that was almost finished.
+   */
+  private async askExtractionModel(cfg: any, model: string, messages: any[]): Promise<any> {
+    const OpenAI = require('openai');
+    const Client = OpenAI.default ?? OpenAI;
+    const client = new Client({ apiKey: cfg.apiKey, baseURL: cfg.baseURL });
+
+    let status: number | undefined;
+    let detail = 'unknown error';
+
+    for (let attempt = 1; attempt <= EXTRACTION_ATTEMPTS; attempt++) {
+      let waitMs = EXTRACTION_BACKOFF_MS * attempt;
+
+      try {
+        const res = await client.chat.completions.create({ model, temperature: 0, messages });
+        const parsed = parseJsonBlock(res?.choices?.[0]?.message?.content ?? '');
+        if (parsed) return parsed;
+
+        status = undefined;
+        detail = 'the reply contained no readable JSON';
+      } catch (e: any) {
+        status = e?.status ?? e?.response?.status;
+        detail = e?.message ?? 'unknown error';
+        const hinted = retryAfterMs(e);
+        if (hinted) waitMs = hinted;
+      }
+
+      // A rejected key, a refused model or a malformed request will not improve
+      // by waiting; anything else gets another go.
+      const worthRetrying = status === undefined || status === 429 || status >= 500;
+      if (!worthRetrying || attempt === EXTRACTION_ATTEMPTS) break;
+
+      await delay(waitMs);
+    }
+
+    if (status === 401) {
+      throw new BadRequestException(
+        `The AI provider rejected the key (401) at ${cfg.baseURL}. Check AI_API_KEY.`,
+      );
+    }
+    if (status === 403) {
+      throw new BadRequestException(
+        `The AI provider refused the request (403) at ${cfg.baseURL} for "${model}". ` +
+        'That key is not allowed to use that model — check AI_API_KEY, AI_BASE_URL and AI_MODEL together.',
+      );
+    }
+    if (status === 429) {
+      throw new BadRequestException(
+        `The AI provider is still rate-limiting this key (429) after ${EXTRACTION_ATTEMPTS} attempts on "${model}". ` +
+        'Model ids ending in ":free" are capped per minute and per day — wait a minute and retry, ' +
+        'or point AI_MODEL at a different model.',
+      );
+    }
+    throw new BadRequestException(`Question extraction failed on "${model}": ${detail}`);
+  }
+
+  /**
+   * Turns an uploaded exam paper into questions.
+   *
+   * This replaced a rules-based parser that only understood four option layouts,
+   * silently defaulted a missing answer to "A", and dropped anything it could not
+   * match without saying so — which is how a teacher could upload a paper and
+   * quietly lose questions, or import a set of answers nobody ever wrote. It also
+   * ran in the browser, where a PDF had no branch of its own and was handed to an
+   * image OCR engine, so PDFs never worked at all.
+   *
+   * Text documents are read here; images go to a vision model, since there is no
+   * text to read out of a photograph. A question the paper does not answer comes
+   * back blank and is reported, never guessed.
+   */
   async extractQuestions(file: Express.Multer.File) {
-    if (!file) throw new BadRequestException('No file uploaded');
-    const content = fs.readFileSync(file.path, 'utf8');
-    const questions = this.parseQuestions(content);
-    fs.unlinkSync(file.path);
-    if (!questions.length) throw new BadRequestException('No questions could be identified in the file');
-    return this.ok(questions);
+    if (!file?.buffer?.length) throw new BadRequestException('No file uploaded');
+
+    const cfg = this.aiConfig();
+    if (!cfg.apiKey) {
+      throw new BadRequestException(
+        'AI extraction is not set up yet. Add AI_API_KEY to the backend environment.',
+      );
+    }
+
+    const questions: any[] = [];
+    const tally = emptyTally();
+    const isImage = Boolean(file.mimetype?.startsWith('image/'));
+
+    if (isImage) {
+      // A photographed or scanned paper: the model reads the page itself.
+      const raw = await this.askExtractionModel(cfg, cfg.visionModel, [
+        { role: 'system', content: QUESTION_EXTRACTION_PROMPT },
+        {
+          role: 'user',
+          content: [
+            { type: 'text', text: 'Extract every question from this exam paper image.' },
+            {
+              type: 'image_url',
+              image_url: { url: `data:${file.mimetype};base64,${file.buffer.toString('base64')}` },
+            },
+          ],
+        },
+      ]);
+      collectExtractedQuestions(raw, questions, tally);
+    } else {
+      if ((file.originalname ?? '').toLowerCase().endsWith('.doc')) {
+        throw new BadRequestException('Legacy .doc files cannot be read — save the paper as .docx or PDF.');
+      }
+
+      const text = await readUploadedDocument(file);
+      if (!text.trim()) {
+        throw new BadRequestException(
+          'No text could be read from that file. If the paper is a scan or a photo, upload it as an image instead.',
+        );
+      }
+
+      // Long papers are split so nothing is lost past the model's input limit.
+      // A heading that fell in the previous chunk is carried into the next one,
+      // so its questions still arrive labelled.
+      let carrySection = '';
+      for (const chunk of splitForExtraction(text)) {
+        const raw = await this.askExtractionModel(cfg, cfg.model, [
+          { role: 'system', content: QUESTION_EXTRACTION_PROMPT },
+          { role: 'user', content: carrySection ? continuationPrompt(carrySection, chunk) : chunk },
+        ]);
+
+        const before = questions.length;
+        collectExtractedQuestions(raw, questions, tally);
+        if (questions.length > before) {
+          carrySection = questions[questions.length - 1].sectionLabel || carrySection;
+        }
+      }
+    }
+
+    if (!questions.length) {
+      throw new BadRequestException(
+        tally.theory
+          ? `No multiple-choice questions were found — ${tally.theory} question${tally.theory === 1 ? '' : 's'} had no options.`
+          : 'No questions could be identified in the file',
+      );
+    }
+
+    assignSectionOrder(questions);
+
+    const warnings: string[] = [];
+    if (tally.theory) {
+      warnings.push(
+        `${tally.theory} question${tally.theory === 1 ? '' : 's'} had no options and ${tally.theory === 1 ? 'was' : 'were'} skipped — the question bank holds multiple-choice questions only.`,
+      );
+    }
+    if (tally.noAnswer) {
+      warnings.push(
+        `${tally.noAnswer} question${tally.noAnswer === 1 ? '' : 's'} ${tally.noAnswer === 1 ? 'has' : 'have'} no answer marked in the paper. Set the answer in the table below, or ${tally.noAnswer === 1 ? 'it' : 'they'} will be skipped on import.`,
+      );
+    }
+    if (tally.unreadable) {
+      warnings.push(
+        `${tally.unreadable} item${tally.unreadable === 1 ? '' : 's'} came back without readable question text and ${tally.unreadable === 1 ? 'was' : 'were'} skipped.`,
+      );
+    }
+
+    return this.ok(
+      { questions, warnings, model: isImage ? cfg.visionModel : cfg.model },
+      `Extracted ${questions.length} question${questions.length === 1 ? '' : 's'}`,
+    );
   }
 
   async bulkCreate(user: any, body: any) {
@@ -998,17 +1214,5 @@ export class CbtService {
       { resultsInserted, answersInserted },
       `Imported ${resultsInserted} results and ${answersInserted} answers`,
     );
-  }
-
-  private parseQuestions(text: string): any[] {
-    const questions: any[] = [];
-    const parts = text.split(/\n\d+[\.\)]\s+/).filter(Boolean);
-    for (const part of parts) {
-      const optionParts = part.split(/\s+[A-D][\.\)]\s+/);
-      if (optionParts.length >= 3) {
-        questions.push({ question: optionParts[0].trim(), option1: optionParts[1]?.trim() || '', option2: optionParts[2]?.trim() || '', option3: optionParts[3]?.trim() || '', option4: optionParts[4]?.trim() || '', answer: '' });
-      }
-    }
-    return questions;
   }
 }
