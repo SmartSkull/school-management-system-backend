@@ -789,7 +789,7 @@ export class CbtService {
       process.env.GEMINI_API_KEY ||
       process.env.OPENAI_API_KEY ||
       '';
-    const model = process.env.AI_MODEL || process.env.OPENAI_MODEL || 'gemini-2.0-flash';
+    const model = process.env.AI_MODEL || process.env.OPENAI_MODEL || 'gemini-3.5-flash-lite';
     const rawBase =
       process.env.AI_BASE_URL ||
       process.env.OPENAI_BASE_URL ||
