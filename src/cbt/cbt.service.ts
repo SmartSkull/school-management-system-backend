@@ -790,12 +790,15 @@ export class CbtService {
       process.env.OPENAI_API_KEY ||
       '';
     const model = process.env.AI_MODEL || process.env.OPENAI_MODEL || 'gemini-2.0-flash';
+    const rawBase =
+      process.env.AI_BASE_URL ||
+      process.env.OPENAI_BASE_URL ||
+      'https://generativelanguage.googleapis.com/v1beta/openai/';
     return {
       apiKey: isPlaceholder(apiKey) ? '' : apiKey,
-      baseURL:
-        process.env.AI_BASE_URL ||
-        process.env.OPENAI_BASE_URL ||
-        'https://generativelanguage.googleapis.com/v1beta/openai/',
+      // Strip trailing slash — the openai SDK appends /chat/completions itself,
+      // and a double-slash causes a 404 on the Gemini endpoint.
+      baseURL: rawBase.replace(/\/+$/, ''),
       model,
       visionModel: process.env.AI_VISION_MODEL || model,
     };
