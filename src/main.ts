@@ -36,8 +36,17 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
 
-  app.use(require('express').json({ limit: '50mb' }));
-  app.use(require('express').urlencoded({ limit: '50mb', extended: true }));
+  // Apply JSON and urlencoded body parsers only to non-multipart requests.
+  // If these run on multipart/form-data they drain the raw stream before
+  // Multer can read it, causing FileInterceptor to see an empty upload.
+  app.use((req: any, res: any, next: any) => {
+    if (/multipart\/form-data/i.test(req.headers['content-type'] ?? '')) return next();
+    require('express').json({ limit: '50mb' })(req, res, next);
+  });
+  app.use((req: any, res: any, next: any) => {
+    if (/multipart\/form-data/i.test(req.headers['content-type'] ?? '')) return next();
+    require('express').urlencoded({ limit: '50mb', extended: true })(req, res, next);
+  });
 
   app.enableCors({
     origin: '*',
