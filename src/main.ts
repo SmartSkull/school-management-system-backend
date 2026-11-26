@@ -35,6 +35,7 @@ async function bootstrap() {
   });
 
   const app = await NestFactory.create(AppModule, { bodyParser: false });
+  console.log('[bootstrap] bodyParser disabled — Multer handles multipart');
 
   // Apply JSON and urlencoded body parsers only to non-multipart requests.
   // NestFactory's built-in bodyParser is disabled above — if it ran on

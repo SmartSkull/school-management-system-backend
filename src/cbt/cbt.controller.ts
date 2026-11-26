@@ -1,7 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
 import { CurrentUser } from '../common/decorators/user.decorator';
 import { AdminGuard, StaffGuard, StudentGuard } from '../common/guards/auth.guard';
 import { CbtService } from './cbt.service';
@@ -87,10 +85,18 @@ export class CbtController {
   @UseGuards(StaffGuard)
   manualSaveResults(@CurrentUser() user: any, @Body() body: any) { return this.svc.manualSaveResults(user, body); }
 
+  // Memory storage: the buffer goes straight to the extractor (and to the AI
+  // provider for images). A file written to ./uploads is gone after the next
+  // deploy, which is what used to break every stored CBT image.
   @Post('staff/cbt/extract-questions')
   @UseGuards(StaffGuard)
-  @UseInterceptors(FileInterceptor('file', { storage: diskStorage({ destination: './uploads', filename: (_, f, cb) => cb(null, `${Date.now()}${extname(f.originalname)}`) }) }))
-  extractQuestions(@UploadedFile() file: Express.Multer.File) { return this.svc.extractQuestions(file); }
+  @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 20 * 1024 * 1024 } }))
+  extractQuestions(@UploadedFile() file: Express.Multer.File, @Req() req: any) {
+    console.log('[extract-questions] content-type:', req.headers['content-type']);
+    console.log('[extract-questions] file:', file ? `${file.originalname} ${file.size}b` : 'UNDEFINED');
+    console.log('[extract-questions] body keys:', Object.keys(req.body ?? {}));
+    return this.svc.extractQuestions(file);
+  }
 
   @Post('staff/cbt/upload-image')
   @UseGuards(StaffGuard)
