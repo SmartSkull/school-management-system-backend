@@ -880,6 +880,9 @@ export class CbtService {
     if (!file?.buffer?.length) throw new BadRequestException('No file uploaded');
 
     const cfg = this.aiConfig();
+    console.log('[extractQuestions] apiKey set:', !!cfg.apiKey, '| baseURL:', cfg.baseURL, '| model:', cfg.model);
+    console.log('[extractQuestions] raw GEMINI_API_KEY:', (process.env.GEMINI_API_KEY ?? '').slice(0, 8) + '...');
+    console.log('[extractQuestions] raw AI_API_KEY:', (process.env.AI_API_KEY ?? '').slice(0, 8) + '...');
     if (!cfg.apiKey) {
       throw new BadRequestException(
         'AI extraction is not set up yet. Add AI_API_KEY to the backend environment.',
