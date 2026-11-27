@@ -278,21 +278,34 @@ export class AdminService {
   }
 
   async deleteStudent(studentId: string) {
-    const user = await this.prisma.user.findUnique({ where: { uniqueId: studentId } });
+    const user = await this.prisma.user.findUnique({
+      where: { uniqueId: studentId },
+      include: { student: true },
+    });
     if (!user) throw new NotFoundException('Student not found');
+
+    const student = user.student;
+
     try {
-      await this.prisma.user.delete({ where: { id: user.id } });
-    } catch (err: any) {
-      if (err?.code === 'P2003' || err?.code === 'P2014' || err?.message?.includes('Foreign key')) {
-        await this.prisma.user.update({
-          where: { id: user.id },
-          data: { status: 'INACTIVE' as any, email: null },
-        });
-        return this.ok(null, 'Student deactivated (has related records, cannot be fully deleted)');
+      if (student) {
+        // Delete all child records that have no onDelete: Cascade in the schema
+        // so the subsequent user delete never hits a foreign key violation.
+        await this.prisma.cbtResult.deleteMany({ where: { studentId: student.id } });
+        await this.prisma.cbtAnswer.deleteMany({ where: { studentId: student.id } });
+        await this.prisma.assignmentSubmission.deleteMany({ where: { studentId: student.id } });
+        await this.prisma.schoolFeePayment.deleteMany({ where: { studentId: student.id } }).catch(() => {});
+        // Records with onDelete: Cascade on Student are handled by the DB automatically.
       }
-      throw err;
+      await this.prisma.user.delete({ where: { id: user.id } });
+      return this.ok(null, 'Student deleted successfully');
+    } catch (err: any) {
+      // Last-resort fallback: if any other relation blocks the delete, deactivate instead
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: { status: 'INACTIVE' as any },
+      });
+      return this.ok(null, 'Student deactivated (has related records that could not be removed)');
     }
-    return this.ok(null, 'Student deleted successfully');
   }
 
   async changeStudentPassword(body: any) {
